@@ -7,4 +7,4 @@ clean:
 	rm grammar.js
 
 %.js: %.jison
-	jison -d $<
+	jison $<

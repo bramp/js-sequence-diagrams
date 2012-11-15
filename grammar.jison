@@ -5,15 +5,15 @@
 %lex
 %%
 
-"\n"              return '\n'
-[\s]+             /* skip whitespace */
+[\n]+             return 'NL';
+[ \t]+             /* skip whitespace */
 "participant"     return 'participant'
-[^->:\n]+         return 'ACTOR'
+[^->:\n]+\b       return 'ACTOR'
 "--"              return 'DOTLINE'
 "-"               return 'LINE'
 ">>"              return 'OPENARROW'
 ">"               return 'ARROW'
-(:)[^\n]+         return 'MESSAGE'
+:[^\n]+           return 'MESSAGE'
 <<EOF>>           return 'EOF'
 .                 return 'INVALID'
 
@@ -28,41 +28,36 @@ document: /* empty */
 	;
 
 line
-	: '\n'
-	| statement '\n'  { console.log('line'); }
+	: statement 'NL'  { console.log('line ' + $1); }
+	| 'EOF'
 	;
 
 statement
-	: signal          { console.log('s'); }
-	| p               { console.log('p'); }
-	;
-
-p
-	: 'participant' ACTOR { return $2 }
+	: signal               { $$ = 'signal ' + $1; console.log($$) }
+	| 'participant' ACTOR  { $$ = 'participant ' + $2; console.log($$) }
 	;
 
 signal
-	: ACTOR signaltype ACTOR MESSAGE
-	{ console.log($1 + ' ' + $2 + ' ' + $3 + ' ' + $4); }
+	: ACTOR signaltype ACTOR message
+	{ $$ = $1 + ' ' + $2 + ' ' + $3 + ' ' + $4; }
 
 	;
 
 signaltype
-	: linetype arrowtype  { return $1 + ' ' + $2 }
-	| linetype            { return $1 }
+	: linetype arrowtype  { $$ = $1 + $2; }
+	| linetype            { $$ = $1; }
 	;
 
 linetype
-	: LINE      { return "a" }
-	| DOTLINE   { return "b" }
+	: LINE      { $$ = '-'; }
+	| DOTLINE   { $$ = '--'; }
 	;
 
 arrowtype
-	: ARROW     { return "a" }
-	| OPENARROW { return "b" }
+	: ARROW     { $$ = '>'; }
+	| OPENARROW { $$ = '>>'; }
 	;
 
 message
-	: ":" 
+	: MESSAGE { $$ = $1; }
 	;
-
