@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+    </head>
+    <body>
+
+    	<textarea id="language" rows="10" cols="50">
+Andrew->China: Says Hello
+China->Andrew: How are you?
+note right of Andrew: Andrew thinks about it
+
+    	</textarea>
+    	<button id="parse" type="button">Click Me!</button>
+    	<div id="diagram"></div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script src="raphael-min.js"></script>
+
+        <script src="grammar.js"></script>
+        <script>
+
+		var LINETYPE = {
+			SOLID  : 0,
+			DOTTED : 1
+		};
+
+		var ARROWTYPE = {
+			FILLED  : 0,
+			OPEN    : 1
+		};
+
+		var PLACEMENT = {
+			LEFTOF  : 0,
+			RIGHTOF : 1,
+			OVER    : 2
+		}
+
+		var actors  = [];
+		var signals = [];
+
+		function Actor (name, index) {
+			this.name = name;
+			this.index = index;
+			this.distances = {};
+		}
+
+		function getActor(name) {
+			for (var i in actors) {
+				if (actors[i].name == name)
+					return actors[i];
+			}
+			var i = actors.push( new Actor(name, actors.length) );
+			return actors[ i - 1];
+		}
+
+		function Signal (actorA, signaltype, actorB, message) {
+			this.type       = "Signal";
+			this.actorA     = actorA;
+			this.actorB     = actorB;
+			this.signaltype = signaltype;
+			this.message    = message;
+		}
+
+		function Note (actor, placement, message) {
+			this.type      = "Note";
+			this.actor     = actor;
+			this.placement = placement;
+			this.message   = message;
+		}
+
+		$(document).ready(function(){
+			$('#parse').click(function() {
+				actors  = [];
+				signals = [];
+
+				grammar.parse($('#language').val());
+
+				console.log(actors);
+				console.log(signals);
+
+				// Creates canvas 320 × 200 at 10, 50
+				var paper = Raphael('diagram', 320, 200);
+
+				var SIGNAL_PADDING = 10;
+
+				// Calculate distances between actors
+				var t = paper.text(0,0).attr('text-anchor', 'middle');
+				//var distances = new Array(actors.length + 2);
+				//for (var i in actors) {
+				//	distances[i] = new Array(actors.length + 2);
+				//}
+
+				for (var i in signals) {
+					var s = signals[i];
+					var a, b;
+
+					if (s.type == "Signal") {
+						console.log(typeof s);
+						a = Math.min(s.actorA.index, s.actorB.index);
+						b = Math.max(s.actorA.index, s.actorB.index);
+					} else if (s.type == "Note") {
+						if (s.placement == PLACEMENT.LEFTOF) {
+							b = s.actor.index;
+							a = b - 1;
+						} else if (s.placement == PLACEMENT.RIGHTOF) {
+							a = s.actor.index;
+							b = a + 1;
+						}
+					} else {
+						/* Opps something went wrong! */
+					}
+
+					t.attr("text", s.message);
+					var w = t.getBBox().width + SIGNAL_PADDING * 2;
+
+					distances[a][b] = Math.max(w, distances[a][b]);
+					console.log(a, b, w);
+				}
+				console.log(distances);
+
+
+				// Creates circle at x = 50, y = 40, with radius 10
+				var circle = paper.circle(50, 40, 10);
+				// Sets the fill attribute of the circle to red (#f00)
+				circle.attr("fill", "#f00");
+
+				// Sets the stroke attribute of the circle to white
+				circle.attr("stroke", "#fff");
+			});
+
+		});
+
+        </script>
+
+    </body>
+</html>
+
+
+
