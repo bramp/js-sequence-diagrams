@@ -78,5 +78,5 @@ arrowtype
 	;
 
 message
-	: MESSAGE { $$ = $1; }
+	: MESSAGE { $$ = $1.substring(1); }
 	;
