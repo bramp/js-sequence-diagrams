@@ -3,6 +3,57 @@
 
 /* lexical grammar */
 %lex
+
+%{
+	var actors  = [];
+	var signals = [];
+
+	var LINETYPE = {
+		SOLID  : 0,
+		DOTTED : 1
+	};
+
+	var ARROWTYPE = {
+		FILLED  : 0,
+		OPEN    : 1
+	};
+
+	var PLACEMENT = {
+		LEFTOF  : 0,
+		RIGHTOF : 1,
+		OVER    : 2
+	};
+
+	function getActor(name) {
+		for (var i in actors) {
+			if (actors[i].name == name)
+				return actors[i];
+		}
+		var i = actors.push( new Actor(name, actors.length) );
+		return actors[ i - 1];
+	}
+
+	function Actor (name, index) {
+		this.name = name;
+		this.index = index;
+	}
+
+	function Signal (actorA, signaltype, actorB, message) {
+		this.type       = "Signal";
+		this.actorA     = actorA;
+		this.actorB     = actorB;
+		this.signaltype = signaltype;
+		this.message    = message;
+	}
+
+	function Note (actor, placement, message) {
+		this.type      = "Note";
+		this.actor     = actor;
+		this.placement = placement;
+		this.message   = message;
+	}
+%}
+
 %%
 
 [\n]+             return 'NL';
