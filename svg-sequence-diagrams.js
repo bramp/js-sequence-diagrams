@@ -35,6 +35,10 @@
 				//'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
 			};
 
+			var LINE = {
+				'stroke-width': 2
+			};
+
 
 			// Calculate distances between actors
 			var t = paper.text(0,0).attr('text-anchor', 'middle');
@@ -131,9 +135,42 @@
 
 				// Veritical line
 				var aX = a.x + a.width/2;
-				paper.line(aX, y + actors_height, aX, y + actors_height + signals_height);
+				var line = paper.line(aX, y + actors_height, aX, y + actors_height + signals_height);
+				line.attr(LINE);
 
 			});
+
+			/**
+			 * Draws a arrow head
+			 * direction must be -1 for left, or 1 for right
+			 */
+			function draw_arrowhead(x, y, size, direction) {
+				var dx = (size/2) * direction;
+				var dy = (size/2);
+
+				y -= dy; x -= dx;
+				var p = paper.path("M" + x + "," + y + "v" + size + "l" + dx + ",-" + (size/2) + "Z");
+			}
+
+			function draw_signal_arrow(s, offsetY) {
+				var aX = s.actorA.x + s.actorA.width/2;
+				var bX = s.actorB.x + s.actorB.width/2;
+				var line = paper.line(aX, offsetY, bX, offsetY);
+				line.attr(LINE);
+				line.attr({'stroke-width': 2 ,'arrow-end': 'classic-wide-long'});
+
+
+				var midx = (bX - aX) / 2 + aX;
+
+				var t = paper.text(midx, offsetY);
+				t.attr(FONT);
+				t.attr('text-anchor', 'middle');
+				t.attr("text", s.message);
+
+				//var ARROW_SIZE = 16;
+				//var dir = s.actorA.x < s.actorB.x ? 1 : -1;
+				//draw_arrowhead(bX, offsetY, ARROW_SIZE, dir);
+			}
 
 			// Draw each signal
 			y = actors_height;
@@ -142,19 +179,10 @@
 				y += s.height;
 
 				if (s.type == "Signal") {
-
-					var aX = s.actorA.x + s.actorA.width/2;
-					var bX = s.actorB.x + s.actorB.width/2;
-					paper.line(aX, y, bX, y);
-
-					var midx = (bX - aX) / 2 + aX;
-
-					var t = paper.text(midx, y);
-					t.attr(FONT);
-					t.attr('text-anchor', 'middle');
-					t.attr("text", s.message);
+					draw_signal_arrow(s, y);
 
 				} else if (s.type == "Note") {
+
 				}
 
 			});
