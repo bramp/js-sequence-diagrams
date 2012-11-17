@@ -11,19 +11,25 @@
     <body>
 
     	<textarea id="language" rows="10" cols="50">
+    		Andrew->China: Says Hello aa a a a a a a aa
+
 Andrew->China: Says Hello
 China->Andrew: How are you?
-note right of Andrew: Andrew thinks about it
+Andrew->Bob: How are you?
+
 
     	</textarea>
+    	<!--note right of Andrew: Andrew thinks about it-->
     	<button id="parse" type="button">Click Me!</button>
     	<div id="diagram"></div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="underscore-min.js"></script>
 		<script src="raphael-min.js"></script>
 
         <script src="grammar.js"></script>
         <script>
+"use strict";
 
 		var LINETYPE = {
 			SOLID  : 0,
@@ -47,6 +53,11 @@ note right of Andrew: Andrew thinks about it
 		function Actor (name, index) {
 			this.name = name;
 			this.index = index;
+
+			// Layout related fields
+			this.x = 0;
+			this.width = 0;
+			this.height = 0;
 			this.distances = {};
 		}
 
@@ -74,6 +85,11 @@ note right of Andrew: Andrew thinks about it
 			this.message   = message;
 		}
 
+		Array.prototype.repeat= function(what, L){
+			while(L) this[--L]= what;
+			return this;
+		}
+
 		$(document).ready(function(){
 			$('#parse').click(function() {
 				actors  = [];
@@ -87,23 +103,43 @@ note right of Andrew: Andrew thinks about it
 				// Creates canvas 320 × 200 at 10, 50
 				var paper = Raphael('diagram', 320, 200);
 
-				var SIGNAL_PADDING = 10;
+				var ACTOR_MARGIN  = 10; // Outer
+				var ACTOR_PADDING = 10; // Inner
+				var SIGNAL_PADDING = 10; // Inner
+
+				var FONT = {
+					'font-size': 18,
+					//'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
+				};
+
 
 				// Calculate distances between actors
 				var t = paper.text(0,0).attr('text-anchor', 'middle');
-				//var distances = new Array(actors.length + 2);
-				//for (var i in actors) {
-				//	distances[i] = new Array(actors.length + 2);
-				//}
+				t.attr(FONT);
 
-				for (var i in signals) {
-					var s = signals[i];
-					var a, b;
+				// Setup some layout stuff
+				_.each(actors, function(a) {
+					var bb = t.attr("text", a.name).getBBox();
+					a.width  = bb.width  + ACTOR_PADDING * 2;
+					a.height = bb.height + ACTOR_PADDING * 2;
+
+					a.x = 0;
+					a.distances = [];
+				});
+
+				_.each(signals, function(s) {
+					var a, b; // Indexes of the left and right actors involved
+					var leftActor;
+
+					var bb = t.attr("text", s.message).getBBox();
+					var w  = bb.width;
+					s.height = bb.height;
 
 					if (s.type == "Signal") {
-						console.log(typeof s);
 						a = Math.min(s.actorA.index, s.actorB.index);
 						b = Math.max(s.actorA.index, s.actorB.index);
+						w += SIGNAL_PADDING * 2;
+
 					} else if (s.type == "Note") {
 						if (s.placement == PLACEMENT.LEFTOF) {
 							b = s.actor.index;
@@ -111,27 +147,88 @@ note right of Andrew: Andrew thinks about it
 						} else if (s.placement == PLACEMENT.RIGHTOF) {
 							a = s.actor.index;
 							b = a + 1;
+						} else if (s.placement == PLACEMENT.OVER) {
+							a = actors[a];
+							a.width = w;
+							return;
 						}
 					} else {
 						/* Opps something went wrong! */
 					}
 
-					t.attr("text", s.message);
-					var w = t.getBBox().width + SIGNAL_PADDING * 2;
 
-					distances[a][b] = Math.max(w, distances[a][b]);
-					console.log(a, b, w);
-				}
-				console.log(distances);
+					a = actors[a];
+					//b = actors[b];
+					a.distances[b] = Math.max(w, a.distances[b] ? a.distances[b] : 0);
+				});
+
+				t.remove();
+
+				// Re-jig the positions
+				var x = 0;
+				_.each(actors, function(a) {
+					a.x = Math.max(x + ACTOR_MARGIN, a.x);
+					_.each(a.distances, function(distance, b) {
+						b = actors[b];
+						distance = Math.max(distance, a.width / 2, b.width / 2);
+						b.x = Math.max(b.x, a.x + distance);
+						console.log(a, b, distance);
+					});
+
+					x = a.x + a.width + ACTOR_MARGIN;
+				});
+
+				paper.setSize(x, 500);
+
+				// Now draw
+				paper.setStart();
+
+				var y = 10;
+				var max_height = 0;
+				_.each(actors, function(a) {
+					console.log(a);
+					var rect = paper.rect(a.x, y, a.width, a.height);
+					rect.attr("stroke", "#000");
+
+					var t = paper.text(	a.x + ACTOR_PADDING, y + a.height/2);
+					t.attr(FONT);
+					t.attr('text-anchor', 'start');
+					t.attr("text", a.name);
+
+					max_height = Math.max(a.height, max_height);
+				});
+
+				// Draw each signal
+				y = max_height;
+				_.each(signals, function(s) {
+
+					y += s.height;
+
+					if (s.type == "Signal") {
+
+						var aX = s.actorA.x + s.actorA.width/2;
+						var bX = s.actorB.x + s.actorB.width/2;
+						var from = "M" + aX + "," + y;
+						var to   = "L" + bX + "," + y;
+						var path = paper.path(from + to);
+
+						var midx = (bX - aX) / 2 + aX
+
+						var t = paper.text(midx, y)
+						t.attr(FONT);
+						t.attr('text-anchor', 'middle');
+						t.attr("text", s.message);
 
 
-				// Creates circle at x = 50, y = 40, with radius 10
-				var circle = paper.circle(50, 40, 10);
-				// Sets the fill attribute of the circle to red (#f00)
-				circle.attr("fill", "#f00");
+					} else if (s.type == "Note") {
+					}
 
-				// Sets the stroke attribute of the circle to white
-				circle.attr("stroke", "#fff");
+
+				});
+
+				// Draw the vertical lines
+
+				paper.setFinish();
 			});
 
 		});
