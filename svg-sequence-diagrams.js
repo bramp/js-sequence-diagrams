@@ -14,11 +14,8 @@
 
 	$(document).ready(function(){
 		$('#parse').click(function() {
-			//actors  = [];
-			//signals = [];
 
 			var diagram = grammar.parse($('#language').val());
-			console.log(diagram);
 
 			var actors  = diagram.actors;
 			var signals = diagram.signals;
@@ -28,17 +25,16 @@
 			var DIAGRAM_MARGIN = 10;
 			var ACTOR_MARGIN   = 10; // Margin around a actor
 			var ACTOR_PADDING  = 10; // Padding inside a actor
-			var SIGNAL_PADDING = 10; // Margin around a signal
+			var SIGNAL_MARGIN = 20; // Margin around a signal
 
 			var FONT = {
-				'font-size': 18,
-				//'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
+				'font-size': 18
 			};
 
 			var LINE = {
+				'stroke': '#000',
 				'stroke-width': 2
 			};
-
 
 			// Calculate distances between actors
 			var t = paper.text(0,0).attr('text-anchor', 'middle');
@@ -56,7 +52,7 @@
 				actors_height = Math.max(a.height, actors_height);
 			});
 
-			var signals_height = 0;
+			var signals_height = SIGNAL_MARGIN;
 			_.each(signals, function(s) {
 				var a, b; // Indexes of the left and right actors involved
 
@@ -64,12 +60,12 @@
 				var w  = bb.width;
 				s.height = bb.height;
 
-				signals_height += s.height;
+				signals_height += s.height + SIGNAL_MARGIN;
 
 				if (s.type == "Signal") {
 					a = Math.min(s.actorA.index, s.actorB.index);
 					b = Math.max(s.actorA.index, s.actorB.index);
-					w += SIGNAL_PADDING * 2;
+					w += SIGNAL_MARGIN * 2;
 
 				} else if (s.type == "Note") {
 					if (s.placement == PLACEMENT.LEFTOF) {
@@ -112,12 +108,14 @@
 			//
 			// Now draw
 			//
-			paper.setSize(actors_width, 2 * DIAGRAM_MARGIN + 2 * actors_height + signals_height);
+			paper.setSize(
+				2 * DIAGRAM_MARGIN + actors_width,
+				2 * DIAGRAM_MARGIN + 2 * actors_height + ACTOR_MARGIN + signals_height);
 			paper.setStart();
 
 			function draw_actor(a, offsetX, offsetY, height) {
 				var rect = paper.rect(a.x, offsetY, a.width, height);
-				rect.attr("stroke", "#000");
+				rect.attr(LINE);
 
 				var t = paper.text(	a.x + ACTOR_PADDING, offsetY + height/2);
 				t.attr(FONT);
@@ -137,32 +135,31 @@
 				var aX = a.x + a.width/2;
 				var line = paper.line(aX, y + actors_height, aX, y + actors_height + signals_height);
 				line.attr(LINE);
-
 			});
 
 			/**
 			 * Draws a arrow head
 			 * direction must be -1 for left, or 1 for right
 			 */
-			function draw_arrowhead(x, y, size, direction) {
-				var dx = (size/2) * direction;
-				var dy = (size/2);
-
-				y -= dy; x -= dx;
-				var p = paper.path("M" + x + "," + y + "v" + size + "l" + dx + ",-" + (size/2) + "Z");
-			}
+			//function draw_arrowhead(x, y, size, direction) {
+			//	var dx = (size/2) * direction;
+			//	var dy = (size/2);
+			//
+			//	y -= dy; x -= dx;
+			//	var p = paper.path("M" + x + "," + y + "v" + size + "l" + dx + ",-" + (size/2) + "Z");
+			//}
 
 			function draw_signal_arrow(s, offsetY) {
+				var y = offsetY + s.height;
 				var aX = s.actorA.x + s.actorA.width/2;
 				var bX = s.actorB.x + s.actorB.width/2;
-				var line = paper.line(aX, offsetY, bX, offsetY);
+				var line = paper.line(aX, y, bX, y);
 				line.attr(LINE);
-				line.attr({'stroke-width': 2 ,'arrow-end': 'classic-wide-long'});
-
+				line.attr({'arrow-end': 'classic-wide-long'});
 
 				var midx = (bX - aX) / 2 + aX;
 
-				var t = paper.text(midx, offsetY);
+				var t = paper.text(midx, offsetY + s.height / 2);
 				t.attr(FONT);
 				t.attr('text-anchor', 'middle');
 				t.attr("text", s.message);
@@ -173,11 +170,8 @@
 			}
 
 			// Draw each signal
-			y = actors_height;
+			y = DIAGRAM_MARGIN + actors_height + ACTOR_MARGIN;
 			_.each(signals, function(s) {
-
-				y += s.height;
-
 				if (s.type == "Signal") {
 					draw_signal_arrow(s, y);
 
@@ -185,6 +179,7 @@
 
 				}
 
+				y += s.height + SIGNAL_MARGIN;
 			});
 
 			paper.setFinish();

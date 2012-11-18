@@ -1,11 +1,8 @@
-
-/* description: Parses end executes mathematical expressions. */
-
 /* lexical grammar */
 %lex
 
 %{
-	// Code can go here
+	// Pre-lexer code can go here
 %}
 
 %%
@@ -34,9 +31,12 @@
 
 start
 	: document {
-		var doc = {actors: actors, signals: signals};
-		actors = []; signals = []; // Reset
-		return doc; }
+		console.log(this.yy);
+		this.yy = 1;
+		var olddoc = doc;
+		doc = new Diagram(); // Reset
+		return olddoc;
+	  }
 	;
 
 document: /* empty */
@@ -46,32 +46,32 @@ document: /* empty */
 line
 	: statement 'NL'  { }
 	| statement 'EOF' { }
-	| 'EOF'
+	| 'NL' | 'EOF'
 	;
 
 statement
 	: 'participant' actor  { /* do nothing */  }
-	| signal               { signals.push($1); }
-	| note_statement       { signals.push($1); }
+	| signal               { doc.addSignal($1); }
+	| note_statement       { doc.addSignal($1); }
 	;
 
 note_statement
-	: 'note' placement actor message   { $$ = new Note($3, $2, $4); }
+	: 'note' placement actor message   { $$ = new Diagram.Note($3, $2, $4); }
 	;
 
 placement
-	: 'left_of'   { $$ = PLACEMENT.LEFTOF; }
-	| 'right_of'  { $$ = PLACEMENT.RIGHTOF; }
-	| 'over'      { $$ = PLACEMENT.OVER; }
+	: 'left_of'   { $$ = Diagram.PLACEMENT.LEFTOF; }
+	| 'right_of'  { $$ = Diagram.PLACEMENT.RIGHTOF; }
+	| 'over'      { $$ = Diagram.PLACEMENT.OVER; }
 	;
 
 signal
 	: actor signaltype actor message
-	{ $$ = new Signal($1, $2, $3, $4); }
+	{ $$ = new Diagram.Signal($1, $2, $3, $4); }
 	;
 
 actor
-	: ACTOR { $$ = getActor($1); }
+	: ACTOR { $$ = doc.getActor($1); }
 	;
 
 signaltype
@@ -80,13 +80,13 @@ signaltype
 	;
 
 linetype
-	: LINE      { $$ = LINETYPE.SOLID; }
-	| DOTLINE   { $$ = LINETYPE.DOTTED; }
+	: LINE      { $$ = Diagram.LINETYPE.SOLID; }
+	| DOTLINE   { $$ = Diagram.LINETYPE.DOTTED; }
 	;
 
 arrowtype
-	: ARROW     { $$ = ARROWTYPE.FILLED; }
-	| OPENARROW { $$ = ARROWTYPE.OPEN; }
+	: ARROW     { $$ = Diagram.ARROWTYPE.FILLED; }
+	| OPENARROW { $$ = Diagram.ARROWTYPE.OPEN; }
 	;
 
 message
@@ -95,50 +95,64 @@ message
 
 
 %%
-	var LINETYPE = {
-		SOLID  : 0,
-		DOTTED : 1
-	};
 
-	var ARROWTYPE = {
-		FILLED  : 0,
-		OPEN    : 1
-	};
+// This is the Window this
 
-	var PLACEMENT = {
-		LEFTOF  : 0,
-		RIGHTOF : 1,
-		OVER    : 2
-	};
+function Diagram() {
+	this.actors  = [];
+	this.signals = [];
+}
 
-	function getActor(name) {
-		for (var i in actors) {
-			if (actors[i].name == name)
-				return actors[i];
-		}
-		var i = actors.push( new Actor(name, actors.length) );
-		return actors[ i - 1 ];
+Diagram.prototype.getActor = function(name) {
+	var actors = this.actors;
+	for (var i in actors) {
+		if (actors[i].name == name)
+			return actors[i];
 	}
+	var i = actors.push( new Diagram.Actor(name, actors.length) );
+	return actors[ i - 1 ];
+}
 
-	function Actor (name, index) {
-		this.name = name;
-		this.index = index;
-	}
+Diagram.prototype.addSignal = function(signal) {
+	this.signals.push( signal );
+}
 
-	function Signal (actorA, signaltype, actorB, message) {
-		this.type       = "Signal";
-		this.actorA     = actorA;
-		this.actorB     = actorB;
-		this.signaltype = signaltype;
-		this.message    = message;
-	}
 
-	function Note (actor, placement, message) {
-		this.type      = "Note";
-		this.actor     = actor;
-		this.placement = placement;
-		this.message   = message;
-	}
+Diagram.Actor = function(name, index) {
+	this.name = name;
+	this.index = index;
+}
 
-	var actors  = [];
-	var signals = [];
+Diagram.Signal = function(actorA, signaltype, actorB, message) {
+	this.type       = "Signal";
+	this.actorA     = actorA;
+	this.actorB     = actorB;
+	this.signaltype = signaltype;
+	this.message    = message;
+}
+
+Diagram.Note = function(actor, placement, message) {
+	this.type      = "Note";
+	this.actor     = actor;
+	this.placement = placement;
+	this.message   = message;
+}
+
+Diagram.LINETYPE = {
+	SOLID  : 0,
+	DOTTED : 1
+};
+
+Diagram.ARROWTYPE = {
+	FILLED  : 0,
+	OPEN    : 1
+};
+
+Diagram.PLACEMENT = {
+	LEFTOF  : 0,
+	RIGHTOF : 1,
+	OVER    : 2
+};
+
+var doc = new Diagram();
+
