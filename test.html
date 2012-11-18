@@ -24,10 +24,27 @@ Andrew->Bob: How are you?
     	<div id="diagram"></div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
         <script src="underscore-min.js"></script>
 		<script src="raphael-min.js"></script>
+
         <script src="grammar.js"></script>
+        <script src="diagram.js"></script>
         <script src="svg-sequence-diagrams.js"></script>
+
+        <!--<script src="bundle.js"></script>-->
+        <script>
+            $(document).ready(function(){
+                $('#parse').click(function() {
+
+                    var diagram = Diagram.parse($('#language').val());
+                    console.log(diagram);
+
+                    diagram.drawSVG('diagram');
+                });
+            });
+        </script>
+
 
     </body>
 </html>

@@ -1,6 +1,8 @@
 /* lexical grammar */
 %lex
 
+%options case-insensitive
+
 %{
 	// Pre-lexer code can go here
 %}
@@ -30,17 +32,12 @@
 %% /* language grammar */
 
 start
-	: document {
-		console.log(this.yy);
-		this.yy = 1;
-		var olddoc = doc;
-		doc = new Diagram(); // Reset
-		return olddoc;
-	  }
+	: document { return yy; }
 	;
 
-document: /* empty */
-	| document line   { }
+document
+	: /* empty */
+	| document line
 	;
 
 line
@@ -51,8 +48,8 @@ line
 
 statement
 	: 'participant' actor  { /* do nothing */  }
-	| signal               { doc.addSignal($1); }
-	| note_statement       { doc.addSignal($1); }
+	| signal               { yy.addSignal($1); }
+	| note_statement       { yy.addSignal($1); }
 	;
 
 note_statement
@@ -71,7 +68,7 @@ signal
 	;
 
 actor
-	: ACTOR { $$ = doc.getActor($1); }
+	: ACTOR { $$ = yy.getActor($1); }
 	;
 
 signaltype
@@ -95,64 +92,3 @@ message
 
 
 %%
-
-// This is the Window this
-
-function Diagram() {
-	this.actors  = [];
-	this.signals = [];
-}
-
-Diagram.prototype.getActor = function(name) {
-	var actors = this.actors;
-	for (var i in actors) {
-		if (actors[i].name == name)
-			return actors[i];
-	}
-	var i = actors.push( new Diagram.Actor(name, actors.length) );
-	return actors[ i - 1 ];
-}
-
-Diagram.prototype.addSignal = function(signal) {
-	this.signals.push( signal );
-}
-
-
-Diagram.Actor = function(name, index) {
-	this.name = name;
-	this.index = index;
-}
-
-Diagram.Signal = function(actorA, signaltype, actorB, message) {
-	this.type       = "Signal";
-	this.actorA     = actorA;
-	this.actorB     = actorB;
-	this.signaltype = signaltype;
-	this.message    = message;
-}
-
-Diagram.Note = function(actor, placement, message) {
-	this.type      = "Note";
-	this.actor     = actor;
-	this.placement = placement;
-	this.message   = message;
-}
-
-Diagram.LINETYPE = {
-	SOLID  : 0,
-	DOTTED : 1
-};
-
-Diagram.ARROWTYPE = {
-	FILLED  : 0,
-	OPEN    : 1
-};
-
-Diagram.PLACEMENT = {
-	LEFTOF  : 0,
-	RIGHTOF : 1,
-	OVER    : 2
-};
-
-var doc = new Diagram();
-
