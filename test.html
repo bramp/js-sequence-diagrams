@@ -11,8 +11,7 @@
     <body>
 
     	<textarea id="language" rows="10" cols="50">
-    		Andrew->China: Says Hello aa a a a a a a aa
-
+            Note right of Andrew: This is a long note
 Andrew->China: Says Hello
 China->Andrew: How are you?
 Andrew->Bob: How are you?
@@ -35,13 +34,13 @@ Andrew->Bob: How are you?
         <!--<script src="bundle.js"></script>-->
         <script>
             $(document).ready(function(){
-                $('#parse').click(function() {
+                $('#parse').click(_.throttle( function() {
 
                     var diagram = Diagram.parse($('#language').val());
                     console.log(diagram);
 
                     diagram.drawSVG('diagram');
-                });
+                }, 100));
             });
         </script>
 
