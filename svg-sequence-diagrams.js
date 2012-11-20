@@ -31,7 +31,7 @@
 		'stroke-width': 2
 	};
 
-	Raphael.prototype.line = function(x1, y1, x2, y2) {
+	Raphael.fn.line = function(x1, y1, x2, y2) {
 		var from = "M" + x1 + "," + y1;
 		var to   = "L" + x2 + "," + y2;
 		return this.path(from + to);
@@ -173,20 +173,29 @@
 		//	var p = paper.path("M" + x + "," + y + "v" + size + "l" + dx + ",-" + (size/2) + "Z");
 		//}
 
+		var line_types = ['', '-'];
+		var arrow_types = ['block', 'open'];
+
 		function draw_signal(offsetY) {
-			var y = offsetY + this.height;
+			var y = offsetY + this.height - SIGNAL_MARGIN;
 			var aX = this.actorA.x + this.actorA.width/2;
 			var bX = this.actorB.x + this.actorB.width/2;
+
 			var line = paper.line(aX, y, bX, y);
 			line.attr(LINE);
-			line.attr({'arrow-end': 'classic-wide-long'});
+			line.attr({
+				'arrow-end': arrow_types[this.arrowtype] + '-wide-long',
+				'stroke-dasharray': line_types[this.linetype]
+			});
 
 			var midx = (bX - aX) / 2 + aX;
 
 			var t = paper.text(midx, offsetY + this.height / 2);
 			t.attr(FONT);
-			t.attr('text-anchor', 'middle');
-			t.attr("text", this.message);
+			t.attr({
+				'text': this.message,
+				'text-anchor': 'middle',
+			});
 
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
@@ -208,8 +217,10 @@
 
 			var t = paper.text(x, y);
 			t.attr(FONT);
-			t.attr('text-anchor', 'middle');
-			t.attr("text", text);
+			t.attr({
+				'text': text,
+				'text-anchor': 'middle',
+			});
 		}
 
 		function draw_actor(offsetY, height) {

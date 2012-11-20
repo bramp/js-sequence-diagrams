@@ -29,7 +29,8 @@
 		this.type       = "Signal";
 		this.actorA     = actorA;
 		this.actorB     = actorB;
-		this.signaltype = signaltype;
+		this.linetype   = signaltype;
+		this.arrowtype  = signaltype >> 2;
 		this.message    = message;
 	}
 
