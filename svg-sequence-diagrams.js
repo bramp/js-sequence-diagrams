@@ -83,6 +83,8 @@
 			s.width  = bb.width;
 			s.height = bb.height;
 
+			var extra_width = 0;
+
 			if (s.type == "Signal") {
 				s.width  += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
 				s.height += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
@@ -93,6 +95,9 @@
 			} else if (s.type == "Note") {
 				s.width  += (NOTE_MARGIN + NOTE_PADDING) * 2;
 				s.height += (NOTE_MARGIN + NOTE_PADDING) * 2;
+
+				// HACK lets include the actor's padding
+				extra_width = 2 * ACTOR_MARGIN;
 
 				if (s.placement == PLACEMENT.LEFTOF) {
 					b = s.actor.index;
@@ -112,7 +117,7 @@
 			}
 
 			//this.x = this.actor.x + this.actor.width / 2;
-			actor_ensure_distance(a, b, s.width);
+			actor_ensure_distance(a, b, s.width + extra_width);
 			signals_height += s.height;
 		});
 
@@ -232,7 +237,7 @@
 			this.y = offsetY;
 			switch (this.placement) {
 				case PLACEMENT.RIGHTOF:
-					this.x = this.actor.x + this.actor.width / 2;
+					this.x = this.actor.x + this.actor.width / 2 + ACTOR_MARGIN;
 					break;
 				default:
 					throw new Error("Unhandled note placement:" + this.placement);
