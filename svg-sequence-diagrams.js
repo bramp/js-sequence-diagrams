@@ -23,7 +23,8 @@
 	var ARROWTYPE = Diagram.ARROWTYPE;
 
 	var FONT = {
-		'font-size': 18
+		'font-size': 18,
+		'font-family': 'daniel',
 	};
 
 	var LINE = {
@@ -81,15 +82,21 @@
 		var signals = this.signals;
 
 		var paper = new Raphael(container, 320, 200);
+		var font = paper.getFont('daniel');
 
 		// Calculate distances between actors
-		var t = paper.text(0,0).attr('text-anchor', 'middle');
-		t.attr(FONT);
+		//var t = paper.text(0,0).attr('text-anchor', 'middle');
+		//t.attr(FONT);
 
 		// Setup some layout stuff
 		var actors_height = 0;
 		_.each(actors, function(a) {
-			var bb = t.attr("text", a.name).getBBox();
+			
+			var p = paper.print(0, 0, a.name, font, 16, 'middle');
+			var bb = p.getBBox();
+			p.remove();
+
+			//var bb = t.attr("text", a.name).getBBox();
 			a.width  = bb.width  + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
 			a.height = bb.height + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
 
@@ -116,7 +123,11 @@
 		_.each(signals, function(s) {
 			var a, b; // Indexes of the left and right actors involved
 
-			var bb = t.attr("text", s.message).getBBox();
+			var p = paper.print(0, 0, s.message, font, 16, 'middle');
+			var bb = p.getBBox();
+			p.remove();
+			
+			//var bb = t.attr("text", s.message).getBBox();
 			s.width  = bb.width;
 			s.height = bb.height;
 
@@ -158,7 +169,7 @@
 			signals_height += s.height;
 		});
 
-		t.remove();
+		//t.remove();
 
 		// Re-jig the positions
 		var actors_width = DIAGRAM_MARGIN;
@@ -233,12 +244,16 @@
 
 			var midx = (bX - aX) / 2 + aX;
 
+			paper.print(midx - this.width / 2, offsetY + this.height / 2, this.message, font, 16, 'middle');
+
+/*
 			var t = paper.text(midx, offsetY + this.height / 2);
 			t.attr(FONT);
 			t.attr({
 				'text': this.message,
 				'text-anchor': 'middle',
 			});
+*/
 
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
@@ -258,12 +273,16 @@
 			x = box.x + box.width / 2;
 			y = box.y + box.height / 2;
 
+			var t=paper.print(box.x + padding, y, text, font, 16, 'middle');
+
+			/*
 			var t = paper.text(x, y);
 			t.attr(FONT);
 			t.attr({
 				'text': text,
 				'text-anchor': 'middle',
 			});
+			*/
 
 		}
 
