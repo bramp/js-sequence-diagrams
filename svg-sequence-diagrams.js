@@ -32,10 +32,47 @@
 	};
 
 	Raphael.fn.line = function(x1, y1, x2, y2) {
-		var from = "M" + x1 + "," + y1;
-		var to   = "L" + x2 + "," + y2;
-		return this.path(from + to);
+		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
 	};
+
+	Raphael.fn.wobble = function(x1, y1, x2, y2) {
+		var wobble = Math.sqrt( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
+
+		// Distance along line
+		var r1 = Math.random();
+		var r2 = Math.random();
+
+		var xfactor = Math.random() > 0.5 ? wobble : -wobble;
+		var yfactor = Math.random() > 0.5 ? wobble : -wobble;
+
+		var p1 = {
+			x: (x2 - x1) * r1 + x1 + xfactor,
+			y: (y2 - y1) * r1 + y1 + yfactor,
+		};
+
+		var p2 = {
+			x: (x2 - x1) * r2 + x1 - xfactor,
+			y: (y2 - y1) * r2 + y1 - yfactor,
+		};
+
+		return "C" + p1.x + "," + p1.y
+			 + " " + p2.x + "," + p2.y
+			 + " " + x2 + "," + y2;
+
+	};
+
+	Raphael.fn.handRect = function (x, y, w, h) {
+		return this.path("M" + x + "," + y
+			+ this.wobble(x, y, x + w, y)
+			+ this.wobble(x + w, y, x + w, y + h)
+			+ this.wobble(x + w, y + h, x, y + h)
+			+ this.wobble(x, y + h, x, y)
+			);
+	}
+
+	Raphael.fn.handLine = function (x1, y1, x2, y2) {
+		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
+	}
 
 	Diagram.prototype.drawSVG = function (container) {
 
@@ -158,7 +195,7 @@
 
 				// Veritical line
 				var aX = a.x + a.width/2;
-				var line = paper.line(
+				var line = paper.handLine(
 					aX, y + actors_height - ACTOR_MARGIN,
 					aX, y + actors_height + ACTOR_MARGIN + signals_height);
 				line.attr(LINE);
@@ -186,7 +223,8 @@
 			var aX = this.actorA.x + this.actorA.width/2;
 			var bX = this.actorB.x + this.actorB.width/2;
 
-			var line = paper.line(aX, y, bX, y);
+			//var line = paper.line(aX, y, bX, y);
+			var line = paper.handLine(aX, y, bX, y, 5);
 			line.attr(LINE);
 			line.attr({
 				'arrow-end': arrow_types[this.arrowtype] + '-wide-long',
@@ -214,7 +252,7 @@
 			var h = box.height - 2 * margin;
 
 			// Draw inner box
-			var rect = paper.rect(x, y, w, h);
+			var rect = paper.handRect(x, y, w, h);
 			rect.attr(LINE);
 
 			x = box.x + box.width / 2;
@@ -226,6 +264,7 @@
 				'text': text,
 				'text-anchor': 'middle',
 			});
+
 		}
 
 		function draw_actor(offsetY, height) {
@@ -244,16 +283,6 @@
 			}
 
 			draw_text_box(this, this.message, NOTE_MARGIN, NOTE_PADDING);
-
-/*
-			var rect = paper.rect(x, offsetY, this.width - 2 * NOTE_MARGIN, this.height - 2 * NOTE_MARGIN);
-			rect.attr(LINE);
-
-			var t = paper.text(	x + NOTE_PADDING, offsetY + this.height/2 - NOTE_MARGIN);
-			t.attr(FONT);
-			t.attr('text-anchor', 'start');
-			t.attr("text", this.message);
-*/
 		}
 
 		// Draw each signal
