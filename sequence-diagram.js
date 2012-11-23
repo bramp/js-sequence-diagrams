@@ -13,6 +13,16 @@
 	// Following the CSS convention
 	// Margin is the gap outside the box
 	// Padding is the gap inside the box
+	// Each object has x/y/width/height properties
+	// The x/y should be top left corner
+	// width/height is with both margin and padding
+
+	// TODO
+	// Move these padding/margin into the objects as fields
+	// Image width is wrong, when there is a note in the right hand col
+	// The text is not correctly centered in some cases
+	// Title box could look better
+	// Note box could look better
 
 	var DIAGRAM_MARGIN = 10;
 
@@ -98,35 +108,56 @@
 		//var t = paper.text(0,0).attr('text-anchor', 'middle');
 		//t.attr(FONT);
 
+		var diagram_width = 0; // min width
+		var diagram_height = 0; // min width
+
 		// Setup some layout stuff
+		var title = {x:0, y:0, width:0, height:0};
+		if (this.title) {
+			var p = paper.print(0, 0, this.title, font, 16, 'middle');
+			title = p.getBBox();
+			title.message = this.title;
+			p.remove();
+
+			title.width  += (TITLE_PADDING + TITLE_MARGIN) * 2;
+			title.height += (TITLE_PADDING + TITLE_MARGIN) * 2;
+			title.x = DIAGRAM_MARGIN;
+			title.y = DIAGRAM_MARGIN;// + title.height / 2;
+
+			diagram_width = title.width;
+		}
+
 		var actors_height = 0;
-		_.each(actors, function(a) {
-			
+		_.each(actors, function(a) {			
 			var p = paper.print(0, 0, a.name, font, 16, 'middle');
 			var bb = p.getBBox();
 			p.remove();
 
 			//var bb = t.attr("text", a.name).getBBox();
+			a.x = 0; a.y = 0;
 			a.width  = bb.width  + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
 			a.height = bb.height + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
 
-			a.x = 0;
 			a.distances = [];
+			a.padding_right = 0;
 			actors_height = Math.max(a.height, actors_height);
 		});
 
 		function actor_ensure_distance(a, b, d) {
-			if (b < a)
-				throw new Error("Assertion: a must be less than or equal to b");
+			assert(a < b, "a must be less than or equal to b");
 
 			if (a < 0) {
 				// Ensure b has left margin
+				b = actors[b];
+				b.x = Math.max(d - b.width / 2, b.x);
 			} else if (b >= actors.length) {
-				// Ensure b has right margin
+				// Ensure a has right margin
+				a = actors[a];
+				a.padding_right = Math.max(d, a.padding_right);
+			} else {
+				a = actors[a];
+				a.distances[b] = Math.max(d, a.distances[b] ? a.distances[b] : 0);
 			}
-
-			a = actors[a];
-			a.distances[b] = Math.max(d, a.distances[b] ? a.distances[b] : 0);
 		}
 
 		var signals_height = 0;
@@ -174,7 +205,6 @@
 				throw new Error("Unhandled signal type:" + s.type);
 			}
 
-			//this.x = this.actor.x + this.actor.width / 2;
 			actor_ensure_distance(a, b, s.width + extra_width);
 			signals_height += s.height;
 		});
@@ -182,7 +212,7 @@
 		//t.remove();
 
 		// Re-jig the positions
-		var actors_width = DIAGRAM_MARGIN;
+		var actors_width = 0
 		_.each(actors, function(a) {
 			a.x = Math.max(actors_width, a.x);
 			// TODO This only works if we loop in sequence, 0, 1, 2, etc
@@ -192,21 +222,22 @@
 				b.x = Math.max(b.x, a.x + a.width/2 + distance - b.width/2);
 			});
 
-			actors_width = a.x + a.width;
+			actors_width = a.x + a.width + a.padding_right;
 		});
+		diagram_width = Math.max(actors_width, diagram_width);
+
+		diagram_width  += 2 * DIAGRAM_MARGIN;
+		diagram_height += 2 * DIAGRAM_MARGIN + 2 * actors_height + signals_height + title.height;
 
 		//
 		// Now draw
 		//
-		paper.setSize(
-			2 * DIAGRAM_MARGIN + actors_width,
-			2 * DIAGRAM_MARGIN + 2 * actors_height + signals_height
-		);
 		paper.setStart();
+		paper.setSize(diagram_width, diagram_height);
 
 		// Draw the actors
 		function draw_actors() {
-			var y = DIAGRAM_MARGIN;
+			var y = DIAGRAM_MARGIN + title.height;
 			_.each(actors, function(a) {
 				// Top box
 				draw_actor.call(a, y, actors_height);
@@ -245,7 +276,7 @@
 			var bX = this.actorB.x + this.actorB.width/2;
 
 			//var line = paper.line(aX, y, bX, y);
-			var line = paper.handLine(aX, y, bX, y, 5);
+			var line = paper.handLine(aX, y, bX, y);
 			line.attr(LINE);
 			line.attr({
 				'arrow-end': arrow_types[this.arrowtype] + '-wide-long',
@@ -273,13 +304,14 @@
 		function draw_text_box(box, text, margin, padding) {
 			var x = box.x + margin;
 			var y = box.y + margin;
-			var w = box.width - 2 * margin;
+			var w = box.width  - 2 * margin;
 			var h = box.height - 2 * margin;
 
 			// Draw inner box
 			var rect = paper.handRect(x, y, w, h);
 			rect.attr(LINE);
 
+			// Draw text
 			x = box.x + box.width / 2;
 			y = box.y + box.height / 2;
 
@@ -293,7 +325,6 @@
 				'text-anchor': 'middle',
 			});
 			*/
-
 		}
 
 		function draw_actor(offsetY, height) {
@@ -307,6 +338,9 @@
 				case PLACEMENT.RIGHTOF:
 					this.x = this.actor.x + this.actor.width / 2 + ACTOR_MARGIN;
 					break;
+				case PLACEMENT.LEFTOF:
+					this.x = this.actor.x + this.actor.width / 2 - ACTOR_MARGIN - this.width;
+					break;
 				default:
 					throw new Error("Unhandled note placement:" + this.placement);
 			}
@@ -316,7 +350,7 @@
 
 		// Draw each signal
 		function draw_signals() {
-			var y = DIAGRAM_MARGIN + actors_height;
+			var y = DIAGRAM_MARGIN + title.height + actors_height;
 			_.each(signals, function(s) {
 				if (s.type == "Signal") {
 					draw_signal.call(s, y);
