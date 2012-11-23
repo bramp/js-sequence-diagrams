@@ -17,7 +17,7 @@ Example
 
 Requirements
 ------------
-	You need underscore and raphael
+You need underscore and raphael
 
 Usage
 -----
@@ -28,16 +28,23 @@ On your page you need to include both underscore and raphael like so:
   <script src="raphael-min.js"></script>
 
 and then 
-  <script src="sequence-diagram.js"></script>
-
-  var diagram = Diagram.parse($('#language').val());
-  diagram.drawSVG('diagram');
-
+  <div id="diagram">Diagram will be placed here</div>
+  <script src="sequence-diagram-min.js"></script>
+  <script> 
+    var diagram = Diagram.parse("A->B: Does something");
+    diagram.drawSVG('diagram');
+  </script>
 
 Build requirements
 ------------------
-	JavaScript Preprocessor
-		gem install jspp
+JavaScript Preprocessor
+  gem install jspp
+
+UglifyJS 2
+  npm install uglify-js
+
+Then to build, just run
+  make
 
 TODO
 ----
