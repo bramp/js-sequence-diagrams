@@ -1,3 +1,10 @@
+/** js sequence diagrams 0.9
+ *  http://bramp.github.com/js-sequence-diagrams/
+ *  (c) 2012 Andrew Brampton (bramp.net)
+ *  @license Simplified BSD license.
+ */
+
+// diagram.js is included by jspp
 /*> diagram.js */
 
 (function () {

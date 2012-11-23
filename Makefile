@@ -10,7 +10,7 @@ clean:
 
 sequence-diagram-min.js: grammar.js sequence-diagram.js
 	jspp sequence-diagram.js | \
-		uglifyjs -o sequence-diagram-min.js -c
+		uglifyjs -o sequence-diagram-min.js -c --comments
 
 %.js: %.jison
 	jison $<
