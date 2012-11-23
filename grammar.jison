@@ -17,7 +17,7 @@
 "over"            return 'over'
 "note"            return 'note'
 "title"           return 'title'
-[^->:\n]+\b       return 'ACTOR'
+[^\->:\n]+\b      return 'ACTOR'
 "--"              return 'DOTLINE'
 "-"               return 'LINE'
 ">>"              return 'OPENARROW'

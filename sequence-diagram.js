@@ -9,6 +9,7 @@
 
 (function () {
 	"use strict";
+	/*global Diagram, Raphael, _ */
 
 	// Following the CSS convention
 	// Margin is the gap outside the box
@@ -44,7 +45,7 @@
 
 	var FONT = {
 		'font-size': 18,
-		'font-family': 'daniel',
+		'font-family': 'daniel'
 	};
 
 	var LINE = {
@@ -55,7 +56,7 @@
 	function AssertException(message) { this.message = message; }
 	AssertException.prototype.toString = function () {
 		return 'AssertException: ' + this.message;
-	}
+	};
 
 	function assert(exp, message) {
 		if (!exp) {
@@ -82,34 +83,32 @@
 
 		var p1 = {
 			x: (x2 - x1) * r1 + x1 + xfactor,
-			y: (y2 - y1) * r1 + y1 + yfactor,
+			y: (y2 - y1) * r1 + y1 + yfactor
 		};
 
 		var p2 = {
 			x: (x2 - x1) * r2 + x1 - xfactor,
-			y: (y2 - y1) * r2 + y1 - yfactor,
+			y: (y2 - y1) * r2 + y1 - yfactor
 		};
 
-		return "C" + p1.x + "," + p1.y
-			 + " " + p2.x + "," + p2.y
-			 + " " + x2 + "," + y2;
-
+		return "C" + p1.x + "," + p1.y +
+			" " + p2.x + "," + p2.y +
+			" " + x2 + "," + y2;
 	};
 
 	Raphael.fn.handRect = function (x, y, w, h) {
 		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
-		return this.path("M" + x + "," + y
-			+ this.wobble(x, y, x + w, y)
-			+ this.wobble(x + w, y, x + w, y + h)
-			+ this.wobble(x + w, y + h, x, y + h)
-			+ this.wobble(x, y + h, x, y)
-		);
-	}
+		return this.path("M" + x + "," + y +
+			this.wobble(x, y, x + w, y) +
+			this.wobble(x + w, y, x + w, y + h) +
+			this.wobble(x + w, y + h, x, y + h) +
+			this.wobble(x, y + h, x, y));
+	};
 
 	Raphael.fn.handLine = function (x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
-	}
+	};
 
 	Diagram.prototype.drawSVG = function (container) {
 
@@ -228,7 +227,7 @@
 		//t.remove();
 
 		// Re-jig the positions
-		var actors_width = 0
+		var actors_width = 0;
 		_.each(actors, function(a) {
 			a.x = Math.max(actors_width, a.x);
 			// TODO This only works if we loop in sequence, 0, 1, 2, etc
