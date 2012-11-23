@@ -1,6 +1,6 @@
 .PHONY : test clean
 
-all: bundle.js
+all: sequence-diagram-min.js
 
 test: grammar.js
 	node grammar.js test
@@ -8,8 +8,9 @@ test: grammar.js
 clean:
 	rm grammar.js
 
-bundle.js: grammar.js svg-sequence-diagrams.js
-	jspp svg-sequence-diagrams.js > bundle.js
+sequence-diagram-min.js: grammar.js sequence-diagram.js
+	jspp sequence-diagram.js | \
+		uglifyjs -o sequence-diagram-min.js -c
 
 %.js: %.jison
 	jison $<

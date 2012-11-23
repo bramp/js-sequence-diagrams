@@ -28,7 +28,7 @@ On your page you need to include both underscore and raphael like so:
   <script src="raphael-min.js"></script>
 
 and then 
-  <script src="bundle.js"></script>
+  <script src="sequence-diagram.js"></script>
 
   var diagram = Diagram.parse($('#language').val());
   diagram.drawSVG('diagram');
