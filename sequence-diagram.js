@@ -24,6 +24,8 @@
 	// The text is not correctly centered in some cases
 	// Title box could look better
 	// Note box could look better
+	// Note "over" is not centered correctly
+	// Note "over" should handle multiple actors
 
 	var DIAGRAM_MARGIN = 10;
 
@@ -52,6 +54,10 @@
 		'stroke': '#000',
 		'stroke-width': 2
 	};
+
+	var RECT = {
+		'fill': "#fff"
+	}
 
 	function AssertException(message) { this.message = message; }
 	AssertException.prototype.toString = function () {
@@ -102,7 +108,8 @@
 			this.wobble(x, y, x + w, y) +
 			this.wobble(x + w, y, x + w, y + h) +
 			this.wobble(x + w, y + h, x, y + h) +
-			this.wobble(x, y + h, x, y));
+			this.wobble(x, y + h, x, y))
+			.attr(RECT);
 	};
 
 	Raphael.fn.handLine = function (x1, y1, x2, y2) {
@@ -214,6 +221,7 @@
 					a = s.actor.index;
 					actor_ensure_distance(a - 1, a, s.width / 2);
 					actor_ensure_distance(a, a + 1, s.width / 2);
+					signals_height += s.height;
 					return;
 				}
 			} else {
@@ -286,6 +294,7 @@
 		var arrow_types = ['block', 'open'];
 
 		function draw_signal(offsetY) {
+			/*jshint validthis: true */
 			var y = offsetY + this.height - SIGNAL_MARGIN;
 			var aX = this.actorA.x + this.actorA.width/2;
 			var bX = this.actorB.x + this.actorB.width/2;
@@ -300,8 +309,7 @@
 
 			var midx = (bX - aX) / 2 + aX;
 
-			paper.print(midx - this.width / 2, offsetY + this.height / 2, this.message, font, 16, 'middle');
-
+			draw_text(paper, midx - this.width / 2, offsetY + this.height / 2, this.message);
 /*
 			var t = paper.text(midx, offsetY + this.height / 2);
 			t.attr(FONT);
@@ -314,6 +322,15 @@
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
 			//draw_arrowhead(bX, offsetY, ARROW_SIZE, dir);
+		}
+
+		function draw_text(paper, x, y, text) {
+			var t = paper.print(x, y, text, font, 16, 'middle');
+			// draw a rect behind it
+			var bb = t.getBBox();
+			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
+			r.attr({'fill': "#fff", 'stroke-width': 0});
+			t.toFront();
 		}
 
 		function draw_text_box(box, text, margin, padding) {
@@ -330,7 +347,7 @@
 			x = box.x + box.width / 2;
 			y = box.y + box.height / 2;
 
-			var t=paper.print(box.x + padding, y, text, font, 16, 'middle');
+			paper.print(box.x + padding, y, text, font, 16, 'middle');
 
 			/*
 			var t = paper.text(x, y);
@@ -343,11 +360,14 @@
 		}
 
 		function draw_actor(offsetY, height) {
+			/*jshint validthis: true */
 			this.y = offsetY;
+			this.height = height;
 			draw_text_box(this, this.name, ACTOR_MARGIN, ACTOR_PADDING);
 		}
 
 		function draw_note(offsetY) {
+			/*jshint validthis: true */
 			this.y = offsetY;
 			switch (this.placement) {
 				case PLACEMENT.RIGHTOF:
@@ -355,6 +375,9 @@
 					break;
 				case PLACEMENT.LEFTOF:
 					this.x = this.actor.x + this.actor.width / 2 - ACTOR_MARGIN - this.width;
+					break;
+				case PLACEMENT.OVER:
+					this.x = this.actor.x;
 					break;
 				default:
 					throw new Error("Unhandled note placement:" + this.placement);
