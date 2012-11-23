@@ -3,8 +3,8 @@ Generates sequence diagrams from a simple text language
 
 by [Andrew Brampton](http://bramp.net) 2012
 
-<https://github.com/bramp/handy-tools>
-<https://github.com/bramp/handy-tools>
+<https://github.com/bramp/js-sequence-diagrams>
+<http://bramp.github.com/js-sequence-diagrams/>
 
 Example
 -------
