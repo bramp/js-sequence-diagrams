@@ -52,11 +52,25 @@
 		'stroke-width': 2
 	};
 
+	function AssertException(message) { this.message = message; }
+	AssertException.prototype.toString = function () {
+		return 'AssertException: ' + this.message;
+	}
+
+	function assert(exp, message) {
+		if (!exp) {
+			throw new AssertException(message);
+		}
+	}
+
 	Raphael.fn.line = function(x1, y1, x2, y2) {
+		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
 	};
 
 	Raphael.fn.wobble = function(x1, y1, x2, y2) {
+		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+
 		var wobble = Math.sqrt( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
 
 		// Distance along line
@@ -83,15 +97,17 @@
 	};
 
 	Raphael.fn.handRect = function (x, y, w, h) {
+		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
 		return this.path("M" + x + "," + y
 			+ this.wobble(x, y, x + w, y)
 			+ this.wobble(x + w, y, x + w, y + h)
 			+ this.wobble(x + w, y + h, x, y + h)
 			+ this.wobble(x, y + h, x, y)
-			);
+		);
 	}
 
 	Raphael.fn.handLine = function (x1, y1, x2, y2) {
+		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
 	}
 
