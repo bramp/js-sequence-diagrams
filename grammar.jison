@@ -16,6 +16,7 @@
 "right of"        return 'right_of'
 "over"            return 'over'
 "note"            return 'note'
+"title"           return 'title'
 [^->:\n]+\b       return 'ACTOR'
 "--"              return 'DOTLINE'
 "-"               return 'LINE'
@@ -50,6 +51,7 @@ statement
 	: 'participant' actor  { /* do nothing */  }
 	| signal               { yy.addSignal($1); }
 	| note_statement       { yy.addSignal($1); }
+	| 'title' message      { yy.setTitle($1);  }
 	;
 
 note_statement

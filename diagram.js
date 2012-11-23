@@ -2,6 +2,7 @@
 	"use strict";
 
 	function Diagram() {
+		this.title   = undefined;
 		this.actors  = [];
 		this.signals = [];
 	}
@@ -14,6 +15,10 @@
 		}
 		var i = actors.push( new Diagram.Actor(name, actors.length) );
 		return actors[ i - 1 ];
+	}
+
+	Diagram.prototype.setTitle = function(title) {
+		this.title = title;
 	}
 
 	Diagram.prototype.addSignal = function(signal) {
