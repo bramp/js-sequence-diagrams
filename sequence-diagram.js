@@ -25,6 +25,9 @@
 	var NOTE_MARGIN   = 10; // Margin around a note
 	var NOTE_PADDING  = 5; // Padding inside a note
 
+	var TITLE_MARGIN   = 0;
+	var TITLE_PADDING  = 5;
+
 	var PLACEMENT = Diagram.PLACEMENT;
 	var LINETYPE  = Diagram.LINETYPE;
 	var ARROWTYPE = Diagram.ARROWTYPE;
@@ -326,6 +329,12 @@
 			});
 		}
 
+		function draw_title() {
+			if (title.message)
+				draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING);
+		}
+
+		draw_title();
 		draw_actors();
 		draw_signals();
 

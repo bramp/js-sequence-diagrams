@@ -51,7 +51,7 @@ statement
 	: 'participant' actor  { /* do nothing */  }
 	| signal               { yy.addSignal($1); }
 	| note_statement       { yy.addSignal($1); }
-	| 'title' message      { yy.setTitle($1);  }
+	| 'title' message      { yy.setTitle($2);  }
 	;
 
 note_statement
