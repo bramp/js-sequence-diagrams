@@ -6,11 +6,11 @@ test: grammar.js
 	node grammar.js test
 
 clean:
-	rm grammar.js sequence-diagram-min.js
+	rm sequence-diagram-min.js grammar.js 
 
-sequence-diagram-min.js: diagram.js grammar.js jquery-plugin.js sequence-diagram.js
-	jspp sequence-diagram.js | \
+sequence-diagram-min.js: grammar.js src/diagram.js src/jquery-plugin.js src/sequence-diagram.js
+	jspp src/sequence-diagram.js | \
 		uglifyjs -o sequence-diagram-min.js -c --comments
 
-%.js: %.jison
+%.js: src/%.jison
 	jison $<

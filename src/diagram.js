@@ -65,7 +65,7 @@
 	};
 
 	/** include the grammar.js for the bundle */
-	/*> grammar.js */
+	/*> ../grammar.js */
 
 	/**
 	 * jison doesn't have a good exception, so we make one
