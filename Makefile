@@ -1,4 +1,4 @@
-.PHONY : test clean
+.PHONY : all test clean
 
 all: sequence-diagram-min.js
 
