@@ -3,54 +3,62 @@ Generates sequence diagrams from a simple text language
 
 by [Andrew Brampton](http://bramp.net) 2012
 
-<https://github.com/bramp/js-sequence-diagrams>
 <http://bramp.github.com/js-sequence-diagrams/>
 
 Example
 -------
+We turn
 
-  Alice->Bob: Hello Bob, how are you?
-  Note right of Alice: Bob thinks
-  Bob->Alice: I am good thanks!
+    Alice->Bob: Hello Bob, how are you?
+    Note right of Bob: Bob thinks
+    Bob-->Alice: I am good thanks!
 
-![Alt text](/path/to/img.jpg "Optional title")
+into
+
+![Sample generated UML diagram](http://bramp.github.com/js-sequence-diagrams/images/sample.svg)
 
 Requirements
 ------------
-You need underscore and raphael
+You will need [underscore.js](http://underscorejs.org/) and [Raphaël](http://raphaeljs.com/)
 
 Usage
 -----
 
 On your page you need to include both underscore and raphael like so:
 
+```html
   <script src="underscore-min.js"></script>
   <script src="raphael-min.js"></script>
+```
 
-and then 
+and then
+
+```html
   <div id="diagram">Diagram will be placed here</div>
   <script src="sequence-diagram-min.js"></script>
   <script> 
     var diagram = Diagram.parse("A->B: Does something");
     diagram.drawSVG('diagram');
   </script>
+```
 
 Build requirements
 ------------------
 JavaScript Preprocessor
-  gem install jspp
+
+    gem install jspp
 
 UglifyJS 2
-  npm install uglify-js
 
-Then to build, just run
-  make
+    npm install uglify-js
+
+Then to build, just run ```make```
 
 TODO
 ----
 * Change Makefile to Grunt (because it looks cool)
 * Other themes
-* Rethink the use of Raphael. Due to it's support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper
+* Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper
 library
 
 Thanks
@@ -60,7 +68,7 @@ This project makes use of Jison, Raphaël, underscore.js, and the Daniel font (w
 Licence (Simplified BSD License)
 -------
 
-Copyright (c) 2012, Andrew Brampton 
+Copyright (c) 2012, Andrew Brampton  
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
