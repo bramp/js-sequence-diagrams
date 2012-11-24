@@ -48,10 +48,14 @@ Then to build, just run
 
 TODO
 ----
-Write jquery plugin
-Change Makefile to Grunt (because it looks cool)
-Other themes
+* Change Makefile to Grunt (because it looks cool)
+* Other themes
+* Rethink the use of Raphael. Due to it's support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper
+library
 
+Thanks
+------
+This project makes use of Jison, Raphaël, underscore.js, and the Daniel font (which is free to use for any purpose).
 
 Licence (Simplified BSD License)
 -------

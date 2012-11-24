@@ -4,8 +4,10 @@
  *  @license Simplified BSD license.
  */
 
-// diagram.js is included by jspp
+// The following are included by jspp
 /*> diagram.js */
+/*> jquery-plugin.js */
+/*> fonts/daniel/daniel_700.font.js */
 
 (function () {
 	"use strict";
