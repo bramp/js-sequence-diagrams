@@ -72,6 +72,12 @@
 		}
 	}
 
+	if (!String.prototype.trim) {
+		String.prototype.trim=function() {
+			return this.replace(/^\s+|\s+$/g, '');
+		};
+	}
+
 	Raphael.fn.line = function(x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
