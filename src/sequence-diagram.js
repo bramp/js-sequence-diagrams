@@ -110,6 +110,16 @@
 			" " + x2 + "," + y2;
 	};
 
+	/**
+	 * Returns the text's bounding box
+	 */
+	Raphael.fn.text_bbox = function (text, font) {
+		var p = this.print(0, 0, text, font, 16, 'middle');
+		var bb = p.getBBox();
+		p.remove();
+		return bb;
+	};
+
 	Raphael.fn.handRect = function (x, y, w, h) {
 		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
 		return this.path("M" + x + "," + y +
@@ -127,16 +137,12 @@
 
 	Diagram.prototype.drawSVG = function (container) {
 
-		// Local vars
+		// Local copies
 		var actors  = this.actors;
 		var signals = this.signals;
 
 		var paper = new Raphael(container, 320, 200);
 		var font = paper.getFont('daniel');
-
-		// Calculate distances between actors
-		//var t = paper.text(0,0).attr('text-anchor', 'middle');
-		//t.attr(FONT);
 
 		var diagram_width = 0; // min width
 		var diagram_height = 0; // min width
@@ -144,13 +150,12 @@
 		// Setup some layout stuff
 		var title = {x:0, y:0, width:0, height:0};
 		if (this.title) {
-			var p = paper.print(0, 0, this.title, font, 16, 'middle');
-			title = p.getBBox();
+			var bb = paper.text_bbox(this.title, font);
+			title.text_bb = bb;
 			title.message = this.title;
-			p.remove();
 
-			title.width  += (TITLE_PADDING + TITLE_MARGIN) * 2;
-			title.height += (TITLE_PADDING + TITLE_MARGIN) * 2;
+			title.width  = bb.width  + (TITLE_PADDING + TITLE_MARGIN) * 2;
+			title.height = bb.height + (TITLE_PADDING + TITLE_MARGIN) * 2;
 			title.x = DIAGRAM_MARGIN;
 			title.y = DIAGRAM_MARGIN;// + title.height / 2;
 
@@ -158,10 +163,9 @@
 		}
 
 		var actors_height = 0;
-		_.each(actors, function(a) {			
-			var p = paper.print(0, 0, a.name, font, 16, 'middle');
-			var bb = p.getBBox();
-			p.remove();
+		_.each(actors, function(a) {
+			var bb = paper.text_bbox(a.name, font);
+			a.text_bb = bb;
 
 			//var bb = t.attr("text", a.name).getBBox();
 			a.x = 0; a.y = 0;
@@ -194,13 +198,12 @@
 		_.each(signals, function(s) {
 			var a, b; // Indexes of the left and right actors involved
 
-			var p = paper.print(0, 0, s.message, font, 16, 'middle');
-			var bb = p.getBBox();
-			p.remove();
-			
+			var bb = paper.text_bbox(s.message, font);
+
 			//var bb = t.attr("text", s.message).getBBox();
-			s.width  = bb.width;
-			s.height = bb.height;
+			s.text_bb = bb;
+			s.width   = bb.width;
+			s.height  = bb.height;
 
 			var extra_width = 0;
 
@@ -239,8 +242,6 @@
 			actor_ensure_distance(a, b, s.width + extra_width);
 			signals_height += s.height;
 		});
-
-		//t.remove();
 
 		// Re-jig the positions
 		var actors_width = 0;
@@ -298,7 +299,7 @@
 		//	var p = paper.path("M" + x + "," + y + "v" + size + "l" + dx + ",-" + (size/2) + "Z");
 		//}
 
-		var line_types = ['', '-'];
+		var line_types  = ['', '-'];
 		var arrow_types = ['block', 'open'];
 
 		function draw_signal(offsetY) {
@@ -332,6 +333,9 @@
 			//draw_arrowhead(bX, offsetY, ARROW_SIZE, dir);
 		}
 
+		/**
+		 * Draws text with a white background
+		 */
 		function draw_text(paper, x, y, text) {
 			var t = paper.print(x, y, text, font, 16, 'middle');
 			// draw a rect behind it
@@ -352,10 +356,13 @@
 			rect.attr(LINE);
 
 			// Draw text
-			x = box.x + box.width / 2;
-			y = box.y + box.height / 2;
+			//x = box.x + padding;
+			//y = box.y + box.height / 2;
 
-			paper.print(box.x + padding, y, text, font, 16, 'middle');
+			x = box.x + margin + padding - box.text_bb.x;
+			y = box.y + margin + padding - box.text_bb.y;
+
+			var p = paper.print(x, y, text, font, 16, 'middle');
 
 			/*
 			var t = paper.text(x, y);
