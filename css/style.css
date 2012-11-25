@@ -87,37 +87,36 @@ header h2 {
 }
 
 
-        #sidebar {
-          float: left;
-          width: 350px;
-          margin-left: 20px;
-        }
+#sidebar {
+  float: left;
+  width: 350px;
+  margin-left: 20px;
+}
 
-        #editor { 
-            width: 350px;
-            height: 210px;
-            font-size: 14px;
-        }
+#editor { 
+    width: 380px;
+    height: 210px;
+    font-size: 14px;
+}
 
-        #editor-wrapper {
-            height: 210px;
-            width: 350px;
-        }
+#editor-wrapper {
+    width: 380px;
+    height: 210px;
+}
 
-        #diagram {
-          float: left;
-        }
+#diagram {
+  float: left;
+}
 
-        .gh-forkme {
-          position: absolute; top: 0; right: 0; border: 0;
-        }
+.gh-forkme {
+  position: absolute; top: 0; right: 0; border: 0;
+}
 
 .inner {
   position: relative;
   width: 940px;
   margin: 0 auto;
 }
-
 
 
 aside#sidebar {
