@@ -1,9 +1,11 @@
-Generates sequence diagrams from a simple text language
-=======================================================
+
+JS Sequence Diagrams (we need a better name!)
+=============================================
+**Generates UML sequence diagrams from simple text**  
+<http://bramp.github.com/js-sequence-diagrams/>
 
 by [Andrew Brampton](http://bramp.net) 2012
 
-<http://bramp.github.com/js-sequence-diagrams/>
 
 Example
 -------
@@ -27,19 +29,19 @@ Usage
 On your page you need to include both underscore and raphael like so:
 
 ```html
-  <script src="underscore-min.js"></script>
-  <script src="raphael-min.js"></script>
+<script src="underscore-min.js"></script>
+<script src="raphael-min.js"></script>
 ```
 
 and then
 
 ```html
-  <div id="diagram">Diagram will be placed here</div>
-  <script src="sequence-diagram-min.js"></script>
-  <script> 
-    var diagram = Diagram.parse("A->B: Does something");
-    diagram.drawSVG('diagram');
-  </script>
+<div id="diagram">Diagram will be placed here</div>
+<script src="sequence-diagram-min.js"></script>
+<script> 
+  var diagram = Diagram.parse("A->B: Does something");
+  diagram.drawSVG('diagram');
+</script>
 ```
 
 Build requirements
