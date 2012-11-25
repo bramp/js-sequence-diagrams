@@ -7,48 +7,15 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title></title>
-        <style>
-        /*
-        @font-face {
-            font-family: 'danielbold';
-            src: url('danielbd-webfont.eot');
-            src: url('danielbd-webfont.eot?#iefix') format('embedded-opentype'),
-                 url('danielbd-webfont.woff') format('woff'),
-                 url('danielbd-webfont.ttf') format('truetype'),
-                 url('danielbd-webfont.svg#danielbold') format('svg');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        svg > text{
-            font-family: danielbold
-        }
-        */
-        </style>
     </head>
-    <body>
-            <!--
-
-
-Note right of Andrew: This is a long note
-
-Note right of Andrew: This is a long note
-Andrew->China: Says Hello
-China->Andrew: How are you?
-Andrew->Bob: How are you?
-    -->
+ 
     	<textarea id="language" rows="10" cols="50">
-participant Andrew
-participant China
-participant Bob
-title: Hello
-Note over Andrew: This is a long note
-Andrew-->China: Says Hello
+Andrew-->China: Hello
+Note right of China: China thinks\nabout it
 China->Andrew: How are you?
-Andrew->Bob: How are you?
-
+Andrew->China: I am good thanks!
     	</textarea>
-    	<button id="parse" type="button">Click Me!</button>        
+    	<button id="parse" type="button">Click Me!</button>  
         <button id="export" type="button">Export</button>
 
     	<div id="diagram"></div>
@@ -58,11 +25,13 @@ Andrew->Bob: How are you?
         <script src="underscore-min.js"></script>
 		<script src="raphael-min.js"></script>
 
-        <script src="grammar.js"></script>
-        <script src="diagram.js"></script>
-        <script src="sequence-diagram.js"></script>
+        <script src="../grammar.js"></script>
+        <script src="../src/diagram.js"></script>
+        <script src="../src/jquery-plugin.js"></script>
+        <script src="../fonts/daniel/daniel_700.font.js"></script>
+        <script src="../src/sequence-diagram.js"></script>
 
-        <!--<script src="bundle.js"></script>-->
+        <!--<script src="../sequence-diagram-min.js"></script>-->
         <script>
             $(document).ready(function(){
                 $('#parse').click(_.throttle( function() {
