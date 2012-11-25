@@ -316,9 +316,13 @@
 				'stroke-dasharray': line_types[this.linetype]
 			});
 
+			// Mid point between actors
 			var midx = (bX - aX) / 2 + aX;
 
-			draw_text(paper, midx - this.width / 2, offsetY + this.height / 2, this.message);
+			var x = midx - this.width / 2 + this.text_bb.x;
+			    y = offsetY + this.height / 2;
+
+			draw_text(paper, x, y, this.message);
 /*
 			var t = paper.text(midx, offsetY + this.height / 2);
 			t.attr(FONT);
