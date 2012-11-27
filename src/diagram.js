@@ -71,13 +71,10 @@
 	 * jison doesn't have a good exception, so we make one
 	 */
 	function ParseError(message, hash) {
+		_.extend(this, hash);
+
 		this.name = "ParseError";
 		this.message = (message || "");
-		this.text  = hash.text;
-		this.token = hash.token;
-		this.line  = hash.line;
-		this.loc   = hash.loc;
-		this.expected = hash.expected;
 	}
 	ParseError.prototype = new Error();
 	Diagram.ParseError = ParseError;
