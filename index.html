@@ -164,6 +164,8 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
         editor.getSession().on('change', _.debounce(on_change, 500));
         on_change();
 
+        $('#theme').change(on_change);
+
         function on_change() {
           try {
             var diagram = Diagram.parse(editor.getValue());
