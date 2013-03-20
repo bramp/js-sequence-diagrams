@@ -497,7 +497,7 @@
 	});
 
 	var themes = {
-		plain : RaphaëlTheme,
+		simple : RaphaëlTheme,
 		hand  : HandRaphaëlTheme,
 	};
 
