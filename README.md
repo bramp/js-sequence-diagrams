@@ -1,4 +1,3 @@
-
 JS Sequence Diagrams (we need a better name!)
 =============================================
 **Generates UML sequence diagrams from simple text**  
@@ -47,12 +46,13 @@ and then
 Build requirements
 ------------------
 JavaScript Preprocessor
-
     gem install jspp
 
 UglifyJS 2
+    npm install uglify-js -g
 
-    npm install uglify-js
+Jison
+    npm install jison -g
 
 Then to build, just run ```make```
 
