@@ -36,11 +36,14 @@ Andrew->China: I am good thanks!
             $(document).ready(function(){
                 $('#parse').click(_.throttle( function() {
 
-                    var diagram = Diagram.parse($('#language').val());
-                    console.log(diagram);
+                    //try {
+                        var diagram = Diagram.parse($('#language').val());
+                        console.log(diagram);
 
-                    diagram.drawSVG('diagram');
-
+                        diagram.drawSVG('diagram', {theme: 'hand'});
+                    //} catch (e) {
+                    //    console.log(e);
+                    //}
                 }, 100));
 
                 $('#export').click(function() {
