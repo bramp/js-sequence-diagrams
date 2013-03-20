@@ -83,7 +83,7 @@
 		throw new ParseError(message, hash);
 	};
 
-	Diagram.parse = function(input) {	
+	Diagram.parse = function(input) {
 		//var parser = require("grammar").parser;
 		grammar.yy = new Diagram();
 
