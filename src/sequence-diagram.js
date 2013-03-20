@@ -301,8 +301,14 @@
 			var actors_x = 0;
 			_.each(actors, function(a) {
 				a.x = Math.max(actors_x, a.x);
+
 				// TODO This only works if we loop in sequence, 0, 1, 2, etc
 				_.each(a.distances, function(distance, b) {
+					// lodash (and possibly others) does not like non-continous
+					// arrays, so sometimes they return undefined
+					if (typeof distance == "undefined")
+						return;
+
 					b = actors[b];
 					distance = Math.max(distance, a.width / 2, b.width / 2);
 					b.x = Math.max(b.x, a.x + a.width/2 + distance - b.width/2);
