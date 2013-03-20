@@ -56,7 +56,7 @@
 
 	var RECT = {
 		'fill': "#fff"
-	}
+	};
 
 	function AssertException(message) { this.message = message; }
 	AssertException.prototype.toString = function () {
@@ -148,7 +148,7 @@
 
 	var RaphaëlTheme = function(diagram) {
 		this.init(diagram);
-	}
+	};
 
 	_.extend(RaphaëlTheme.prototype, {
 		init : function(diagram) {
@@ -331,7 +331,7 @@
 		},
 
 		draw_actors : function(offsetY) {
-			var y = offsetY
+			var y = offsetY;
 			_.each(this.diagram.actors, function(a) {
 				// Top box
 				this.draw_actor(a, y, this._actors_height);
@@ -386,8 +386,8 @@
 			// Mid point between actors
 			var midx = (bX - aX) / 2 + aX;
 
-			var x = midx - signal.width / 2 + signal.text_bb.x;
-			    y = offsetY + signal.height / 2;
+			var x = midx - this.width / 2 + this.text_bb.x;
+				y = offsetY + this.height / 2;
 
 			this.draw_text(x, y, signal.message);
 	/*
@@ -463,7 +463,7 @@
 				'text-anchor': 'middle',
 			});
 			*/
-		},
+		}
 
 		/**
 		 * Draws a arrow head
@@ -484,7 +484,7 @@
 
 	var HandRaphaëlTheme = function(diagram) {
 		this.init(diagram);
-	}
+	};
 
 	// Take the standard RaphaëlTheme and make all the lines wobbly
 	_.extend(HandRaphaëlTheme.prototype, RaphaëlTheme.prototype, {
@@ -498,7 +498,7 @@
 
 	var themes = {
 		simple : RaphaëlTheme,
-		hand  : HandRaphaëlTheme,
+		hand  : HandRaphaëlTheme
 	};
 
 	Diagram.prototype.drawSVG = function (container, options) {
