@@ -506,7 +506,10 @@
 			theme: 'hand'
 		};
 
-		options = _.defaults(options, default_options);
+		options = _.defaults(options || {}, default_options);
+
+		if (!(options.theme in themes))
+			throw new Error("Unsupported theme: " + options.theme);
 
 		var drawing = new themes[options.theme](this);
 		drawing.draw(container);
