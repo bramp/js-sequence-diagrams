@@ -45,16 +45,20 @@ and then
 
 Build requirements
 ------------------
-JavaScript Preprocessor
-    gem install jspp
+```bash
+# JavaScript Preprocessor 
+gem install jspp
 
-UglifyJS 2
-    npm install uglify-js -g
+## UglifyJS 2
+npm install uglify-js -g
 
-Jison
-    npm install jison -g
+## Jison
+npm install jison -g
 
-Then to build, just run ```make```
+## Then to build, just run:
+make clean
+make
+```
 
 TODO
 ----
