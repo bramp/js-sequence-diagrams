@@ -2,7 +2,7 @@
 	$.fn.sequenceDiagram = function( options ) {
 
 		var settings = $.extend( {
-			'theme' : 'hand',
+			'theme' : 'hand'
 		}, options);
 
 		return this.each(function() {

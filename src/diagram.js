@@ -1,6 +1,6 @@
 (function () {
 	"use strict";
-	/*global grammar */
+	/*global grammar _ */
 
 	function Diagram() {
 		this.title   = undefined;

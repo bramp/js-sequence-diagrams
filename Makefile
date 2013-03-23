@@ -1,4 +1,4 @@
-.PHONY : all test clean
+.PHONY : all test clean lint
 
 all: sequence-diagram-min.js
 
@@ -7,6 +7,9 @@ test: grammar.js
 
 clean:
 	rm sequence-diagram-min.js grammar.js 
+
+lint:
+	jshint src/*.js
 
 sequence-diagram-min.js: grammar.js src/diagram.js src/jquery-plugin.js src/sequence-diagram.js
 	jspp src/sequence-diagram.js | \
