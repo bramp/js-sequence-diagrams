@@ -160,6 +160,18 @@
 
 			this._actors_height  = 0;
 			this._signals_height = 0;
+
+			return this;
+		},
+
+		init_paper : function(container) {
+			this._paper = new Raphael(container, 320, 200);
+			return this;
+		},
+
+		init_font : function() {
+			/* Do nothing */
+			return this;
 		},
 
 		draw_line : function(x1, y1, x2, y2) {
@@ -172,8 +184,8 @@
 
 		draw : function(container) {
 			var diagram = this.diagram;
-			this._paper = new Raphael(container, 320, 200);
-			this._font  = this._paper.getFont('daniel');
+			this.init_paper(container);
+			this.init_font();
 
 			this.layout();
 
@@ -322,6 +334,8 @@
 			// TODO Refactor a little
 			diagram.width  += 2 * DIAGRAM_MARGIN;
 			diagram.height += 2 * DIAGRAM_MARGIN + 2 * this._actors_height + this._signals_height;
+
+			return this;
 		},
 
 		draw_title : function() {
@@ -488,9 +502,14 @@
 
 	// Take the standard RaphaëlTheme and make all the lines wobbly
 	_.extend(HandRaphaëlTheme.prototype, RaphaëlTheme.prototype, {
+		init_font : function() {
+			this._font  = this._paper.getFont('daniel');
+		},
+
 		draw_line : function(x1, y1, x2, y2) {
 			return this._paper.handLine(x1, y1, x2, y2);
 		},
+
 		draw_rect : function(x, y, w, h) {
 			return this._paper.handRect(x, y, w, h);
 		}
