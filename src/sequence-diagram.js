@@ -160,18 +160,14 @@
 
 			this._actors_height  = 0;
 			this._signals_height = 0;
-
-			return this;
 		},
 
 		init_paper : function(container) {
 			this._paper = new Raphael(container, 320, 200);
-			return this;
 		},
 
 		init_font : function() {
 			/* Do nothing */
-			return this;
 		},
 
 		draw_line : function(x1, y1, x2, y2) {
