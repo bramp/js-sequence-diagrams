@@ -24,6 +24,7 @@
 	// Image width is wrong, when there is a note in the right hand col
 	// Title box could look better
 	// Note box could look better
+	// Note over isn't correctly align
 
 
 	var DIAGRAM_MARGIN = 10;

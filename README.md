@@ -56,7 +56,6 @@ npm install uglify-js -g
 npm install jison -g
 
 ## Then to build, just run:
-make clean
 make
 ```
 
