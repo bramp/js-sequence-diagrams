@@ -396,8 +396,8 @@
 			// Mid point between actors
 			var midx = (bX - aX) / 2 + aX;
 
-			var x = midx - this.width / 2 + this.text_bb.x;
-				y = offsetY + this.height / 2;
+			var x = midx - signal.width / 2 + signal.text_bb.x;
+				y = offsetY + signal.height / 2;
 
 			this.draw_text(x, y, signal.message);
 	/*
