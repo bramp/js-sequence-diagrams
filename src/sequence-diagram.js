@@ -115,9 +115,16 @@
 	 * Returns the text's bounding box
 	 */
 	Raphael.fn.text_bbox = function (text, font) {
-		var p = this.print(0, 0, text, font, 16, 'middle');
+		var p;
+		if (font) {
+			p = this.print(0, 0, text, font, 16, 'middle');
+		} else {
+			p = this.text(0, 0, text);
+		}
+
 		var bb = p.getBBox();
 		p.remove();
+
 		return bb;
 	};
 
@@ -394,10 +401,13 @@
 			});
 
 			// Mid point between actors
-			var midx = (bX - aX) / 2 + aX;
-
-			var x = midx - signal.width / 2 + signal.text_bb.x;
+			var x = (bX - aX) / 2 + aX;
 				y = offsetY + signal.height / 2;
+
+			if (this._font) {
+				// This is a bit of a hack, but fixes alignment issues
+				x = x - signal.width / 2 + signal.text_bb.x;
+			}
 
 			this.draw_text(x, y, signal.message);
 	/*
@@ -438,7 +448,12 @@
 		 */
 		draw_text : function (x, y, text) {
 			var paper = this._paper;
-			var t = paper.print(x, y, text, this._font, 16, 'middle');
+			var t;
+			if (this._font) {
+				t = paper.print(x, y, text, this._font, 16, 'middle');
+			} else {
+				t = paper.text(x, y, text);
+			}
 			// draw a rect behind it
 			var bb = t.getBBox();
 			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
@@ -457,22 +472,10 @@
 			rect.attr(LINE);
 
 			// Draw text
-			//x = box.x + padding;
-			//y = box.y + box.height / 2;
-
 			x = box.x + margin + padding - box.text_bb.x;
 			y = box.y + margin + padding - box.text_bb.y;
 
-			this._paper.print(x, y, text, this._font, 16, 'middle');
-
-			/*
-			var t = this._paper.text(x, y);
-			t.attr(FONT);
-			t.attr({
-				'text': text,
-				'text-anchor': 'middle',
-			});
-			*/
+			this.draw_text(x, y, text);
 		}
 
 		/**
