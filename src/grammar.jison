@@ -70,7 +70,7 @@ signal
 	;
 
 actor
-	: ACTOR { $$ = yy.getActor($1); }
+	: ACTOR { $$ = yy.getActor($1.replace(/\\n/gm, "\n")); }
 	;
 
 signaltype
