@@ -93,19 +93,15 @@ header h2 {
   margin-left: 20px;
 }
 
-#editor { 
+.editor { 
     width: 380px;
     height: 210px;
     font-size: 14px;
 }
 
-#editor-wrapper {
+.editor-wrapper {
     width: 380px;
     height: 210px;
-}
-
-#diagram {
-  float: left;
 }
 
 .gh-forkme {
@@ -116,6 +112,14 @@ header h2 {
   position: relative;
   width: 940px;
   margin: 0 auto;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
 }
 
 
