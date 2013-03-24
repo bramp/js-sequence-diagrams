@@ -64,8 +64,8 @@
 		OVER    : 2
 	};
 
-	/** he following are included by jspp */
-	/*> ../grammar.js */
+	/** the following file is inclued by rig grunt task */
+	//= ../grammar.js
 
 	/**
 	 * jison doesn't have a good exception, so we make one
