@@ -64,7 +64,7 @@
 		OVER    : 2
 	};
 
-	/** include the grammar.js for the bundle */
+	/** he following are included by jspp */
 	/*> ../grammar.js */
 
 	/**

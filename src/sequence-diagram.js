@@ -3,12 +3,6 @@
  *  (c) 2013 Andrew Brampton (bramp.net)
  *  @license Simplified BSD license.
  */
-
-// The following are included by jspp
-/*> diagram.js */
-/*> jquery-plugin.js */
-/*> ../fonts/daniel/daniel_700.font.js */
-
 (function () {
 	"use strict";
 	/*global Diagram, Raphael, _ */
