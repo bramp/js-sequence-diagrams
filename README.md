@@ -43,6 +43,14 @@ and then
 </script>
 ```
 
+or use jQuery to do all the work:
+```html
+<div class="diagram">A->B: Message</div>;
+<script>;
+$(".diagram").sequenceDiagram({theme: 'hand'});
+</script>;
+```
+
 Build requirements
 ------------------
 ```bash
