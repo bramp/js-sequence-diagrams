@@ -381,23 +381,15 @@
 		},
 
 		draw_signal : function (signal, offsetY) {
-			var y = offsetY + signal.height - SIGNAL_MARGIN;
 			var aX = signal.actorA.x + signal.actorA.width/2;
 			var bX = signal.actorB.x + signal.actorB.width/2;
 
 			var line_types  = ['', '-'];
 			var arrow_types = ['block', 'open'];
 
-			var line = this.draw_line(aX, y, bX, y);
-			line.attr(LINE);
-			line.attr({
-				'arrow-end': arrow_types[signal.arrowtype] + '-wide-long',
-				'stroke-dasharray': line_types[signal.linetype]
-			});
-
 			// Mid point between actors
 			var x = (bX - aX) / 2 + aX;
-				y = offsetY + signal.height / 2;
+			var y = offsetY + signal.height / 2;
 
 			if (this._font) {
 				// This is a bit of a hack, but fixes alignment issues
@@ -405,6 +397,14 @@
 			}
 
 			this.draw_text(x, y, signal.message);
+
+			y = offsetY + signal.height - SIGNAL_MARGIN;
+			var line = this.draw_line(aX, y, bX, y);
+			line.attr(LINE);
+			line.attr({
+				'arrow-end': arrow_types[signal.arrowtype] + '-wide-long',
+				'stroke-dasharray': line_types[signal.linetype]
+			});
 	/*
 			var t = paper.text(midx, offsetY + this.height / 2);
 			t.attr(FONT);
