@@ -1,0 +1,18 @@
+/* EBNF version of the grammar for diagraming purposes only
+ * by bramp 2013 
+ */
+
+document ::= statement*
+
+statement ::=
+	( 'title' ':' message
+	| 'participant' actor 
+	| 'note' ('left of' | 'right of' | 'over') actor ':' message
+	| actor ( '-' | '--' ) ( '>' | '>>' )? actor ':' message
+	)
+
+/*
+message ::= [^\n]+
+
+actor ::= [^\->:\n,]+
+*/
