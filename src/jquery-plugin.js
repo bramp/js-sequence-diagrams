@@ -1,16 +1,10 @@
 (function( $ ) {
 	$.fn.sequenceDiagram = function( options ) {
-
-		var settings = $.extend( {
-			'theme' : 'hand'
-		}, options);
-
 		return this.each(function() {
 			var $this = $(this);
-			var diagram = Diagram.parse($this.val());
-			// Blank the HTML
+			var diagram = Diagram.parse($this.text());
 			$this.html('');
-			diagram.drawSVG(this, settings);
+			diagram.drawSVG(this, options);
 		});
 	};
 })( jQuery );
