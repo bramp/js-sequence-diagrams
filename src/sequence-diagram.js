@@ -452,7 +452,7 @@
 			// draw a rect behind it
 			var bb = t.getBBox();
 			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
-			r.attr({'fill': "#fff", 'stroke-width': 0});
+			r.attr({'fill': "#fff", 'stroke': 'none'});
 			t.toFront();
 		},
 
