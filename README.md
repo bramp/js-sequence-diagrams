@@ -54,22 +54,19 @@ $(".diagram").sequenceDiagram({theme: 'hand'});
 Build requirements
 ------------------
 ```bash
-# JavaScript Preprocessor 
-gem install jspp
 
-## UglifyJS 2
-npm install uglify-js -g
+# This project uses Grunt.js, so we need to make sure it is installed
+npm install -g grunt-cli
 
-## Jison
-npm install jison -g
+# Install the build dependencies
+npm install
 
-## Then to build, just run:
-make
+# Then to build, just run:
+grunt
 ```
 
 TODO
 ----
-* Change Makefile to Grunt (because it looks cool)
 * Other themes
 * Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper
 library
