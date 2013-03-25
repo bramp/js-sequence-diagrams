@@ -61,7 +61,9 @@ module.exports = function(grunt) {
 
     var grammar = grunt.file.read(opts.src);
     var parser = new Parser(grammar);
-    var parserSource = parser.generate();
+    var parserSource = parser.generate({
+      moduleName: 'grammar'
+    });
 
     grunt.file.write(opts.target, parserSource);
   });
