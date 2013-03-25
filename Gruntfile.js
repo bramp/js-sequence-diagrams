@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    clean: ['sequence-diagram-min.js*', 'grammar.js', 'diagram-grammar.js'],
+    clean: ['tmp'],
     jshint: {
       all: ['Gruntfile.js', 'src/diagram.js', 'src/sequence-diagram.js']
     },
@@ -10,7 +10,7 @@ module.exports = function(grunt) {
       'js-sequence-diagrams': {
         files: {
           'sequence-diagram-min.js': [
-            'diagram-grammar.js',
+            'tmp/diagram-grammar.js',
             'src/jquery-plugin.js',
             'fonts/daniel/daniel_700.font.js',
             'src/sequence-diagram.js'
@@ -26,12 +26,12 @@ module.exports = function(grunt) {
     },
     grammar: {
       src: 'src/grammar.jison',
-      target: 'grammar.js'
+      target: 'tmp/grammar.js'
     },
     rig: {
       compile: {
         files: {
-          'diagram-grammar.js': ['src/diagram.js']
+          'tmp/diagram-grammar.js': ['src/diagram.js']
         }
       }
     },

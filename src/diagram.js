@@ -65,7 +65,7 @@
 	};
 
 	/** the following file is inclued by rig grunt task */
-	//= ../grammar.js
+	//= ../tmp/grammar.js
 
 	/**
 	 * jison doesn't have a good exception, so we make one
