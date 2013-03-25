@@ -2,19 +2,32 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
     clean: ['tmp'],
+
     jshint: {
       all: ['Gruntfile.js', 'src/diagram.js', 'src/sequence-diagram.js']
     },
+
+    concat: {
+      options: {
+        separator: ';'
+      },
+      dist: {
+        src: [
+          'tmp/diagram-grammar.js',
+          'src/jquery-plugin.js',
+          'fonts/daniel/daniel_700.font.js',
+          'src/sequence-diagram.js'
+        ],
+        dest: 'sequence-diagram.js'
+      }
+    },
+
     uglify: {
-      'js-sequence-diagrams': {
+      minified: {
         files: {
-          'sequence-diagram-min.js': [
-            'tmp/diagram-grammar.js',
-            'src/jquery-plugin.js',
-            'fonts/daniel/daniel_700.font.js',
-            'src/sequence-diagram.js'
-          ]
+          'sequence-diagram-min.js': [ 'sequence-diagram.js' ]
         },
         options: {
           mangle: false,
@@ -24,10 +37,12 @@ module.exports = function(grunt) {
         }
       }
     },
+
     grammar: {
       src: 'src/grammar.jison',
       target: 'tmp/grammar.js'
     },
+
     rig: {
       compile: {
         files: {
@@ -35,6 +50,7 @@ module.exports = function(grunt) {
         }
       }
     },
+
     copy: {
       main: {
         files: [{
@@ -46,13 +62,14 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-rigger');
 
   grunt.registerTask('lint', ['jshint']);
-  grunt.registerTask('default', ['clean', 'grammar', 'rig', 'uglify', 'copy']);
+  grunt.registerTask('default', ['clean', 'grammar', 'rig', 'concat', 'uglify', 'copy']);
 
   grunt.registerTask('grammar', "Execute jison", function() {
     var opts = grunt.config.data.grammar;
