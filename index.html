@@ -70,7 +70,6 @@ Andrew->>China: I am good thanks!</div>
           <tr id="example1">
             <td class="diagram"></td>
             <td>
-              <input type="hidden" class="theme" value="hand" />
               <div class="editor-wrapper">
                 <div class="editor">Title: Here is a title
 A->B: Normal line
@@ -107,7 +106,6 @@ Note over A: Note over A</div>
           <tr id="example3">
             <td class="diagram"></td>
             <td>
-              <input type="hidden" class="theme" value="hand" />
               <div class="editor-wrapper">
                 <div class="editor">participant C
 participant B
@@ -201,7 +199,7 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
     <script src="sequence-diagram-min.js"></script>
     <script src="svginnerhtml.min.js"></script>
  
-    <script>
+    <script type="text/javascript">
 
       function setup_editor(div) {
 
@@ -228,7 +226,7 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
           a.attr("href", "data:image/svg+xml," + encodeURIComponent(xml));
         });
 
-        var theme = theme_div.change(on_change);
+        theme_div.change(on_change);
         on_change();
 
         function on_change() {
@@ -241,7 +239,7 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
             diagram_div.html('');
 
             var options = {
-              theme: theme.val(),
+              theme: theme_div.val(),
               scale: 1
             };
 
