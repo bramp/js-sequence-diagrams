@@ -49,7 +49,7 @@ Andrew->>China: I am good thanks!</div>
               <option value="simple">Simple</option>
               <option value="hand" selected>Hand drawn</option>
             </select>
-            <a href="#" class="download" >Download </a>
+            | <a href="#" class="download">Download as SVG</a>
             </td>
             <td class="diagram">This should be a diagram! If you don't see it you need Javascript enabled</td>
           </tr>
@@ -78,20 +78,29 @@ B-->C: Dashed line
 C->>D: Open arrow
 D->A: Return arrow</div>
               </div>
-              <a href="#" class="download">Download </a>
+              Theme:
+              <select class="theme">
+                <option value="simple">Simple</option>
+                <option value="hand" selected>Hand drawn</option>
+              </select>
+              | <a href="#" class="download">Download as SVG</a>
             </td>
           </tr>
 
           <tr id="example2">
             <td class="diagram"></td>
             <td>
-              <input type="hidden" class="theme" value="hand" />
               <div class="editor-wrapper">
                 <div class="editor">Note left of A: Note to the\n left of A
 Note right of A: Note to the\n right of A
 Note over A: Note over A</div>
               </div>
-              <a href="#" class="download" >Download </a>
+              Theme:
+              <select class="theme">
+                <option value="simple">Simple</option>
+                <option value="hand" selected>Hand drawn</option>
+              </select>
+              | <a href="#" class="download">Download as SVG</a>
             </td>
           </tr>
 
@@ -105,7 +114,12 @@ participant B
 participant A
 Note right of A: By listing the participants\n you can change their order</div>
               </div>
-              <a href="#" class="download" >Download </a>
+              Theme:
+              <select class="theme">
+                <option value="simple">Simple</option>
+                <option value="hand" selected>Hand drawn</option>
+              </select>
+              | <a href="#" class="download">Download as SVG</a>
             </td>
           </tr>
 
@@ -260,8 +274,6 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
         setup_editor($('#example1'));
         setup_editor($('#example2'));
         setup_editor($('#example3'));
-        //setup_editor($('#demo_diagram'), 'demo_editor', $('#demo_theme')));
-        //setup_editor($('#demo_diagram'), 'demo_editor', $('#demo_theme')));
       });
     </script>
 
