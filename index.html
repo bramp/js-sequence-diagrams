@@ -202,6 +202,18 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
         editor.getSession().setMode("ace/mode/asciidoc");
         editor.getSession().on('change', _.debounce(on_change, 100));
 
+        download_link.click(function(ev) {
+          var svg = diagram_div.find('svg')[0];
+          var width = parseInt(svg.width.baseVal.value);
+          var height = parseInt(svg.height.baseVal.value);
+          var data = editor.getValue();
+          var xml = '<?xml version="1.0" encoding="utf-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"><svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" xmlns:xlink="http://www.w3.org/1999/xlink"><source><![CDATA[' + data + ']]></source>' + svg.innerHTML + '</svg>';
+
+          var a = $(this);
+          a.attr("download", "diagram.svg"); // TODO I could put title here
+          a.attr("href", "data:image/svg+xml," + encodeURIComponent(xml));
+        });
+
         var theme = theme_div.change(on_change);
         on_change();
 
@@ -221,16 +233,6 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
 
             // Draw
             diagram.drawSVG(diagram_div.get(0), options);
-            download_link.unbind();
-            download_link.click(function(ev) {
-              ev.preventDefault();
-              var svg = diagram_div.find('svg')[0];
-              var width = parseInt(svg.width.baseVal.value);
-              var height = parseInt(svg.height.baseVal.value);
-              var data = editor.getValue();
-              var xml = '<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"><svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" xmlns:xlink="http://www.w3.org/1999/xlink"><source><![CDATA[' + data + ']]></source>' + svg.innerHTML + '</svg>';
-              window.location.href = "data:application/octet-stream," + encodeURIComponent(xml);
-            });
 
           } catch(err) {
             var annotation = {
