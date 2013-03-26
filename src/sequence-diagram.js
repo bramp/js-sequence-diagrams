@@ -229,7 +229,7 @@
 			}
 
 			_.each(actors, function(a) {
-				var bb = paper.text_bbox(a.name, font);
+				var bb = paper.text_bbox(a.alias, font);
 				a.text_bb = bb;
 
 				//var bb = t.attr("text", a.name).getBBox();
@@ -363,7 +363,7 @@
 		draw_actor : function (actor, offsetY, height) {
 			actor.y      = offsetY;
 			actor.height = height;
-			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING);
+			this.draw_text_box(actor, actor.alias, ACTOR_MARGIN, ACTOR_PADDING);
 		},
 
 		draw_signals : function (offsetY) {
