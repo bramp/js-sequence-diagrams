@@ -74,6 +74,11 @@ TODO
 * Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper
 library
 
+Contributors
+------------
+
+via [GitHub](https://github.com/bramp/js-sequence-diagrams/graphs/contributors)
+
 Thanks
 ------
 This project makes use of Jison, Raphaël, underscore.js, and the Daniel font (which is free to use for any purpose).
