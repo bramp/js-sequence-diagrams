@@ -2,9 +2,6 @@
 
 all: sequence-diagram-min.js
 
-test: grammar.js
-	node grammar.js test
-
 clean:
 	rm sequence-diagram-min.js* grammar.js diagram-grammar.js
 
