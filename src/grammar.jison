@@ -10,7 +10,7 @@
 %%
 
 [\n]+             return 'NL'
-[ \t]+            /* skip whitespace */
+\s+               /* skip whitespace */
 \#[^\n]*          /* skip comments */
 "participant"     return 'participant'
 "left of"         return 'left_of'
@@ -34,7 +34,7 @@
 %% /* language grammar */
 
 start
-	: document { return yy; }
+	: document 'EOF' { return yy; }
 	;
 
 document
@@ -44,8 +44,7 @@ document
 
 line
 	: statement 'NL'  { }
-	| statement 'EOF' { }
-	| 'NL' | 'EOF'
+	| statement       { }
 	;
 
 statement
