@@ -55,7 +55,18 @@ function assertEmptyDocument(d) {
 	equal(d.signals.length, 0, "Zero signals");
 }
 
-test( "Empty document", function() {
+test( "Empty documents", function() {
 	assertEmptyDocument(Diagram.parse(""));
 	assertEmptyDocument(Diagram.parse(" \t\n"));
+});
+
+test( "Comments", function() {
+	assertEmptyDocument(Diagram.parse("#"));
+	assertEmptyDocument(Diagram.parse("# comment"));
+	assertEmptyDocument(Diagram.parse(" # comment"));
+	assertEmptyDocument(Diagram.parse("# A->B: Title"));
+	assertSingleArrow(Diagram.parse("A->B: Title # comment"));
+	//"title Title # comment"
+	//"participant A # comment"
+	//"note left of A: blah # comment"
 });

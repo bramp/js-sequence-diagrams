@@ -11,7 +11,7 @@
 
 [\n]+             return 'NL'
 [ \t]+            /* skip whitespace */
-\#[^\n]+          /* skip comments */
+\#[^\n]*          /* skip comments */
 "participant"     return 'participant'
 "left of"         return 'left_of'
 "right of"        return 'right_of'
