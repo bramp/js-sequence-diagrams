@@ -141,14 +141,14 @@
 	};
 
 /******************
- * RaphaëlTheme
+ * BaseTheme
  ******************/
 
-	var RaphaëlTheme = function(diagram) {
+	var BaseTheme = function(diagram) {
 		this.init(diagram);
 	};
 
-	_.extend(RaphaëlTheme.prototype, {
+	_.extend(BaseTheme.prototype, {
 		init : function(diagram) {
 			this.diagram = diagram;
 			this._paper   = undefined;
@@ -164,9 +164,7 @@
 			this._paper = new Raphael(container, 320, 200);
 		},
 
-		init_font : function() {
-			/* Do nothing */
-		},
+		init_font : function() {},
 
 		draw_line : function(x1, y1, x2, y2) {
 			return this._paper.line(x1, y1, x2, y2);
@@ -489,6 +487,25 @@
 	});
 
 /******************
+ * RaphaëlTheme
+ ******************/
+
+	var RaphaëlTheme = function(diagram) {
+		this.init(diagram);
+	};
+
+	_.extend(RaphaëlTheme.prototype, BaseTheme.prototype, {
+
+		init_font : function() {
+			this._font = {
+				'font-size': 16,
+				'font-family': 'Andale Mono, monospace'
+			};
+		}
+
+	});
+
+/******************
  * HandRaphaëlTheme
  ******************/
 
@@ -497,7 +514,7 @@
 	};
 
 	// Take the standard RaphaëlTheme and make all the lines wobbly
-	_.extend(HandRaphaëlTheme.prototype, RaphaëlTheme.prototype, {
+	_.extend(HandRaphaëlTheme.prototype, BaseTheme.prototype, {
 		init_font : function() {
 			this._font = {
 				'font-size': 16,
