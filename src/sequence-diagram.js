@@ -39,11 +39,6 @@
 	var LINETYPE  = Diagram.LINETYPE;
 	var ARROWTYPE = Diagram.ARROWTYPE;
 
-	var FONT = {
-		'font-size': 18,
-		'font-family': 'daniel'
-	};
-
 	var LINE = {
 		'stroke': '#000',
 		'stroke-width': 2
@@ -111,10 +106,11 @@
 	 */
 	Raphael.fn.text_bbox = function (text, font) {
 		var p;
-		if (font) {
-			p = this.print(0, 0, text, font, 16, 'middle');
+		if (font._obj) {
+			p = this.print(0, 0, text, font._obj, font['font-size'], 'middle');
 		} else {
 			p = this.text(0, 0, text);
+			p.attr(font)
 		}
 
 		var bb = p.getBBox();
@@ -339,7 +335,7 @@
 		draw_title : function() {
 			var title = this._title;
 			if (title)
-				this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING);
+				this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font);
 		},
 
 		draw_actors : function(offsetY) {
@@ -363,7 +359,7 @@
 		draw_actor : function (actor, offsetY, height) {
 			actor.y      = offsetY;
 			actor.height = height;
-			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING);
+			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
 		},
 
 		draw_signals : function (offsetY) {
@@ -389,16 +385,18 @@
 
 			// Mid point between actors
 			var x = (bX - aX) / 2 + aX;
-			var y = offsetY + signal.height / 2;
+			var y = offsetY + SIGNAL_MARGIN + 2*SIGNAL_PADDING;
 
-			if (this._font) {
+			if (this._font._obj) {
 				// This is a bit of a hack, but fixes alignment issues
 				x = x - signal.width / 2 + signal.text_bb.x;
 			}
 
-			this.draw_text(x, y, signal.message);
+			// Draw the text in the middle of the signal
+			this.draw_text(x, y, signal.message, this._font);
 
-			y = offsetY + signal.height - SIGNAL_MARGIN;
+			// Draw the line along the bottom of the signal
+			y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
 			var line = this.draw_line(aX, y, bX, y);
 			line.attr(LINE);
 			line.attr({
@@ -435,28 +433,32 @@
 					throw new Error("Unhandled note placement:" + note.placement);
 			}
 
-			this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING);
+			this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font);
 		},
 
 		/**
 		 * Draws text with a white background
+		 * TODO Horz center the text when it's multi-line print
 		 */
-		draw_text : function (x, y, text) {
+		draw_text : function (x, y, text, font) {
 			var paper = this._paper;
+			var f = font || {};
 			var t;
-			if (this._font) {
-				t = paper.print(x, y, text, this._font, 16, 'middle');
+			if (f._obj) {
+				t = paper.print(x, y, text, f._obj, f['font-size'], 'middle');
 			} else {
 				t = paper.text(x, y, text);
+				t.attr(f);
 			}
 			// draw a rect behind it
 			var bb = t.getBBox();
 			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
 			r.attr({'fill': "#fff", 'stroke': 'none'});
+
 			t.toFront();
 		},
 
-		draw_text_box : function (box, text, margin, padding) {
+		draw_text_box : function (box, text, margin, padding, font) {
 			var x = box.x + margin;
 			var y = box.y + margin;
 			var w = box.width  - 2 * margin;
@@ -470,7 +472,7 @@
 			x = box.x + margin + padding - box.text_bb.x;
 			y = box.y + margin + padding - box.text_bb.y;
 
-			this.draw_text(x, y, text);
+			this.draw_text(x, y, text, font);
 		}
 
 		/**
@@ -497,7 +499,16 @@
 	// Take the standard RaphaëlTheme and make all the lines wobbly
 	_.extend(HandRaphaëlTheme.prototype, RaphaëlTheme.prototype, {
 		init_font : function() {
-			this._font  = this._paper.getFont('daniel');
+			this._font = {
+				'font-size': 16,
+				'font-family': 'daniel',
+			};
+
+			var font_obj = this._paper.getFont('daniel')
+			if (font_obj) {
+				this._font._obj = font_obj;
+			}
+
 		},
 
 		draw_line : function(x1, y1, x2, y2) {
