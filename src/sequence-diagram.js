@@ -1,6 +1,6 @@
 /** js sequence diagrams 1.0.1
  *  http://bramp.github.com/js-sequence-diagrams/
- *  (c) 2013 Andrew Brampton (bramp.net)
+ *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  @license Simplified BSD license.
  */
 (function () {
@@ -329,8 +329,8 @@
 
 				// TODO This only works if we loop in sequence, 0, 1, 2, etc
 				_.each(a.distances, function(distance, b) {
-					// lodash (and possibly others) does not like non-continous
-					// arrays, so sometimes they return undefined
+					// lodash (and possibly others) do not like sparse arrays
+					// so sometimes they return undefined
 					if (typeof distance == "undefined")
 						return;
 
@@ -455,14 +455,6 @@
 				'arrow-end': arrow_types[signal.arrowtype] + '-wide-long',
 				'stroke-dasharray': line_types[signal.linetype]
 			});
-	/*
-			var t = paper.text(midx, offsetY + this.height / 2);
-			t.attr(FONT);
-			t.attr({
-				'text': this.message,
-				'text-anchor': 'middle',
-			});
-	*/
 
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
