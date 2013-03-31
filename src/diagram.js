@@ -47,7 +47,7 @@
 
 		this.isSelf = function() {
 			return this.actorA.index == this.actorB.index;
-		}
+		};
 	};
 
 	Diagram.Note = function(actor, placement, message) {

@@ -112,7 +112,7 @@
 			p = this.print_center(0, 0, text, font._obj, font['font-size']);
 		} else {
 			p = this.text(0, 0, text);
-			p.attr(font)
+			p.attr(font);
 		}
 
 		var bb = p.getBBox();
@@ -146,14 +146,14 @@
 	 * Prints, but aligns text in a similar way to text(...)
 	 */
 	Raphael.fn.print_center = function(x, y, string, font, size, letter_spacing) {
-	    var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
-	    var bb = path.getBBox();
+		var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
+		var bb = path.getBBox();
 
-	    var dx = (x - bb.x) - bb.width / 2;
-	    var dy = (y - bb.y) - bb.height / 2;
+		var dx = (x - bb.x) - bb.width / 2;
+		var dy = (y - bb.y) - bb.height / 2;
 
-	    return path.transform("t" + dx + "," + dy);
-	}
+		return path.transform("t" + dx + "," + dy);
+	};
 
 /******************
  * BaseTheme
@@ -565,10 +565,10 @@
 		init_font : function() {
 			this._font = {
 				'font-size': 16,
-				'font-family': 'daniel',
+				'font-family': 'daniel'
 			};
 
-			this._font._obj = this._paper.getFont('daniel')
+			this._font._obj = this._paper.getFont('daniel');
 		},
 
 		draw_line : function(x1, y1, x2, y2) {
