@@ -568,11 +568,7 @@
 				'font-family': 'daniel',
 			};
 
-			var font_obj = this._paper.getFont('daniel')
-			if (font_obj) {
-				this._font._obj = font_obj;
-			}
-
+			this._font._obj = this._paper.getFont('daniel')
 		},
 
 		draw_line : function(x1, y1, x2, y2) {
