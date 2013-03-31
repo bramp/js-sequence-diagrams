@@ -11,16 +11,16 @@
  
     	<textarea id="language" rows="10" cols="50">
 Andrew-->China: Hello
-Note right of China: China thinks\nabout it
+Note left of China: China thinks\nabout it
 China->Andrew: How are you?
 Andrew->China: I am good thanks!
+Andrew->Andrew: Self
     	</textarea>
     	<button id="parse" type="button">Click Me!</button>  
-        <button id="export" type="button">Export</button>
 
     	<div id="diagram"></div>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
         <!--script src="underscore-min.js"></script-->
         <script src="lodash.min.js"></script>
@@ -46,20 +46,8 @@ Andrew->China: I am good thanks!
                     //    console.log(e);
                     //}
                 }, 100));
-
-                $('#export').click(function() {
-                    // http://phpepe.com/2012/07/export-raphael-graphic-to-image.html
-                    // http://stackoverflow.com/questions/4086703/convert-raphael-svg-to-image-png-etc-client-side
-                    var canvas_ = $('#diagram svg').get(0);
-                    var text = (new XMLSerializer()).serializeToString(canvas_);
-                    var encodedText = encodeURIComponent(text);
-                    open("data:image/svg+xml," + encodedText);
-
-                });
             });
         </script>
-
-
     </body>
 </html>
 
