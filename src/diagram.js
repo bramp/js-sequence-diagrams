@@ -1,3 +1,8 @@
+/** js sequence diagrams
+ *  http://bramp.github.com/js-sequence-diagrams/
+ *  (c) 2012-2013 Andrew Brampton (bramp.net)
+ *  Simplified BSD license.
+ */
 (function () {
 	"use strict";
 	/*global grammar _ */
