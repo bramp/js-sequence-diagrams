@@ -109,7 +109,7 @@
 	Raphael.fn.text_bbox = function (text, font) {
 		var p;
 		if (font._obj) {
-			p = this.print(0, 0, text, font._obj, font['font-size'], 'middle');
+			p = this.print_center(0, 0, text, font._obj, font['font-size']);
 		} else {
 			p = this.text(0, 0, text);
 			p.attr(font)
@@ -141,6 +141,19 @@
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
 	};
+
+	/**
+	 * Prints, but aligns text in a similar way to text(...)
+	 */
+	Raphael.fn.print_center = function(x, y, string, font, size, letter_spacing) {
+	    var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
+	    var bb = path.getBBox();
+
+	    var dx = (x - bb.x) - bb.width / 2;
+	    var dy = (y - bb.y) - bb.height / 2;
+
+	    return path.transform("t" + dx + "," + dy);
+	}
 
 /******************
  * BaseTheme
@@ -431,11 +444,6 @@
 			var x = (bX - aX) / 2 + aX;
 			var y = offsetY + SIGNAL_MARGIN + 2*SIGNAL_PADDING;
 
-			if (this._font._obj) {
-				// This is a bit of a hack, but fixes alignment issues
-				x = x - signal.width / 2 + signal.text_bb.x;
-			}
-
 			// Draw the text in the middle of the signal
 			this.draw_text(x, y, signal.message, this._font);
 
@@ -482,6 +490,7 @@
 
 		/**
 		 * Draws text with a white background
+		 * x,y (int) x,y center point for this text
 		 * TODO Horz center the text when it's multi-line print
 		 */
 		draw_text : function (x, y, text, font) {
@@ -489,7 +498,7 @@
 			var f = font || {};
 			var t;
 			if (f._obj) {
-				t = paper.print(x, y, text, f._obj, f['font-size'], 'middle');
+				t = paper.print_center(x, y, text, f._obj, f['font-size']);
 			} else {
 				t = paper.text(x, y, text);
 				t.attr(f);
