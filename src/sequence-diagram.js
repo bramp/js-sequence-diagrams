@@ -35,6 +35,8 @@
 	var TITLE_MARGIN   = 0;
 	var TITLE_PADDING  = 5;
 
+	var SELF_SIGNAL_WIDTH = 20; // How far out a self signal goes
+
 	var PLACEMENT = Diagram.PLACEMENT;
 	var LINETYPE  = Diagram.LINETYPE;
 	var ARROWTYPE = Diagram.ARROWTYPE;
@@ -266,11 +268,17 @@
 				var extra_width = 0;
 
 				if (s.type == "Signal") {
+					if (s.isSelf()) {
+						a = s.actorA.index;
+						b = a + 1;
+						s.width += SELF_SIGNAL_WIDTH;
+					} else {
+						a = Math.min(s.actorA.index, s.actorB.index);
+						b = Math.max(s.actorA.index, s.actorB.index);
+					}
+
 					s.width  += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
 					s.height += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
-
-					a = Math.min(s.actorA.index, s.actorB.index);
-					b = Math.max(s.actorA.index, s.actorB.index);
 
 				} else if (s.type == "Note") {
 					s.width  += (NOTE_MARGIN + NOTE_PADDING) * 2;
@@ -362,9 +370,13 @@
 
 		draw_signals : function (offsetY) {
 			var y = offsetY;
-				_.each(this.diagram.signals, function(s) {
+			_.each(this.diagram.signals, function(s) {
 				if (s.type == "Signal") {
-					this.draw_signal(s, y);
+					if (s.isSelf()) {
+						this.draw_self_signal(s, y);
+					} else {
+						this.draw_signal(s, y);
+					}
 
 				} else if (s.type == "Note") {
 					this.draw_note(s, y);
@@ -372,6 +384,40 @@
 
 				y += s.height;
 			}, this);
+		},
+
+		draw_self_signal : function(signal, offsetY) {
+			assert(signal.isSelf(), "signal must be a self signal");
+
+			var text_bb = signal.text_bb;
+			var aX = signal.actorA.x + signal.actorA.width/2;
+
+			var line_types  = ['', '-'];
+			var arrow_types = ['block', 'open'];
+
+			var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
+			var y = offsetY + signal.height / 2;
+
+			this.draw_text(x, y, signal.message, this._font);
+
+			var attr = _.extend({}, LINE, {
+				'stroke-dasharray': line_types[signal.linetype]
+			});
+
+			var y1 = offsetY + SIGNAL_MARGIN;
+			var y2 = y1 + signal.height - SIGNAL_MARGIN;
+
+			// Draw three lines, the last one with a arrow
+			var line;
+			line = this.draw_line(aX, y1, aX + SELF_SIGNAL_WIDTH, y1);
+			line.attr(attr);
+
+			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2);
+			line.attr(attr);
+
+			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, aX, y2);
+			attr['arrow-end'] = arrow_types[signal.arrowtype] + '-wide-long';
+			line.attr(attr);
 		},
 
 		draw_signal : function (signal, offsetY) {
@@ -467,8 +513,8 @@
 			rect.attr(LINE);
 
 			// Draw text
-			x = box.x + margin + padding - box.text_bb.x;
-			y = box.y + margin + padding - box.text_bb.y;
+			x = x + padding - box.text_bb.x;
+			y = y + padding - box.text_bb.y;
 
 			this.draw_text(x, y, text, font);
 		}
