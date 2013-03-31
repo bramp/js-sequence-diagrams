@@ -463,15 +463,16 @@
 
 		draw_note : function (note, offsetY) {
 			note.y = offsetY;
+			var aX = note.actor.x + note.actor.width / 2;
 			switch (note.placement) {
 				case PLACEMENT.RIGHTOF:
-					note.x = note.actor.x + note.actor.width / 2 + ACTOR_MARGIN;
+					note.x = aX + ACTOR_MARGIN;
 					break;
 				case PLACEMENT.LEFTOF:
-					note.x = note.actor.x + note.actor.width / 2 - ACTOR_MARGIN - note.width;
+					note.x = aX - ACTOR_MARGIN - note.width;
 					break;
 				case PLACEMENT.OVER:
-					note.x = note.actor.x;
+					note.x = aX - note.width / 2;
 					break;
 				default:
 					throw new Error("Unhandled note placement:" + note.placement);
