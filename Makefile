@@ -14,11 +14,12 @@ diagram-grammar.js: src/diagram.js grammar.js
 	#
 	jspp src/diagram.js > diagram-grammar.js
 
-sequence-diagram-min.js: diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
+sequence-diagram-min.js: src/copyright.js diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
 	#
 	# Ignore warnings from diagram-grammar.js
 	#
 	uglifyjs \
+		src/copyright.js \
 		diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js \
 		src/sequence-diagram.js \
 		-o sequence-diagram-min.js \
