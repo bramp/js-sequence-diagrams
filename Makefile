@@ -1,6 +1,6 @@
 .PHONY : all test clean lint
 
-all: sequence-diagram-min.js
+all: lint sequence-diagram-min.js
 
 clean:
 	rm sequence-diagram-min.js* grammar.js diagram-grammar.js
