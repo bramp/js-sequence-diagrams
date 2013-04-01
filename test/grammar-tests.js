@@ -86,6 +86,11 @@ test( "Empty documents", function() {
 	assertEmptyDocument(Diagram.parse(" \t\n"));
 });
 
+test( "Whitespace", function() {
+	assertSingleArrow(Diagram.parse("  A  -  > B  : Title  "), ARROWTYPE.FILLED, LINETYPE.SOLID);
+	assertSingleArrow(Diagram.parse("\n\nA->B: Title\n\n"), ARROWTYPE.FILLED, LINETYPE.SOLID);
+});
+
 test( "Comments", function() {
 	assertEmptyDocument(Diagram.parse("#"));
 	assertEmptyDocument(Diagram.parse("# comment"));
