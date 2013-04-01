@@ -55,6 +55,14 @@
 		this.actor     = actor;
 		this.placement = placement;
 		this.message   = message;
+
+		if (this.hasManyActors() && actor[0] == actor[1]) {
+			throw new Error("Note should be over two different actors");
+		}
+	};
+
+	Diagram.Note.prototype.hasManyActors = function() {
+		return _.isArray(this.actor);
 	};
 
 	Diagram.LINETYPE = {

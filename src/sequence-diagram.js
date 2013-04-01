@@ -18,8 +18,6 @@
 	// Image width is wrong, when there is a note in the right hand col
 	// Title box could look better
 	// Note box could look better
-	// Note over isn't correctly align
-
 
 	var DIAGRAM_MARGIN = 10;
 
@@ -31,6 +29,7 @@
 
 	var NOTE_MARGIN   = 10; // Margin around a note
 	var NOTE_PADDING  = 5; // Padding inside a note
+	var NOTE_OVERLAP  = 15; // Overlap when using a "note over A,B"
 
 	var TITLE_MARGIN   = 0;
 	var TITLE_PADDING  = 5;
@@ -65,6 +64,18 @@
 		String.prototype.trim=function() {
 			return this.replace(/^\s+|\s+$/g, '');
 		};
+	}
+
+/******************
+ * Drawing extras
+ ******************/
+
+	function getCenterX(box) {
+		return box.x + box.width / 2;
+	}
+
+	function getCenterY(box) {
+		return box.y + box.height / 2;
 	}
 
 /******************
@@ -281,6 +292,10 @@
 				var extra_width = 0;
 
 				if (s.type == "Signal") {
+
+					s.width  += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
+					s.height += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
+
 					if (s.isSelf()) {
 						a = s.actorA.index;
 						b = a + 1;
@@ -289,9 +304,6 @@
 						a = Math.min(s.actorA.index, s.actorB.index);
 						b = Math.max(s.actorA.index, s.actorB.index);
 					}
-
-					s.width  += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
-					s.height += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
 
 				} else if (s.type == "Note") {
 					s.width  += (NOTE_MARGIN + NOTE_PADDING) * 2;
@@ -306,13 +318,22 @@
 					} else if (s.placement == PLACEMENT.RIGHTOF) {
 						a = s.actor.index;
 						b = a + 1;
+					} else if (s.placement == PLACEMENT.OVER && s.hasManyActors()) {
+						// Over multiple actors
+						a = Math.min(s.actor[0].index, s.actor[1].index);
+						b = Math.max(s.actor[0].index, s.actor[1].index);
+
+						// We don't need our padding, and we want to overlap
+						extra_width = - (NOTE_PADDING * 2 + NOTE_OVERLAP * 2);
+
 					} else if (s.placement == PLACEMENT.OVER) {
-						//a = actors[a];
+						// Over single actor
 						a = s.actor.index;
 						actor_ensure_distance(a - 1, a, s.width / 2);
 						actor_ensure_distance(a, a + 1, s.width / 2);
 						this._signals_height += s.height;
-						return;
+
+						return; // Bail out early
 					}
 				} else {
 					throw new Error("Unhandled signal type:" + s.type);
@@ -463,7 +484,8 @@
 
 		draw_note : function (note, offsetY) {
 			note.y = offsetY;
-			var aX = note.actor.x + note.actor.width / 2;
+			var actorA = note.hasManyActors() ? note.actor[0] : note.actor;
+			var aX = getCenterX( actorA );
 			switch (note.placement) {
 				case PLACEMENT.RIGHTOF:
 					note.x = aX + ACTOR_MARGIN;
@@ -472,7 +494,14 @@
 					note.x = aX - ACTOR_MARGIN - note.width;
 					break;
 				case PLACEMENT.OVER:
-					note.x = aX - note.width / 2;
+					if (note.hasManyActors()) {
+						var bX = getCenterX( note.actor[1] );
+						var overlap = NOTE_OVERLAP + NOTE_PADDING;
+						note.x = aX - overlap;
+						note.width = (bX + overlap) - note.x;
+					} else {
+						note.x = aX - note.width / 2;
+					}
 					break;
 				default:
 					throw new Error("Unhandled note placement:" + note.placement);

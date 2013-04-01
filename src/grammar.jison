@@ -22,6 +22,7 @@
 "over"            return 'over'
 "note"            return 'note'
 "title"           return 'title'
+","               return ','
 [^\->:\n,]+\b     return 'ACTOR'
 "--"              return 'DOTLINE'
 "-"               return 'LINE'
@@ -60,12 +61,18 @@ statement
 
 note_statement
 	: 'note' placement actor message   { $$ = new Diagram.Note($3, $2, $4); }
+	| 'note' 'over' actor_pair message { $$ = new Diagram.Note($3, Diagram.PLACEMENT.OVER, $4); }
+	;
+
+actor_pair
+	: actor             { $$ = $1; }
+	| actor ',' actor   { $$ = [$1, $3]; }
 	;
 
 placement
 	: 'left_of'   { $$ = Diagram.PLACEMENT.LEFTOF; }
 	| 'right_of'  { $$ = Diagram.PLACEMENT.RIGHTOF; }
-	| 'over'      { $$ = Diagram.PLACEMENT.OVER; }
+/*	| 'over'      { $$ = Diagram.PLACEMENT.OVER; }*/
 	;
 
 signal
