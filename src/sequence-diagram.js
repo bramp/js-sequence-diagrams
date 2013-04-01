@@ -242,7 +242,7 @@
 				title.width  = bb.width  + (TITLE_PADDING + TITLE_MARGIN) * 2;
 				title.height = bb.height + (TITLE_PADDING + TITLE_MARGIN) * 2;
 				title.x = DIAGRAM_MARGIN;
-				title.y = DIAGRAM_MARGIN;// + title.height / 2;
+				title.y = DIAGRAM_MARGIN;
 
 				diagram.width  += title.width;
 				diagram.height += title.height;
@@ -388,7 +388,7 @@
 				this.draw_actor(a, y + this._actors_height + this._signals_height, this._actors_height);
 
 				// Veritical line
-				var aX = a.x + a.width/2;
+				var aX = getCenterX(a);
 				var line = this.draw_line(
 					aX, y + this._actors_height - ACTOR_MARGIN,
 					aX, y + this._actors_height + ACTOR_MARGIN + this._signals_height);
@@ -424,7 +424,7 @@
 			assert(signal.isSelf(), "signal must be a self signal");
 
 			var text_bb = signal.text_bb;
-			var aX = signal.actorA.x + signal.actorA.width/2;
+			var aX = getCenterX(signal.actorA);
 
 			var line_types  = ['', '-'];
 			var arrow_types = ['block', 'open'];
@@ -455,8 +455,8 @@
 		},
 
 		draw_signal : function (signal, offsetY) {
-			var aX = signal.actorA.x + signal.actorA.width/2;
-			var bX = signal.actorB.x + signal.actorB.width/2;
+			var aX = getCenterX( signal.actorA );
+			var bX = getCenterX( signal.actorB );
 
 			var line_types  = ['', '-'];
 			var arrow_types = ['block', 'open'];
@@ -543,9 +543,9 @@
 			var rect = this.draw_rect(x, y, w, h);
 			rect.attr(LINE);
 
-			// Draw text
-			x = x + padding - box.text_bb.x;
-			y = y + padding - box.text_bb.y;
+			// Draw text (in the center)
+			x = getCenterX(box);
+			y = getCenterY(box);
 
 			this.draw_text(x, y, text, font);
 		}

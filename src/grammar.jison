@@ -72,7 +72,6 @@ actor_pair
 placement
 	: 'left_of'   { $$ = Diagram.PLACEMENT.LEFTOF; }
 	| 'right_of'  { $$ = Diagram.PLACEMENT.RIGHTOF; }
-/*	| 'over'      { $$ = Diagram.PLACEMENT.OVER; }*/
 	;
 
 signal

@@ -44,10 +44,10 @@
 		this.linetype   = signaltype & 3;
 		this.arrowtype  = (signaltype >> 2) & 3;
 		this.message    = message;
+	};
 
-		this.isSelf = function() {
-			return this.actorA.index == this.actorB.index;
-		};
+	Diagram.Signal.prototype.isSelf = function() {
+		return this.actorA.index == this.actorB.index;
 	};
 
 	Diagram.Note = function(actor, placement, message) {
@@ -101,7 +101,6 @@
 	};
 
 	Diagram.parse = function(input) {
-		//var parser = require("grammar").parser;
 		grammar.yy = new Diagram();
 
 		return grammar.parse(input);
