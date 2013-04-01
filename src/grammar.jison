@@ -47,8 +47,8 @@ document
 	;
 
 line
-	: statement 'NL'  { }
-	| statement       { }
+	: statement { }
+	| 'NL'
 	;
 
 statement
