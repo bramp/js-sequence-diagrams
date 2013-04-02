@@ -160,10 +160,18 @@
 		var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
 		var bb = path.getBBox();
 
+		// Translate the text so it's centered.
 		var dx = (x - bb.x) - bb.width / 2;
 		var dy = (y - bb.y) - bb.height / 2;
 
-		return path.transform("t" + dx + "," + dy);
+		// Due to an issue in Raphael 2.1.0 (that seems to be fixed later)
+		// we remap the path itself, instead of using a transformation matrix
+		var m = new Raphael.matrix();
+		m.translate(dx, dy);
+		return path.attr('path', Raphael.mapPath(path.attr('path'), m));
+
+		// otherwise we would do this:
+		//return path.transform("t" + dx + "," + dy);
 	};
 
 /******************
