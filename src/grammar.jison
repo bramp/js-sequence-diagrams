@@ -13,24 +13,24 @@
 
 %%
 
-[\n]+             return 'NL'
+[\n]+             return 'NL';
 \s+               /* skip whitespace */
 \#[^\n]*          /* skip comments */
-"participant"     return 'participant'
-"left of"         return 'left_of'
-"right of"        return 'right_of'
-"over"            return 'over'
-"note"            return 'note'
-"title"           return 'title'
-","               return ','
-[^\->:\n,]+\b     return 'ACTOR'
-"--"              return 'DOTLINE'
-"-"               return 'LINE'
-">>"              return 'OPENARROW'
-">"               return 'ARROW'
-:[^#\n]+          return 'MESSAGE'
-<<EOF>>           return 'EOF'
-.                 return 'INVALID'
+"participant"     return 'participant';
+"left of"         return 'left_of';
+"right of"        return 'right_of';
+"over"            return 'over';
+"note"            return 'note';
+"title"           return 'title';
+","               return ',';
+[^\->:\n,]+\b     return 'ACTOR';
+"--"              return 'DOTLINE';
+"-"               return 'LINE';
+">>"              return 'OPENARROW';
+">"               return 'ARROW';
+:[^#\n]+          return 'MESSAGE';
+<<EOF>>           return 'EOF';
+.                 return 'INVALID';
 
 /lex
 
