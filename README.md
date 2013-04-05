@@ -63,6 +63,9 @@ npm install uglify-js -g
 ## Jison
 npm install jison -g
 
+## JSHint (for linting)
+npm install jshint -g
+
 ## Then to build, just run:
 make
 ```
