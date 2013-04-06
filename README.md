@@ -1,7 +1,7 @@
 JS Sequence Diagrams (we need a better name!)
 =============================================
 **Generates UML sequence diagrams from simple text**  
-<http://bramp.github.com/js-sequence-diagrams/>
+Demo: <http://bramp.github.io/js-sequence-diagrams/>
 
 by [Andrew Brampton](http://bramp.net) 2012
 
