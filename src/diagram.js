@@ -3,6 +3,10 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
+
+/* jspp import statement */
+/*> ../grammar.js */
+
 (function () {
 	"use strict";
 	/*global grammar _ */
@@ -80,9 +84,6 @@
 		RIGHTOF : 1,
 		OVER    : 2
 	};
-
-	/** he following are included by jspp */
-	/*> ../grammar.js */
 
 	/**
 	 * jison doesn't have a good exception, so we make one
