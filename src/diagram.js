@@ -81,8 +81,8 @@
 		OVER    : 2
 	};
 
-	/** he following are included by jspp */
-	/*> ../grammar.js */
+	/** The following is included by jspp */
+	/*> ../build/grammar.js */
 
 	/**
 	 * jison doesn't have a good exception, so we make one
