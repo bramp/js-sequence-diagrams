@@ -7,6 +7,7 @@ clean:
 
 lint:
 	jshint src/*.js
+	jshint test/grammar-tests.js
 
 build/grammar.js: src/grammar.jison
 	~/vendor/jison/jison/node_modules/.bin/jison $< -o $@

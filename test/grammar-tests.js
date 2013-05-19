@@ -63,6 +63,25 @@ var LINETYPE = Diagram.LINETYPE;
 var ARROWTYPE = Diagram.ARROWTYPE;
 var PLACEMENT = Diagram.PLACEMENT;
 
+function regextest(regex, string) {
+	console.log(string, regex.exec(string));
+}
+
+/*
+test("Regex Tests", function() {
+	// These are here to debug regex problems with unicode
+	//var r = /[^\->:\n,]+\b/;
+	var r = /[^\->:\n,]+/;
+	regextest(r, "blah");
+	regextest(r, "bl:ah");
+	regextest(r, "中国");
+	regextest(r, " 中国 ");
+
+	regextest(/^(.+) as (\S+)\s*$/i, "blah");
+	regextest(/^(.+) as (\S+)\s*$/i, " as as as b");
+});
+*/
+
 test( "Solid Arrow", function() {
 	var d = Diagram.parse("A->B: Title");
 	assertSingleArrow(d, ARROWTYPE.FILLED, LINETYPE.SOLID);
@@ -86,8 +105,13 @@ test( "Dashed Open Arrow", function() {
 test( "Titles", function() {
 	equal(Diagram.parse("Title: title").title, "title", "Title");
 	equal(Diagram.parse("Title: line1\\nline2").title, "line1\nline2", "Multiline Title");
+});
 
+test( "Unicode", function() {
 	equal(Diagram.parse("Title: 中国").title, "中国", "Unicode Title");
+	assertEmptyDocument(Diagram.parse("# 中国"));
+	assertSingleActor(Diagram.parse("Participant 中国"), "中国");
+	assertSingleActor(Diagram.parse("中国->中国: Title"), "中国");
 });
 
 test( "Empty documents", function() {
@@ -106,9 +130,10 @@ test( "Comments", function() {
 	assertEmptyDocument(Diagram.parse(" # comment"));
 	assertEmptyDocument(Diagram.parse("# A->B: Title"));
 	assertSingleArrow(Diagram.parse("A->B: Title # comment"), 0, 0);
-	//"title Title # comment"
-	//"participant A # comment"
-	//"note left of A: blah # comment"
+
+	equal(Diagram.parse("Title: title # comment").title, "title");
+	//assertEmptyDocument(Diagram.parse("participant A # comment"));
+	assertSingleNote(Diagram.parse("note left of A: Title # comment"), PLACEMENT.LEFTOF, 'A');
 });
 
 test( "Notes", function() {
