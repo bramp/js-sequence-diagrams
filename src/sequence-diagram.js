@@ -185,13 +185,21 @@
 	_.extend(BaseTheme.prototype, {
 		init : function(diagram) {
 			this.diagram = diagram;
-			this._paper   = undefined;
-			this._font    = undefined;
+			this._paper  = undefined;
+			this._font   = undefined;
 
-			this._title = undefined; // hack - This should be somewhere better
+			this._title  = undefined; // hack - This should be somewhere better
 
 			this._actors_height  = 0;
 			this._signals_height = 0;
+
+			var a = this.arrow_types = {};
+			a[ARROWTYPE.FILLED] = 'block';
+			a[ARROWTYPE.OPEN]   = 'open';
+
+			var l = this.line_types = {};
+			l[LINETYPE.SOLID]  = '';
+			l[LINETYPE.DOTTED] = '-';
 		},
 
 		init_paper : function(container) {
@@ -434,16 +442,13 @@
 			var text_bb = signal.text_bb;
 			var aX = getCenterX(signal.actorA);
 
-			var line_types  = ['', '-'];
-			var arrow_types = ['block', 'open'];
-
 			var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
 			var y = offsetY + signal.height / 2;
 
 			this.draw_text(x, y, signal.message, this._font);
 
 			var attr = _.extend({}, LINE, {
-				'stroke-dasharray': line_types[signal.linetype]
+				'stroke-dasharray': this.line_types[signal.linetype]
 			});
 
 			var y1 = offsetY + SIGNAL_MARGIN;
@@ -458,16 +463,13 @@
 			line.attr(attr);
 
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, aX, y2);
-			attr['arrow-end'] = arrow_types[signal.arrowtype] + '-wide-long';
+			attr['arrow-end'] = this.arrow_types[signal.arrowtype] + '-wide-long';
 			line.attr(attr);
 		},
 
 		draw_signal : function (signal, offsetY) {
 			var aX = getCenterX( signal.actorA );
 			var bX = getCenterX( signal.actorB );
-
-			var line_types  = ['', '-'];
-			var arrow_types = ['block', 'open'];
 
 			// Mid point between actors
 			var x = (bX - aX) / 2 + aX;
@@ -481,8 +483,8 @@
 			var line = this.draw_line(aX, y, bX, y);
 			line.attr(LINE);
 			line.attr({
-				'arrow-end': arrow_types[signal.arrowtype] + '-wide-long',
-				'stroke-dasharray': line_types[signal.linetype]
+				'arrow-end': this.arrow_types[signal.arrowtype] + '-wide-long',
+				'stroke-dasharray': this.line_types[signal.linetype]
 			});
 
 			//var ARROW_SIZE = 16;

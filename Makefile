@@ -19,7 +19,7 @@ build/diagram-grammar.js: src/diagram.js build/grammar.js
 
 build/sequence-diagram-min.js build/sequence-diagram-min.js.map: src/copyright.js build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
 	#
-	# Ignore warnings from diagram-grammar.js
+	# Please ignore the warnings below (these are in combined js code)
 	#
 	uglifyjs \
 		src/copyright.js \
