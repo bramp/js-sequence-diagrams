@@ -28,7 +28,6 @@ build/sequence-diagram-min.js build/sequence-diagram-min.js.map: src/copyright.j
 		src/sequence-diagram.js \
 		-o build/sequence-diagram-min.js \
 		-c --comments \
-		-b \
 		--source-map build/sequence-diagram-min.js.map
 
 	#
