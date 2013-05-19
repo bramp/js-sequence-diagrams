@@ -33,7 +33,9 @@
 	};
 
 	Diagram.Actor = function(name, index) {
-		this.name = name;
+		var nameAndAlias = name.split(/ as /i);
+		this.name  = nameAndAlias.pop();
+		this.alias = (nameAndAlias.length > 0) ? nameAndAlias.join(' As ') : this.name;
 		this.index = index;
 	};
 
