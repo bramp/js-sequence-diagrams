@@ -1,9 +1,18 @@
+function assertSingleActor(d, actor) {
+
+	equal(d.actors.length, 1, "Correct actors count");
+
+	var a = d.actors[0];
+	equal(a.name, actor, "Actors A's name");
+	//equal(a.name, "A", "Actors A");
+}
+
 function assertSingleArrow(d, arrowtype, linetype) {
 
 	equal(d.actors.length, 2, "Correct actors count");
 
 	var a = d.actors[0];
-	var b = d.actors[1]
+	var b = d.actors[1];
 	equal(a.name, "A", "Actors A");
 	equal(b.name, "B", "Actors B");
 
@@ -107,8 +116,13 @@ test( "Notes", function() {
 	assertSingleNote(Diagram.parse("Note right of A: Title"), PLACEMENT.RIGHTOF, 'A');
 	assertSingleNote(Diagram.parse("Note over A: Title"), PLACEMENT.OVER, 'A');
 	assertSingleNote(Diagram.parse("Note over A,B: Title"), PLACEMENT.OVER, ['A', 'B']);
-	//"title Title # comment"
-	//"participant A # comment"
-	//"note left of A: blah # comment"
+});
+
+
+test( "Participants", function() {
+	assertSingleActor(Diagram.parse("Participant Bob"), "Bob");
+	assertSingleActor(Diagram.parse("Participant Name with spaces"), "Name with spaces");
+	assertSingleActor(Diagram.parse("Participant Name with spaces as alias"), "Name with spaces");
+	assertSingleActor(Diagram.parse("Participant Name with 'as' in it"), "Name with 'as' in it");
 });
 

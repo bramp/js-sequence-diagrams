@@ -9,7 +9,7 @@ lint:
 	jshint src/*.js
 
 build/grammar.js: src/grammar.jison
-	jison $< -o $@
+	~/vendor/jison/jison/node_modules/.bin/jison $< -o $@
 
 build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
@@ -27,6 +27,7 @@ build/sequence-diagram-min.js build/sequence-diagram-min.js.map: src/copyright.j
 		src/sequence-diagram.js \
 		-o build/sequence-diagram-min.js \
 		-c --comments \
+		-b \
 		--source-map build/sequence-diagram-min.js.map
 
 	#

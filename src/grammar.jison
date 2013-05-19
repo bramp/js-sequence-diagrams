@@ -23,7 +23,7 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
-[^\->:\n,]+\b     return 'ACTOR';
+[^\->:\n,]+       return 'ACTOR';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';
@@ -53,7 +53,7 @@ line
 	;
 
 statement
-	: 'participant' actor  { /* do nothing */  }
+	: 'participant' actor  { $2.checkForAlias(); }
 	| signal               { yy.addSignal($1); }
 	| note_statement       { yy.addSignal($1); }
 	| 'title' message      { yy.setTitle($2);  }
@@ -80,7 +80,7 @@ signal
 	;
 
 actor
-	: ACTOR { $$ = yy.getActor($1.replace(/\\n/gm, "\n")); }
+	: ACTOR { $$ = yy.getActor($1.trim().replace(/\\n/gm, "\n")); }
 	;
 
 signaltype
