@@ -33,4 +33,4 @@ build/sequence-diagram-min.js build/sequence-diagram-min.js.map: src/copyright.j
 	#
 	# Copy minified file to site
 	#
-	cp build/sequence-diagram-min.js _site/
+	cp build/sequence-diagram-min.js* _site/
