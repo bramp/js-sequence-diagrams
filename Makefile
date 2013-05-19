@@ -1,35 +1,35 @@
 .PHONY : all test clean lint
 
-all: lint sequence-diagram-min.js
+all: lint build/sequence-diagram-min.js
 
 clean:
-	rm sequence-diagram-min.js* grammar.js diagram-grammar.js
+	rm build/*
 
 lint:
 	jshint src/*.js
 
-diagram-grammar.js: src/diagram.js grammar.js
+build/grammar.js: src/grammar.jison
+	jison $< -o $@
+
+build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
 	# Compiling grammar
 	#
-	jspp src/diagram.js > diagram-grammar.js
+	jspp $< > $@
 
-sequence-diagram-min.js: src/copyright.js diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
+build/sequence-diagram-min.js build/sequence-diagram-min.js.map: src/copyright.js build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
 	#
 	# Ignore warnings from diagram-grammar.js
 	#
 	uglifyjs \
 		src/copyright.js \
-		diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js \
+		build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js \
 		src/sequence-diagram.js \
-		-o sequence-diagram-min.js \
+		-o build/sequence-diagram-min.js \
 		-c --comments \
-		--source-map sequence-diagram-min.js.map
+		--source-map build/sequence-diagram-min.js.map
 
 	#
 	# Copy minified file to site
 	#
-	cp sequence-diagram-min.js _site/
-
-grammar.js: src/grammar.jison
-	jison $<
+	cp build/sequence-diagram-min.js _site/
