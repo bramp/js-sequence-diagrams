@@ -1,5 +1,5 @@
 /** js sequence diagrams
- *  http://bramp.github.com/js-sequence-diagrams/
+ *  http://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
