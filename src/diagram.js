@@ -39,9 +39,9 @@
 
 	// Check if we can split the Actor's name into a name,alias pair
 	Diagram.Actor.prototype.checkForAlias = function() {
-		var s = /^(.+) as (\S+)\s*$/i.exec(this.name);
+		var s = /^(.+) as (\S+)\s*$/i.exec(this.name.replace("\n","\\n"));
 		if (s) {
-			this.name  = s[1].trim();
+			this.name  = s[1].trim().replace("\\n","\n");
 			this.alias = s[2].trim();
 		}
 	};
