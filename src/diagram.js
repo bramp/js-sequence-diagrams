@@ -14,12 +14,22 @@
 	}
 
 	Diagram.prototype.getActor = function(alias) {
+		var s = /^(.+) as (\S+)$/i.exec(alias.trim());
+		if (s) {
+			name  = s[1].trim();
+			alias = s[2].trim();
+		} else {
+			name = alias.trim();
+		}
+
+		name = name.replace(/\\n/gm, "\n");
+
 		var i, actors = this.actors;
 		for (i in actors) {
 			if (actors[i].alias == alias)
 				return actors[i];
 		}
-		i = actors.push( new Diagram.Actor(alias, actors.length) );
+		i = actors.push( new Diagram.Actor(alias, name, actors.length) );
 		return actors[ i - 1 ];
 	};
 
@@ -31,19 +41,10 @@
 		this.signals.push( signal );
 	};
 
-	Diagram.Actor = function(alias, index) {
+	Diagram.Actor = function(alias, name, index) {
 		this.alias = alias;
-		this.name  = alias;
+		this.name  = name;
 		this.index = index;
-	};
-
-	// Check if we can split the Actor's name into a name,alias pair
-	Diagram.Actor.prototype.checkForAlias = function() {
-		var s = /^(.+) as (\S+)\s*$/i.exec(this.name);
-		if (s) {
-			this.name  = s[1].trim();
-			this.alias = s[2].trim();
-		}
 	};
 
 	Diagram.Signal = function(actorA, signaltype, actorB, message) {

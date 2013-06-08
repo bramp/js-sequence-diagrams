@@ -111,6 +111,7 @@ test( "Unicode", function() {
 	equal(Diagram.parse("Title: 中国").title, "中国", "Unicode Title");
 	assertEmptyDocument(Diagram.parse("# 中国"));
 	assertSingleActor(Diagram.parse("Participant 中国"), "中国");
+	assertSingleActor(Diagram.parse("Participant 中国 as alias"), "中国");
 	assertSingleActor(Diagram.parse("中国->中国: Title"), "中国");
 });
 
@@ -149,5 +150,7 @@ test( "Participants", function() {
 	assertSingleActor(Diagram.parse("Participant Name with spaces"), "Name with spaces");
 	assertSingleActor(Diagram.parse("Participant Name with spaces as alias"), "Name with spaces");
 	assertSingleActor(Diagram.parse("Participant Name with 'as' in it"), "Name with 'as' in it");
+	assertSingleActor(Diagram.parse("Participant Bob \\n with newline"), "Bob \n with newline");
+	assertSingleActor(Diagram.parse("Participant Bob \\n with newline as alias"), "Bob \n with newline");
 });
 

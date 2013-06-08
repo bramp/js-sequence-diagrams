@@ -53,7 +53,7 @@ line
 	;
 
 statement
-	: 'participant' actor  { $2.checkForAlias(); }
+	: 'participant' actor  { $2; }
 	| signal               { yy.addSignal($1); }
 	| note_statement       { yy.addSignal($1); }
 	| 'title' message      { yy.setTitle($2);  }
@@ -80,7 +80,7 @@ signal
 	;
 
 actor
-	: ACTOR { $$ = yy.getActor($1.trim().replace(/\\n/gm, "\n")); }
+	: ACTOR { $$ = yy.getActor($1); }
 	;
 
 signaltype
