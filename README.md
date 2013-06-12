@@ -86,6 +86,8 @@ Thanks
 ------
 This project makes use of Jison, Raphaël, underscore.js, and the Daniel font (which is free to use for any purpose).
 
+Many thanks to [Web Sequence Diagrams](http://www.websequencediagrams.com/) which greatly inspired this project, and forms the basis for the syntax.
+
 Licence (Simplified BSD License)
 -------
 
