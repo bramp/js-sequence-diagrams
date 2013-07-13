@@ -1,9 +1,9 @@
-JS Sequence Diagrams (we need a better name!)
+JS Sequence Diagrams
 =============================================
 **Generates UML sequence diagrams from simple text**  
 <http://bramp.github.io/js-sequence-diagrams/>
 
-by [Andrew Brampton](http://bramp.net) 2012
+by [Andrew Brampton](http://bramp.net) 2012-2013
 
 
 Example
@@ -55,16 +55,16 @@ Build requirements
 ------------------
 ```bash
 # JavaScript Preprocessor 
-gem install jspp
+sudo gem install jspp
 
 ## UglifyJS 2
-npm install uglify-js -g
+sudo npm install uglify-js -g
 
 ## Jison
-npm install jison -g
+sudo npm install jison -g
 
 ## JSHint (for linting)
-npm install jshint -g
+sudo npm install jshint -g
 
 ## Then to build, just run:
 make
@@ -72,7 +72,6 @@ make
 
 TODO
 ----
-* Change Makefile to Grunt (because it looks cool)
 * Other themes
 * Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper
 library
@@ -91,7 +90,7 @@ Many thanks to [Web Sequence Diagrams](http://www.websequencediagrams.com/) whic
 Licence (Simplified BSD License)
 -------
 
-Copyright (c) 2012, Andrew Brampton  
+Copyright (c) 2012-2013, Andrew Brampton  
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
