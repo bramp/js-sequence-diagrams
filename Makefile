@@ -1,6 +1,12 @@
 .PHONY : all test clean lint
 
-all: lint build/sequence-diagram-min.js
+all: node_modules lint build/sequence-diagram-min.js
+
+node_modules: package.json
+	#
+	# NPM Update needed.
+	#
+	npm update
 
 clean:
 	rm build/*
@@ -10,7 +16,7 @@ lint:
 	jshint test/grammar-tests.js
 
 build/grammar.js: src/grammar.jison
-	~/vendor/jison/jison/node_modules/.bin/jison $< -o $@
+	jison $< -o $@
 
 build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
