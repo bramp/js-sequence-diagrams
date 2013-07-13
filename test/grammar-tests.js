@@ -152,5 +152,6 @@ test( "Participants", function() {
 	assertSingleActor(Diagram.parse("Participant Name with 'as' in it"), "Name with 'as' in it");
 	assertSingleActor(Diagram.parse("Participant Bob \\n with newline"), "Bob \n with newline");
 	assertSingleActor(Diagram.parse("Participant Bob \\n with newline as alias"), "Bob \n with newline");
+	assertSingleActor(Diagram.parse("Participant Object"), "Object");
 });
 
