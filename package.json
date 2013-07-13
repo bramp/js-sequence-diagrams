@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "//" : "Others include jspp",
-    "jison": "~0.4.x",
+    "jison": "0.4.6",
     "jshint": "~2.0.x",
     "uglify-js": "~2.3.x"
   },
