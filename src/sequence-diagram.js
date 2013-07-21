@@ -574,14 +574,14 @@
 	});
 
 /******************
- * RaphaëlTheme
+ * RaphaelTheme
  ******************/
 
-	var RaphaëlTheme = function(diagram) {
+	var RaphaelTheme = function(diagram) {
 		this.init(diagram);
 	};
 
-	_.extend(RaphaëlTheme.prototype, BaseTheme.prototype, {
+	_.extend(RaphaelTheme.prototype, BaseTheme.prototype, {
 
 		init_font : function() {
 			this._font = {
@@ -593,15 +593,15 @@
 	});
 
 /******************
- * HandRaphaëlTheme
+ * HandRaphaelTheme
  ******************/
 
-	var HandRaphaëlTheme = function(diagram) {
+	var HandRaphaelTheme = function(diagram) {
 		this.init(diagram);
 	};
 
-	// Take the standard RaphaëlTheme and make all the lines wobbly
-	_.extend(HandRaphaëlTheme.prototype, BaseTheme.prototype, {
+	// Take the standard RaphaelTheme and make all the lines wobbly
+	_.extend(HandRaphaelTheme.prototype, BaseTheme.prototype, {
 		init_font : function() {
 			this._font = {
 				'font-size': 16,
@@ -621,8 +621,8 @@
 	});
 
 	var themes = {
-		simple : RaphaëlTheme,
-		hand  : HandRaphaëlTheme
+		simple : RaphaelTheme,
+		hand  : HandRaphaelTheme
 	};
 
 	Diagram.prototype.drawSVG = function (container, options) {
