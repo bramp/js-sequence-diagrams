@@ -99,6 +99,12 @@ This project makes use of Jison, Raphaël, underscore.js, and the Daniel font (w
 
 Many thanks to [Web Sequence Diagrams](http://www.websequencediagrams.com/) which greatly inspired this project, and forms the basis for the syntax.
 
+Related
+-------
+
+* [Web Sequence Diagrams](http://www.websequencediagrams.com/) Server side version with a commerical offering
+* [flowchart.js](http://adrai.github.io/flowchart.js/) A similar project that draws flow charts in the browser
+
 Licence (Simplified BSD License)
 -------
 
