@@ -1,0 +1,13 @@
+{
+  "name": "js-sequence-diagrams",
+  "version": "1.0.4",
+  "main": "sequence-diagram.js",
+  "ignore": [
+      "_site",
+      "test",
+      "*.json",
+      "*.md",
+      "Makefile",
+      "reference.js"
+    ]
+}
