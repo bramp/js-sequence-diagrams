@@ -7,7 +7,6 @@
       "test",
       "*.json",
       "*.md",
-      "Makefile",
-      "reference.js"
+      "Makefile"
     ]
 }
