@@ -1,7 +1,7 @@
 {
   "name": "js-sequence-diagrams",
   "version": "1.0.4",
-  "main": "sequence-diagram.js",
+  "main": "./build/sequence-diagram-min.js",
   "ignore": [
       "_site",
       "test",
