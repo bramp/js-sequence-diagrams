@@ -14,7 +14,8 @@
 	}
 
 	Diagram.prototype.getActor = function(alias) {
-		var s = /^(.+) as (\S+)$/i.exec(alias.trim());
+		alias = alias.trim();
+		var s = /^(.+) as (\S+)$/i.exec(alias);
 		if (s) {
 			name  = s[1].trim();
 			alias = s[2].trim();
@@ -23,13 +24,13 @@
 		}
 
 		name = name.replace(/\\n/gm, "\n");
-
 		var i, actors = this.actors;
 		for (i in actors) {
 			if (actors[i].alias == alias)
 				return actors[i];
 		}
-		i = actors.push( new Diagram.Actor(alias, name, actors.length) );
+		var message = new Diagram.Message(name);
+		i = actors.push( new Diagram.Actor(alias, message, actors.length) );
 		return actors[ i - 1 ];
 	};
 
@@ -70,11 +71,37 @@
 			throw new Error("Note should be over two different actors");
 		}
 	};
+	
+	Diagram.Message = function(message) {
+		this.type = "Message";
+		this.text = message;
+	};
+	
+	Diagram.Message.prototype.setAttr = function(attr_obj) {
+		this.attr = attr_obj.values;
+	};
+	
+	Diagram.Attributes = function(attr_str) {
+		this.type = "Attributes";
+		
+		var attribs = attr_str.split(",");
+		var attrib_obj = {};
+		
+		attribs.map(function(attr) {
+			/* split key value pairs foo="bar" accounting for different
+			 * quotes and spaces
+			 */
+		    /^\s*(?:'|")?(.*?)(?:'|")?\s*=\s*(?:'|")(.*?)(?:'|")?\s*$/.exec(attr);
+		    	attrib_obj[RegExp.$1] = RegExp.$2;
+		});	
+		
+		this.values = attrib_obj;
+	};
 
 	Diagram.Note.prototype.hasManyActors = function() {
 		return _.isArray(this.actor);
 	};
-
+	
 	Diagram.LINETYPE = {
 		SOLID  : 0,
 		DOTTED : 1
@@ -112,11 +139,12 @@
 
 	Diagram.parse = function(input) {
 		grammar.yy = new Diagram();
-
+		
 		return grammar.parse(input);
 	};
 
 	// Expose this class externally
 	this.Diagram = Diagram;
+	
 
 }).call(this);
