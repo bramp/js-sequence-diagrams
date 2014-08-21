@@ -37,7 +37,7 @@ and then
 ```html
 <div id="diagram">Diagram will be placed here</div>
 <script src="sequence-diagram-min.js"></script>
-<script> 
+<script>
   var diagram = Diagram.parse("A->B: Does something");
   diagram.drawSVG('diagram');
 </script>
@@ -54,14 +54,14 @@ $(".diagram").sequenceDiagram({theme: 'hand'});
 Build requirements
 ------------------
 ```bash
-# JavaScript Preprocessor 
+# JavaScript Preprocessor
 sudo gem install jspp
 
 ## UglifyJS 2
 sudo npm install uglify-js -g
 
 ## Jison
-sudo npm install jison -g
+sudo npm install jison@0.4.6 -g
 
 ## JSHint (for linting)
 sudo npm install jshint -g
