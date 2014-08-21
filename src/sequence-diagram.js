@@ -621,6 +621,7 @@
 	});
 
 	var themes = {
+		base : BaseTheme,
 		simple : RaphaelTheme,
 		hand  : HandRaphaelTheme
 	};
