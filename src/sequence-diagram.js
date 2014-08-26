@@ -409,7 +409,6 @@
 					aX, y + this._actors_height - ACTOR_MARGIN,
 					aX, y + this._actors_height + ACTOR_MARGIN + this._signals_height);
 				line.attr(LINE);
-				line.attr({fill: "red"});
 			}, this);
 		},
 
@@ -459,16 +458,26 @@
 			var line;
 			line = this.draw_line(aX, y1, aX + SELF_SIGNAL_WIDTH, y1);
 			line.attr(attr);
-			line.attr(signal.message.attr.line);
-
+			
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
+			
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2);
 			line.attr(attr);
-			line.attr(signal.message.attr.line);
-
+			
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
+			
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, aX, y2);
 			attr['arrow-end'] = this.arrow_types[signal.arrowtype] + '-wide-long';
+			
 			line.attr(attr);
-			line.attr(signal.message.attr.line);
+
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
 		},
 
 		draw_signal : function (signal, offsetY) {
@@ -490,7 +499,10 @@
 				'arrow-end': this.arrow_types[signal.arrowtype] + '-wide-long',
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
-			line.attr(signal.message.attr.line);
+			
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
 			
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
@@ -570,6 +582,7 @@
 				rect.attr(text.attr.box);
 				rect.attr(text.attr.line);
 			}
+			
 
 			// Draw text (in the center)
 			x = getCenterX(box);
