@@ -385,7 +385,6 @@
 			// TODO Refactor a little
 			diagram.width  += 2 * DIAGRAM_MARGIN;
 			diagram.height += 2 * DIAGRAM_MARGIN + 2 * this._actors_height + this._signals_height;
-
 			return this;
 		},
 
@@ -410,6 +409,7 @@
 					aX, y + this._actors_height - ACTOR_MARGIN,
 					aX, y + this._actors_height + ACTOR_MARGIN + this._signals_height);
 				line.attr(LINE);
+				line.attr({fill: "red"});
 			}, this);
 		},
 
@@ -459,13 +459,16 @@
 			var line;
 			line = this.draw_line(aX, y1, aX + SELF_SIGNAL_WIDTH, y1);
 			line.attr(attr);
+			line.attr(signal.message.attr.line);
 
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2);
 			line.attr(attr);
+			line.attr(signal.message.attr.line);
 
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, aX, y2);
 			attr['arrow-end'] = this.arrow_types[signal.arrowtype] + '-wide-long';
 			line.attr(attr);
+			line.attr(signal.message.attr.line);
 		},
 
 		draw_signal : function (signal, offsetY) {
@@ -487,7 +490,8 @@
 				'arrow-end': this.arrow_types[signal.arrowtype] + '-wide-long',
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
-
+			line.attr(signal.message.attr.line);
+			
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
 			//draw_arrowhead(bX, offsetY, ARROW_SIZE, dir);
@@ -537,15 +541,17 @@
 				t = paper.text(x, y, message.text);
 				t.attr(f);
 			}
-			
-			if ( message.attr ) {
-				t.attr(message.attr);
-			}
-			
+						
 			// draw a rect behind it
 			var bb = t.getBBox();
 			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
-			r.attr({'fill': "#fff", 'stroke': 'none'});
+			r.attr({'stroke': 'none'});
+			
+			if ( message.attr ) {
+				t.attr(message.attr.text);
+				r.attr(message.attr.box);
+			}
+			
 
 			t.toFront();
 		},
@@ -559,6 +565,11 @@
 			// Draw inner box
 			var rect = this.draw_rect(x, y, w, h);
 			rect.attr(LINE);
+			
+			if ( text.attr ) {
+				rect.attr(text.attr.box);
+				rect.attr(text.attr.line);
+			}
 
 			// Draw text (in the center)
 			x = getCenterX(box);

@@ -79,24 +79,97 @@
 	};
 	
 	Diagram.Message.prototype.setAttr = function(attr_obj) {
-		this.attr = attr_obj.values;
+		this.attr = attr_obj;
 	};
 	
 	Diagram.Attributes = function(attr_str) {
 		this.type = "Attributes";
+		var text = Object.create({}, { 
+			fill: {
+				value: "black",
+				writable: true,
+				enumerable: true,
+				configrable: true
+			},
+			url: {
+				writable: true,
+				enumerable: true,
+				configrable: true
+			}
+		});
+		
+		var box = Object.create({}, {
+			url: {
+				writable: true,
+				enumerable: true,
+				configrable: true
+			},
+			fill: {
+				value: "white",
+				writable: true,
+				enumerable: true,
+				configrable: true
+			}
+		});
+		
+		var line = Object.create({}, {
+			url: {
+				writable: true,
+				enumerable: true,
+				configrable: true
+			}
+		});
+		
+		var paper = Object.create({}, {
+			fill: {
+				writable: true,
+				enumerable: true,
+				configrable: true
+			}
+		});
 		
 		var attribs = attr_str.split(",");
-		var attrib_obj = {};
 		
 		attribs.map(function(attr) {
 			/* split key value pairs foo="bar" accounting for different
 			 * quotes and spaces
 			 */
 		    /^\s*(?:'|")?(.*?)(?:'|")?\s*=\s*(?:'|")(.*?)(?:'|")?\s*$/.exec(attr);
-		    	attrib_obj[RegExp.$1] = RegExp.$2;
+		    /* raphael implements attributes based on 
+		     * types of objects, however attributes that
+		     * DOT provides are flat, so we will attempt to
+		     * translate DOT attributes to raphael
+		     */	
+		    var key = RegExp.$1.toLowerCase();
+		    var value = RegExp.$2;
+		    
+		    switch(key) {
+		    case "color":
+		    	line.stroke = value;
+		    	break;
+		    case "bgcolor":
+		    	paper.fill = value;
+		    	break;
+		    case "fillcolor":
+		    	box.fill = value;
+		    	break;
+		    case "fontcolor":
+		    	text.fill = value;
+		    	break;
+		    case "url":
+		    case "href":
+		    	text.href = value;
+		    	box.href = value;
+		    	line.href = value;
+		    	break;
+		    default:
+		    	break;
+		    }
 		});	
-		
-		this.values = attrib_obj;
+		    
+		this.text = text;
+		this.box = box;
+		this.line = line;
 	};
 
 	Diagram.Note.prototype.hasManyActors = function() {

@@ -9,12 +9,12 @@ document ::= statement*
 
 statement ::=
 	( 'title' ':' message (attributes)?
-	| 'participant' actor (attributes)?
-	| 'note' ('left of' | 'right of' | 'over') actor ':' message (attributes)?
-	| actor ( '-' | '--' ) ( '>' | '>>' )? actor ':' message (attributes)?
+	| 'participant' ActorName (as ActorAlias)? (attributes)?
+	| 'note' ('left of' | 'right of' | 'over') ActorId ':' message (attributes)?
+	| ActorId ( '-' | '--' ) ( '>' | '>>' )? ActorId ':' message (attributes)?
 	)
 
-actor ::= name (as alias)?
+ActorId ::= (ActorName | ActorAlias)
 
 attributes ::=  '[' attribute (',' attribute)* ']'
 
