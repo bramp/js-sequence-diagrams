@@ -45,10 +45,10 @@ and then
 
 or use jQuery to do all the work:
 ```html
-<div class="diagram">A->B: Message</div>;
-<script>;
+<div class="diagram">A->B: Message</div>
+<script>
 $(".diagram").sequenceDiagram({theme: 'hand'});
-</script>;
+</script>
 ```
 
 Build requirements
