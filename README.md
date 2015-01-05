@@ -57,17 +57,10 @@ Build requirements
 # JavaScript Preprocessor 
 sudo gem install jspp
 
-## UglifyJS 2
-sudo npm install uglify-js -g
-
-## Jison
-sudo npm install jison -g
-
-## JSHint (for linting)
-sudo npm install jshint -g
-
 ## Then to build, just run:
 make
+
+## The Makefile will use npm to install all the correct dev dependencies
 ```
 
 How to release

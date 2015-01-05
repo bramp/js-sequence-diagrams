@@ -14,8 +14,8 @@
     "underscore": "~1.4.x",
     "raphael": "~2.1.x"
   },
+  "//" : "Must also install jspp",
   "devDependencies": {
-    "//" : "Others include jspp",
     "jison": "0.4.6",
     "jshint": "~2.0.x",
     "uglify-js": "~2.3.x"

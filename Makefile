@@ -1,5 +1,7 @@
 .PHONY : all test clean lint
 
+NODE_MODULES := node_modules/.bin
+
 all: node_modules lint build/sequence-diagram-min.js
 
 node_modules: package.json
@@ -12,23 +14,23 @@ clean:
 	rm build/*
 
 lint:
-	jshint src/*.js
-	jshint test/grammar-tests.js
+	$(NODE_MODULES)/jshint src/*.js
+	$(NODE_MODULES)/jshint test/grammar-tests.js
 
 build/grammar.js: src/grammar.jison
-	jison $< -o $@
+	$(NODE_MODULES)/jison $< -o $@
 
 build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
 	# Compiling grammar
 	#
-	jspp $< > $@
+	jspp $< > $@ || (rm $@ && exit 127)
 
 build/sequence-diagram-min.js build/sequence-diagram-min.js.map: src/copyright.js build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
 	#
 	# Please ignore the warnings below (these are in combined js code)
 	#
-	uglifyjs \
+	$(NODE_MODULES)/uglifyjs \
 		src/copyright.js \
 		build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js \
 		src/sequence-diagram.js \
