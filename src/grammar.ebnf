@@ -8,14 +8,20 @@
 document ::= statement*
 
 statement ::=
-	( 'title' ':' message
-	| 'participant' actor 
-	| 'note' ('left of' | 'right of' | 'over') actor ':' message
-	| actor ( '-' | '--' ) ( '>' | '>>' )? actor ':' message
+	( 'title' ':' message (attributes)?
+	| 'participant' ActorName (as ActorAlias)? (attributes)?
+	| 'note' ('left of' | 'right of' | 'over') ActorId ':' message (attributes)?
+	| ActorId ( '-' | '--' ) ( '>' | '>>' )? ActorId ':' message (attributes)?
 	)
+
+ActorId ::= (ActorName | ActorAlias)
+
+attributes ::=  '[' attribute (',' attribute)* ']'
+
+attribute ::= key '=' '"' value '"'
 
 /*
 message ::= [^\n]+
 
-actor ::= [^\->:\n,]+
+actor ::= [^\[\->:\n,]+
 */

@@ -117,12 +117,13 @@
 	/**
 	 * Returns the text's bounding box
 	 */
-	Raphael.fn.text_bbox = function (text, font) {
+	Raphael.fn.text_bbox = function (message, font) {
 		var p;
+
 		if (font._obj) {
-			p = this.print_center(0, 0, text, font._obj, font['font-size']);
+			p = this.print_center(0, 0, message.text, font._obj, font['font-size']);
 		} else {
-			p = this.text(0, 0, text);
+			p = this.text(0, 0, message.text);
 			p.attr(font);
 		}
 
@@ -384,7 +385,6 @@
 			// TODO Refactor a little
 			diagram.width  += 2 * DIAGRAM_MARGIN;
 			diagram.height += 2 * DIAGRAM_MARGIN + 2 * this._actors_height + this._signals_height;
-
 			return this;
 		},
 
@@ -458,13 +458,26 @@
 			var line;
 			line = this.draw_line(aX, y1, aX + SELF_SIGNAL_WIDTH, y1);
 			line.attr(attr);
-
+			
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
+			
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2);
 			line.attr(attr);
-
+			
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
+			
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, aX, y2);
 			attr['arrow-end'] = this.arrow_types[signal.arrowtype] + '-wide-long';
+			
 			line.attr(attr);
+
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
 		},
 
 		draw_signal : function (signal, offsetY) {
@@ -486,7 +499,11 @@
 				'arrow-end': this.arrow_types[signal.arrowtype] + '-wide-long',
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
-
+			
+			if ( signal.message.attr ) {
+				line.attr(signal.message.attr.line);
+			}
+			
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
 			//draw_arrowhead(bX, offsetY, ARROW_SIZE, dir);
@@ -525,20 +542,28 @@
 		 * x,y (int) x,y center point for this text
 		 * TODO Horz center the text when it's multi-line print
 		 */
-		draw_text : function (x, y, text, font) {
+		draw_text : function (x, y, message, font) {
 			var paper = this._paper;
 			var f = font || {};
 			var t;
+						
 			if (f._obj) {
-				t = paper.print_center(x, y, text, f._obj, f['font-size']);
+				t = paper.print_center(x, y, message.text, f._obj, f['font-size']);
 			} else {
-				t = paper.text(x, y, text);
+				t = paper.text(x, y, message.text);
 				t.attr(f);
 			}
+						
 			// draw a rect behind it
 			var bb = t.getBBox();
 			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
-			r.attr({'fill': "#fff", 'stroke': 'none'});
+			r.attr({'stroke': 'none'});
+			
+			if ( message.attr ) {
+				t.attr(message.attr.text);
+				r.attr(message.attr.box);
+			}
+			
 
 			t.toFront();
 		},
@@ -552,6 +577,12 @@
 			// Draw inner box
 			var rect = this.draw_rect(x, y, w, h);
 			rect.attr(LINE);
+			
+			if ( text.attr ) {
+				rect.attr(text.attr.box);
+				rect.attr(text.attr.line);
+			}
+			
 
 			// Draw text (in the center)
 			x = getCenterX(box);
@@ -560,17 +591,6 @@
 			this.draw_text(x, y, text, font);
 		}
 
-		/**
-		 * Draws a arrow head
-		 * direction must be -1 for left, or 1 for right
-		 */
-		//function draw_arrowhead(x, y, size, direction) {
-		//	var dx = (size/2) * direction;
-		//	var dy = (size/2);
-		//
-		//	y -= dy; x -= dx;
-		//	var p = this._paper.path("M" + x + "," + y + "v" + size + "l" + dx + ",-" + (size/2) + "Z");
-		//}
 	});
 
 /******************

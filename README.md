@@ -51,6 +51,35 @@ $(".diagram").sequenceDiagram({theme: 'hand'});
 </script>
 ```
 
+Extended example
+----------------
+we turn 
+
+    Title: Sample Diagram[fontcolor="white", fillcolor="blue", color="red"]
+    Participant Alice as A [color="red"]
+    Participant Bob [fillcolor="blue", fontcolor="white"]
+    A->Bob: Message [color="gray"]
+    Note left of A: Hello color\nNotes [URL="http://example.com", fillcolor="orange"]
+    Note right of Bob: Click Me\nI will take you\nto example.com [URL="http://example.com"]
+    Note over A, Bob: Gradient colors [fillcolor="90-#f00:5-#00f:95"]
+
+into
+
+![Sample generated UML diagram](https://cdn.rawgit.com/winfinit/images/master/js-sequence-diagram/issue28/color-output-example.svg)
+
+Attributes
+----------
+We support subset of Graphviz attributes
+
+Attribute | Description
+--- | --- |
+color | Basic drawing color for graphics, not text.
+fillcolor | Color used to fill the background of a node.
+fontcolor | Color used for text.
+URL | Hyperlinks incorporated into device-dependent output.
+href | Same as URL
+
+
 Build requirements
 ------------------
 ```bash

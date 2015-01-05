@@ -23,12 +23,13 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
-[^\->:\n,]+       return 'ACTOR';
+[^\[\->:\n,]+     return 'ACTOR';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';
 ">"               return 'ARROW';
-:[^#\n]+          return 'MESSAGE';
+:[^\[#\n]+        return 'MESSAGE';
+"["[^\n]+"]"      return 'MESSAGE_ATTR';
 <<EOF>>           return 'EOF';
 .                 return 'INVALID';
 
@@ -81,6 +82,7 @@ signal
 
 actor
 	: ACTOR { $$ = yy.getActor($1); }
+	| actor attribs { $1.name.setAttr($2); }
 	;
 
 signaltype
@@ -99,8 +101,15 @@ arrowtype
 	;
 
 message
-	: MESSAGE { $$ = $1.substring(1).trim().replace(/\\n/gm, "\n"); }
+	: MESSAGE 
+	{ 
+		$$ = new Diagram.Message($1.substring(1).trim().replace(/\\n/gm, "\n")); } 
+	}
+	| message attribs { $1.setAttr( $2 ); }
 	;
 
+attribs
+	:MESSAGE_ATTR { $$ = new Diagram.Attributes($1.substring(1, $1.length - 1)); }
+	;
 
 %%
