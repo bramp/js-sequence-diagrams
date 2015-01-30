@@ -3,7 +3,18 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
-(function () {
+(function(init) {
+	/*global Diagram, Raphael, _ */
+	if(typeof define === "function" && define.amd) {
+		define("Diagram", ['raphael'], function(Raphael) {
+			init(Raphael);
+			return Diagram;
+		});
+	}
+	else {
+		init(Raphael);
+	}
+})(function(Raphael) {
 	"use strict";
 	/*global Diagram, Raphael, _ */
 
@@ -640,4 +651,4 @@
 
 	}; // end of drawSVG
 
-}());
+});
