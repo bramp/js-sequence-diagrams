@@ -45,10 +45,10 @@ and then
 
 or use jQuery to do all the work:
 ```html
-<div class="diagram">A->B: Message</div>;
-<script>;
+<div class="diagram">A->B: Message</div>
+<script>
 $(".diagram").sequenceDiagram({theme: 'hand'});
-</script>;
+</script>
 ```
 
 Build requirements
@@ -57,17 +57,10 @@ Build requirements
 # JavaScript Preprocessor
 sudo gem install jspp
 
-## UglifyJS 2
-sudo npm install uglify-js -g
-
-## Jison
-sudo npm install jison@0.4.6 -g
-
-## JSHint (for linting)
-sudo npm install jshint -g
-
 ## Then to build, just run:
 make
+
+## The Makefile will use npm to install all the correct dev dependencies
 ```
 
 How to release

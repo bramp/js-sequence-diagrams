@@ -15,6 +15,7 @@
 
 	Diagram.prototype.getActor = function(alias) {
 		var s = /^(.+) as (\S+)$/i.exec(alias.trim());
+		var name;
 		if (s) {
 			name  = s[1].trim();
 			alias = s[2].trim();
