@@ -36,7 +36,8 @@ build/sequence-diagram-min.js build/sequence-diagram-min.js.map: src/copyright.j
 		src/sequence-diagram.js \
 		-o build/sequence-diagram-min.js \
 		-c --comments \
-		--source-map build/sequence-diagram-min.js.map
+		--source-map build/sequence-diagram-min.js.map \
+		--source-map-url sequence-diagram-min.js.map build/sequence-diagram-min.js
 
 	#
 	# Copy minified file to site
