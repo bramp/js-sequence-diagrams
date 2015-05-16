@@ -69,8 +69,8 @@ How to release
 * Bump version in src/copyright.js
 * ``make clean``
 * ``make``
-* ``git add src/copyright.js build/sequence-diagram-min.js build/sequence-diagram-min.js.map``
-* ``git commit``
+* ``git add -f src/copyright.js build/sequence-diagram-min.js build/sequence-diagram-min.js.map``
+* ``git commit -m "Released version 1.x.x"``
 * ``git push origin master``
 * ``git tag -a v1.x.x -m v1.x.x``
 * ``git push origin v1.x.x``
