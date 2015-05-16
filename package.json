@@ -18,7 +18,8 @@
   "devDependencies": {
     "jison": "0.4.6",
     "jshint": "~2.0.x",
-    "uglify-js": "~2.3.x"
+    "uglify-js": "~2.3.x",
+    "qunit": "1.11.0"
   },
   "scripts": {
     "test": "make test"
