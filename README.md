@@ -1,7 +1,7 @@
 JS Sequence Diagrams
 =============================================
 **Generates UML sequence diagrams from simple text**  
-<http://bramp.github.io/js-sequence-diagrams/>
+<https://bramp.github.io/js-sequence-diagrams/>
 
 by [Andrew Brampton](http://bramp.net) 2012-2015
 
@@ -82,10 +82,10 @@ make
 How to release
 --------------
 * Make sure all changes checked in
-* Bump version in src/main.js
+* Bump version in src/main.js and bower.json
 * ``make clean``
 * ``make``
-* ``git add -f src/main.js build/sequence-diagram-min.js build/sequence-diagram-min.js.map``
+* ``git add -f src/main.js bower.json build/sequence-diagram-min.js build/sequence-diagram-min.js.map``
 * ``git commit -m "Released version 1.x.x"``
 * ``git push origin master``
 * ``git tag -a v1.x.x -m v1.x.x``
