@@ -53,7 +53,13 @@ test: dependencies build/sequence-diagram-min.js
 		-d test/raphael-mock.js $(BOWER_COMPONENTS)/underscore/underscore-min.js
 
 build/grammar.js: src/grammar.jison
-	$(NODE_MODULES)/jison $< -o $@
+	$(NODE_MODULES)/jison $< -o $@.tmp
+
+	# After building the grammar, run it through the uglifyjs to fix some non-strict issues.
+	# Until https://github.com/zaach/jison/issues/285 is fixed, we must do this to create valid non-minified code.
+	$(NODE_MODULES)/uglifyjs \
+		$@.tmp -o $@ \
+		--comments all --compress --beautify
 
 build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
