@@ -22,21 +22,37 @@ Requirements
 ------------
 You will need [underscore.js](http://underscorejs.org/) and [Raphaël](http://raphaeljs.com/)
 
-Usage
------
+Installation
+----------------------
 
-On your page you need to include both underscore and raphael like so:
+### bower
+
+Just run `bower install bramp/js-sequence-diagrams` and include the scripts below:
+
+```html
+<script src="{{ bower directory }}/raphael/raphael-min.js"></script>
+<script src="{{ bower directory }}/underscore/underscore-min.js"></script>
+<script src="{{ bower directory }}/js-sequence-diagrams/build/sequence-diagram-min.js"></script>
+```
+
+### Manually
+
+You can download the dependencies (see requirements above) and js-sequence-diagrams and
+on your page you include all the scripts pointing to the folder you've placed them:
 
 ```html
 <script src="underscore-min.js"></script>
 <script src="raphael-min.js"></script>
+<script src="sequence-diagram-min.js"></script>
 ```
 
-and then
+Usage
+-----
+
+You can use the Diagram class like:
 
 ```html
 <div id="diagram">Diagram will be placed here</div>
-<script src="sequence-diagram-min.js"></script>
 <script> 
   var diagram = Diagram.parse("A->B: Does something");
   diagram.drawSVG('diagram');

@@ -1,0 +1,25 @@
+{
+  "name": "js-sequence-diagrams",
+  "version": "1.0.5",
+  "authors": "Andrew Brampton (bramp.net)",
+  "description": "Generates UML sequence diagrams from simple text",
+  "main": [
+    "build/sequence-diagram-min.js"
+  ],
+  "keywords": [
+    "uml",
+    "sequence",
+    "diagram"
+  ],
+  "license": "BSD",
+  "ignore": [
+    ".*",
+    "_site",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "underscore": "~1.4.x",
+    "raphael": "~2.1.x"
+  }
+}
