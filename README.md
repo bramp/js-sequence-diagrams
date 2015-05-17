@@ -3,7 +3,7 @@ JS Sequence Diagrams
 **Generates UML sequence diagrams from simple text**  
 <http://bramp.github.io/js-sequence-diagrams/>
 
-by [Andrew Brampton](http://bramp.net) 2012-2013
+by [Andrew Brampton](http://bramp.net) 2012-2015
 
 
 Example
@@ -20,7 +20,8 @@ into
 
 Requirements
 ------------
-You will need [underscore.js](http://underscorejs.org/) and [Raphaël](http://raphaeljs.com/)
+You will need [Raphaël](http://raphaeljs.com/), [underscore.js](http://underscorejs.org/) (or [lodash](https://lodash.com/)), and optionally [jQuery](https://jquery.com/).
+
 
 Installation
 ----------------------
@@ -37,8 +38,7 @@ Just run `bower install bramp/js-sequence-diagrams` and include the scripts belo
 
 ### Manually
 
-You can download the dependencies (see requirements above) and js-sequence-diagrams and
-on your page you include all the scripts pointing to the folder you've placed them:
+You can download the dependencies (see requirements above) and include them on your page like so:
 
 ```html
 <script src="underscore-min.js"></script>
@@ -94,8 +94,8 @@ How to release
 TODO
 ----
 * Other themes
-* Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper
-library
+* Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper library
+* Dozens of other issues on https://github.com/bramp/js-sequence-diagrams/issues
 
 Contributors
 ------------
@@ -104,7 +104,7 @@ via [GitHub](https://github.com/bramp/js-sequence-diagrams/graphs/contributors)
 
 Thanks
 ------
-This project makes use of Jison, Raphaël, underscore.js, and the Daniel font (which is free to use for any purpose).
+This project makes use of [Jison](http://zaach.github.io/jison/), Raphaël, underscore.js, and the awersome [Daniel font](http://www.dafont.com/daniel.font) (which is free to use for any purpose).
 
 Many thanks to [Web Sequence Diagrams](http://www.websequencediagrams.com/) which greatly inspired this project, and forms the basis for the syntax.
 
