@@ -39,7 +39,7 @@
 %% /* language grammar */
 
 start
-	: document 'EOF' { return yy; }
+	: document 'EOF' { return yy.parser.yy; } /* returning parser.yy is a quirk of jison >0.4.10 */
 	;
 
 document
@@ -54,9 +54,9 @@ line
 
 statement
 	: 'participant' actor  { $2; }
-	| signal               { yy.addSignal($1); }
-	| note_statement       { yy.addSignal($1); }
-	| 'title' message      { yy.setTitle($2);  }
+	| signal               { yy.parser.yy.addSignal($1); }
+	| note_statement       { yy.parser.yy.addSignal($1); }
+	| 'title' message      { yy.parser.yy.setTitle($2);  }
 	;
 
 note_statement
@@ -80,7 +80,7 @@ signal
 	;
 
 actor
-	: ACTOR { $$ = yy.getActor($1); }
+	: ACTOR { $$ = yy.parser.yy.getActor($1); }
 	;
 
 signaltype

@@ -94,7 +94,8 @@
 	/*> ../build/grammar.js */
 
 	/**
-	 * jison doesn't have a good exception, so we make one
+	 * jison doesn't have a good exception, so we make one.
+	 * This is brittle as it depends on jison internals
 	 */
 	function ParseError(message, hash) {
 		_.extend(this, hash);
@@ -105,13 +106,20 @@
 	ParseError.prototype = new Error();
 	Diagram.ParseError = ParseError;
 
-	grammar.parseError = function(message, hash) {
-		throw new ParseError(message, hash);
+	Diagram.parse = function(input) {
+		// Create the object to track state and deal with errors
+		parser.yy = new Diagram();
+		parser.yy.parseError = function(message, hash) {
+			throw new ParseError(message, hash);
+		};
+
+		// Parse
+		var diagram = parser.parse(input);
+
+		// Then clean up the parseError key that a user won't care about
+		delete diagram.parseError;
+		return diagram;
 	};
 
-	Diagram.parse = function(input) {
-		grammar.yy = new Diagram();
-		return grammar.parse(input);
-	};
 
 
