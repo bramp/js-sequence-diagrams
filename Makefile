@@ -20,18 +20,17 @@ bower_components: bower.json
 dependencies: node_modules bower_components
 
 clean:
-	rm build/*
+	-rm build/*
 
 veryclean: clean
-	rm -rf node_modules
-	rm -rf bower_components
+	-rm -rf node_modules
+	-rm -rf bower_components
 
 lint: dependencies package.json bower.json
 	$(NODE_MODULES)/jshint src/*.js
 	$(NODE_MODULES)/jshint test/*.js
 	$(NODE_MODULES)/jsonlint package.json -q
 	$(NODE_MODULES)/jsonlint bower.json -q
-
 
 test: dependencies build/sequence-diagram-min.js
 
