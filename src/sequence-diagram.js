@@ -3,8 +3,6 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
-(function () {
-	"use strict";
 	/*global Diagram, Raphael, _ */
 
 	// Following the CSS convention
@@ -640,4 +638,3 @@
 
 	}; // end of drawSVG
 
-}());

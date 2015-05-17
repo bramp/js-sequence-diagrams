@@ -3,6 +3,7 @@
   "version": "1.0.5",
   "authors": "Andrew Brampton (bramp.net)",
   "description": "Generates UML sequence diagrams from simple text",
+  "homepage": "http://bramp.github.io/js-sequence-diagrams/",
   "main": [
     "build/sequence-diagram-min.js"
   ],
@@ -12,6 +13,7 @@
     "diagram"
   ],
   "license": "BSD",
+  "readmeFilename": "README.md",
   "ignore": [
     ".*",
     "_site",
@@ -21,5 +23,18 @@
   "dependencies": {
     "underscore": "~1.4.x",
     "raphael": "~2.1.x"
+  },
+  "//" : "Must also install jspp",
+  "devDependencies": {
+    "qunit": "1.11.x",
+    "lodash": "3.8.x",
+    "jquery": "1.8.x"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bramp/js-sequence-diagrams.git"
   }
 }

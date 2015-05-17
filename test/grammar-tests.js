@@ -4,7 +4,6 @@ function assertSingleActor(d, actor) {
 
 	var a = d.actors[0];
 	equal(a.name, actor, "Actors A's name");
-	//equal(a.name, "A", "Actors A");
 }
 
 function assertSingleArrow(d, arrowtype, linetype) {

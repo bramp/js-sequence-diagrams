@@ -3,8 +3,6 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
-(function () {
-	"use strict";
 	/*global grammar _ */
 
 	function Diagram() {
@@ -113,11 +111,7 @@
 
 	Diagram.parse = function(input) {
 		grammar.yy = new Diagram();
-
 		return grammar.parse(input);
 	};
 
-	// Expose this class externally
-	this.Diagram = Diagram;
 
-}).call(this);
