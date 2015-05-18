@@ -13,9 +13,9 @@
 
 %%
 
-[\n]+             return 'NL';
+[\r\n]+           return 'NL';
 \s+               /* skip whitespace */
-\#[^\n]*          /* skip comments */
+\#[^\r\n]*        /* skip comments */
 "participant"     return 'participant';
 "left of"         return 'left_of';
 "right of"        return 'right_of';
@@ -23,12 +23,12 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
-[^\->:\n,]+       return 'ACTOR';
+[^\->:,\r\n]+     return 'ACTOR';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';
 ">"               return 'ARROW';
-:[^\n]+           return 'MESSAGE';
+:[^\r\n]+         return 'MESSAGE';
 <<EOF>>           return 'EOF';
 .                 return 'INVALID';
 

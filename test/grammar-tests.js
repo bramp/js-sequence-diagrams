@@ -123,6 +123,7 @@ test( "Unicode", function() {
 test( "Empty documents", function() {
 	assertEmptyDocument(Diagram.parse(""));
 	assertEmptyDocument(Diagram.parse(" \t\n"));
+	assertEmptyDocument(Diagram.parse("\r\n\r\n"));
 });
 
 test( "Whitespace", function() {
@@ -164,3 +165,8 @@ test( "Participants", function() {
 	assertSingleActor(Diagram.parse("Participant Object"), "Object");
 });
 
+test( "Newlines", function() {
+	assertSingleActor(Diagram.parse("Participant A\nNote left of A: Hello"), "A");
+	assertSingleActor(Diagram.parse("Participant A\rNote left of A: Hello"), "A");
+	assertSingleActor(Diagram.parse("Participant A\r\nNote left of A: Hello"), "A");
+});
