@@ -11,25 +11,39 @@
 		this.signals = [];
 	}
 
-	Diagram.prototype.getActor = function(alias) {
-		var s = /^(.+) as (\S+)$/i.exec(alias.trim());
-		var name;
-		if (s) {
-			name  = s[1].trim();
-			alias = s[2].trim();
-		} else {
-			name = alias.trim();
-		}
-
-		name = name.replace(/\\n/gm, "\n");
+	/*
+	 * Return an existing actor with this alias, or creates a new one with alias and name.
+	 */
+	Diagram.prototype.getActor = function(alias, name) {
+		alias = alias.trim();
 
 		var i, actors = this.actors;
 		for (i in actors) {
 			if (actors[i].alias == alias)
 				return actors[i];
 		}
+		name = (name || alias).replace(/\\n/gm, "\n");
 		i = actors.push( new Diagram.Actor(alias, name, actors.length) );
 		return actors[ i - 1 ];
+	};
+
+	/*
+	 * Parses the input as either a alias, or a "name as alias", and returns the corresponding actor.
+	 */
+	Diagram.prototype.getActorWithAlias = function(input) {
+		input = input.trim();
+
+		// We are lazy and do some of the parsing in javascript :(. TODO move into the .jison file.
+		var s = /^(.+) as (\S+)$/i.exec(input);
+		var alias, name;
+		if (s) {
+			name  = s[1].trim();
+			alias = s[2].trim();
+		} else {
+			name = alias = input;
+		}
+
+		return this.getActor(alias, name);
 	};
 
 	Diagram.prototype.setTitle = function(title) {

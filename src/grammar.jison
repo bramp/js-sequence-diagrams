@@ -53,7 +53,7 @@ line
 	;
 
 statement
-	: 'participant' actor  { $2; }
+	: 'participant' actor_alias { $2; }
 	| signal               { yy.parser.yy.addSignal($1); }
 	| note_statement       { yy.parser.yy.addSignal($1); }
 	| 'title' message      { yy.parser.yy.setTitle($2);  }
@@ -81,6 +81,10 @@ signal
 
 actor
 	: ACTOR { $$ = yy.parser.yy.getActor($1); }
+	;
+
+actor_alias
+	: ACTOR { $$ = yy.parser.yy.getActorWithAlias($1); }
 	;
 
 signaltype

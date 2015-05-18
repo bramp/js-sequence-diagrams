@@ -152,6 +152,9 @@ test( "Notes", function() {
 	assertSingleNote(Diagram.parse("Note right of A: Message"), PLACEMENT.RIGHTOF, 'A');
 	assertSingleNote(Diagram.parse("Note over A: Message"), PLACEMENT.OVER, 'A');
 	assertSingleNote(Diagram.parse("Note over A,B: Message"), PLACEMENT.OVER, ['A', 'B']);
+
+	// We don't allow "as X" when referencing an actor
+	assertSingleNote(Diagram.parse("Note over C as A,B: Message"), PLACEMENT.OVER, ['C as A', 'B']);
 });
 
 
