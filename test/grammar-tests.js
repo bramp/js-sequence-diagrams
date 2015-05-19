@@ -133,6 +133,8 @@ test( "Empty documents", function() {
 test( "Whitespace", function() {
 	assertSingleArrow(Diagram.parse("  A  -  > B  : Message  "), ARROWTYPE.FILLED, LINETYPE.SOLID);
 	assertSingleArrow(Diagram.parse("\n\nA->B: Message\n\n"), ARROWTYPE.FILLED, LINETYPE.SOLID);
+
+	assertSingleActor(Diagram.parse("  A  -> A: blah"), "A");
 });
 
 test( "Comments", function() {
