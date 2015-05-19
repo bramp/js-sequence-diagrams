@@ -3,14 +3,18 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  * 
- *  EBNF version of the grammar for diagraming purposes only
+ * EBNF version of the grammar for diagraming purposes only
+ * Paste this into http://www.bottlecaps.de/rr/ui to generate the diagram 
  */
 document ::= statement*
 
 statement ::=
 	( 'title' ':' message
-	| 'participant' actor 
-	| 'note' ('left of' | 'right of' | 'over') actor ':' message
+	| 'participant' actor ('as' alias)?
+	| 'note' (
+		( 'left of' | 'right of') actor
+		| 'over' (actor | actor ',' actor)
+		) ':' message
 	| actor ( '-' | '--' ) ( '>' | '>>' )? actor ':' message
 	)
 
