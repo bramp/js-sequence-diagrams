@@ -80,11 +80,11 @@ signal
 	;
 
 actor
-	: ACTOR { $$ = yy.parser.yy.getActor($1); }
+	: ACTOR { $$ = yy.parser.yy.getActor(Diagram.unescape($1)); }
 	;
 
 actor_alias
-	: ACTOR { $$ = yy.parser.yy.getActorWithAlias($1); }
+	: ACTOR { $$ = yy.parser.yy.getActorWithAlias(Diagram.unescape($1)); }
 	;
 
 signaltype
@@ -103,7 +103,7 @@ arrowtype
 	;
 
 message
-	: MESSAGE { $$ = $1.substring(1).trim().replace(/\\n/gm, "\n"); }
+	: MESSAGE { $$ = Diagram.unescape($1.substring(1)); }
 	;
 
 

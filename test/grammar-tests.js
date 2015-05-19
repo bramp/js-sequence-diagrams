@@ -1,9 +1,13 @@
-function assertSingleActor(d, actor) {
+function assertSingleActor(d, alias, name) {
+
+	name = name || alias;
 
 	equal(d.actors.length, 1, "Correct actors count");
 
 	var a = d.actors[0];
-	equal(a.name, actor, "Actors A's name");
+	equal(a.name, name, "Actors A's name");
+	equal(a.alias, alias, "Actors A's alias");
+	equal(a.index, 0, "Actors A's index");
 }
 
 function assertSingleArrow(d, arrowtype, linetype, actorA, actorB, message) {
@@ -116,7 +120,7 @@ test( "Unicode", function() {
 	equal(Diagram.parse("Title: 中国").title, "中国", "Unicode Title");
 	assertEmptyDocument(Diagram.parse("# 中国"));
 	assertSingleActor(Diagram.parse("Participant 中国"), "中国");
-	assertSingleActor(Diagram.parse("Participant 中国 as alias"), "中国");
+	assertSingleActor(Diagram.parse("Participant 中国 as alias"), "alias", "中国");
 	assertSingleActor(Diagram.parse("中国->中国: Message"), "中国");
 });
 
@@ -161,10 +165,11 @@ test( "Notes", function() {
 test( "Participants", function() {
 	assertSingleActor(Diagram.parse("Participant Bob"), "Bob");
 	assertSingleActor(Diagram.parse("Participant Name with spaces"), "Name with spaces");
-	assertSingleActor(Diagram.parse("Participant Name with spaces as alias"), "Name with spaces");
+	assertSingleActor(Diagram.parse("Participant Name with spaces as alias"), "alias", "Name with spaces");
 	assertSingleActor(Diagram.parse("Participant Name with 'as' in it"), "Name with 'as' in it");
+	assertSingleActor(Diagram.parse("Participant Double as as alias"), "alias", "Double as");
 	assertSingleActor(Diagram.parse("Participant Bob \\n with newline"), "Bob \n with newline");
-	assertSingleActor(Diagram.parse("Participant Bob \\n with newline as alias"), "Bob \n with newline");
+	assertSingleActor(Diagram.parse("Participant Bob \\n with newline as alias"), "alias", "Bob \n with newline");
 	assertSingleActor(Diagram.parse("Participant Object"), "Object");
 });
 

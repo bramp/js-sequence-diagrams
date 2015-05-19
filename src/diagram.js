@@ -22,8 +22,7 @@
 			if (actors[i].alias == alias)
 				return actors[i];
 		}
-		name = (name || alias).replace(/\\n/gm, "\n");
-		i = actors.push( new Diagram.Actor(alias, name, actors.length) );
+		i = actors.push( new Diagram.Actor(alias, (name || alias), actors.length) );
 		return actors[ i - 1 ];
 	};
 
@@ -34,7 +33,7 @@
 		input = input.trim();
 
 		// We are lazy and do some of the parsing in javascript :(. TODO move into the .jison file.
-		var s = /^(.+) as (\S+)$/i.exec(input);
+		var s = /([\s\S]+) as (\S+)$/im.exec(input);
 		var alias, name;
 		if (s) {
 			name  = s[1].trim();
@@ -86,6 +85,11 @@
 
 	Diagram.Note.prototype.hasManyActors = function() {
 		return _.isArray(this.actor);
+	};
+
+	Diagram.unescape = function(s) {
+		// Turn "\\n" into "\n"
+		return s.trim().replace(/\\n/gm, "\n");
 	};
 
 	Diagram.LINETYPE = {
