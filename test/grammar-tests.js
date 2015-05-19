@@ -68,11 +68,11 @@ var LINETYPE = Diagram.LINETYPE;
 var ARROWTYPE = Diagram.ARROWTYPE;
 var PLACEMENT = Diagram.PLACEMENT;
 
+/*
 function regextest(regex, string) {
 	console.log(string, regex.exec(string));
 }
 
-/*
 test("Regex Tests", function() {
 	// These are here to debug regex problems with unicode
 	//var r = /[^\->:\n,]+\b/;
@@ -172,4 +172,19 @@ test( "Newlines", function() {
 	assertSingleActor(Diagram.parse("Participant A\nNote left of A: Hello"), "A");
 	assertSingleActor(Diagram.parse("Participant A\rNote left of A: Hello"), "A");
 	assertSingleActor(Diagram.parse("Participant A\r\nNote left of A: Hello"), "A");
+});
+
+test( "API", function() {
+	// Public API
+	ok(typeof Diagram.parse == "function");
+
+	var d = Diagram.parse("Participant A");
+	ok(d instanceof Diagram);
+	ok(typeof d.drawSVG == "function");
+
+	// Private API
+	ok(typeof d.getActor == "function");
+	ok(typeof d.getActorWithAlias == "function");
+	ok(typeof d.setTitle == "function");
+	ok(typeof d.addSignal == "function");
 });
