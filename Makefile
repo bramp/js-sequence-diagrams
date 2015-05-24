@@ -29,18 +29,24 @@ veryclean: clean
 	-rm -rf bower_components
 
 lint: dependencies package.json bower.json
-	$(NODE_MODULES)/jshint src/*.js
-	$(NODE_MODULES)/jshint test/*.js
+	$(NODE_MODULES)/jshint --verbose src/*.js
+	$(NODE_MODULES)/jshint --verbose test/*.js
 	$(NODE_MODULES)/jsonlint package.json -q
 	$(NODE_MODULES)/jsonlint bower.json -q
 
 test: dependencies build/sequence-diagram-min.js
 
-	# Test the un-minifed file
+	# Test the un-minifed file (with underscore)
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram.js \
 		-t test/*-tests.js \
 		-d test/raphael-mock.js $(BOWER_COMPONENTS)/underscore/underscore-min.js
+
+	# Test the un-minifed file (with lodash)
+	$(NODE_MODULES)/qunit \
+		-c build/sequence-diagram.js \
+		-t test/*-tests.js \
+		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
 
 	# Test the minifed file (with underscore)
 	$(NODE_MODULES)/qunit \
@@ -52,7 +58,7 @@ test: dependencies build/sequence-diagram-min.js
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram-min.js \
 		-t test/*-tests.js \
-		-d test/raphael-mock.js $(BOWER_COMPONENTS)/underscore/underscore-min.js
+		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
 
 build/grammar.js: src/grammar.jison
 	$(NODE_MODULES)/jison $< -o $@.tmp
@@ -71,14 +77,14 @@ build/diagram-grammar.js: src/diagram.js build/grammar.js
 
 build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
 	#
-	# Compiling grammar
+	# Finally combine all javascript files together
 	#
 	jspp $< > $@ || (rm $@ && exit 127)
 
 build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js
 	#
 	# Please ignore the warnings below (these are in combined js code)
-	# --beautify --compress --mangle
+	#
 	$(NODE_MODULES)/uglifyjs \
 		build/sequence-diagram.js \
 		-o build/sequence-diagram-min.js \
