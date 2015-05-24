@@ -108,6 +108,26 @@
 		OVER    : 2
 	};
 
+
+	// Some older browsers don't have getPrototypeOf, thus we polyfill it
+	// https://github.com/bramp/js-sequence-diagrams/issues/57
+	// https://github.com/zaach/jison/issues/194
+	// Taken from http://ejohn.org/blog/objectgetprototypeof/
+	if ( typeof Object.getPrototypeOf !== "function" ) {
+		/* jshint -W103 */
+		if ( typeof "test".__proto__ === "object" ) {
+			Object.getPrototypeOf = function(object){
+				return object.__proto__;
+			};
+		} else {
+			Object.getPrototypeOf = function(object){
+				// May break if the constructor has been tampered with
+				return object.constructor.prototype;
+			};
+		}
+		/* jshint +W103 */
+	}
+
 	/** The following is included by jspp */
 	/*> ../build/grammar.js */
 
