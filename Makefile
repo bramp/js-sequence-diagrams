@@ -10,12 +10,14 @@ node_modules: package.json
 	# NPM update needed.
 	#
 	npm update
+	touch $@
 
 bower_components: bower.json
 	#
 	# Bower update needed.
 	#
 	bower update
+	touch $@
 
 dependencies: node_modules bower_components
 
