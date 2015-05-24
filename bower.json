@@ -5,6 +5,7 @@
   "description": "Generates UML sequence diagrams from simple text",
   "homepage": "http://bramp.github.io/js-sequence-diagrams/",
   "main": "build/sequence-diagram-min.js",
+  "namespace": "Diagram",
   "keywords": [
     "uml",
     "sequence",
