@@ -73,13 +73,13 @@ build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
 	# Compiling grammar
 	#
-	jspp $< > $@ || (rm $@ && exit 127)
+	$(NODE_MODULES)/preprocess $< . > $@
 
 build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
 	#
 	# Finally combine all javascript files together
 	#
-	jspp $< > $@ || (rm $@ && exit 127)
+	$(NODE_MODULES)/preprocess $< . > $@
 
 build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js
 	#

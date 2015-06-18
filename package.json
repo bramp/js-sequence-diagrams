@@ -1,11 +1,11 @@
 {
-  "//" : "Must also install jspp",
   "devDependencies": {
     "jison": "0.4.15",
     "jshint": "2.7.x",
     "jsonlint": "1.6.x",
-    "uglify-js": "2.4.x",
-    "qunit": "0.7.x"
+    "preprocessor": "1.4.x",
+    "qunit": "0.7.x",
+    "uglify-js": "2.4.x"
   },
   "scripts": {
     "test": "make test"

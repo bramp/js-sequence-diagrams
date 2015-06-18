@@ -69,15 +69,13 @@ $(".diagram").sequenceDiagram({theme: 'hand'});
 
 Build requirements
 ------------------
+The build is managed by a Makefile, and uses various tools available from npm. Thus both `make` and `npm` are required, and can easily be installed on any Linux or Mac machine.
+
 ```bash
-# JavaScript Preprocessor 
-sudo gem install jspp
-
-## Then to build, just run:
 make
-
-## The Makefile will use npm to install all the correct dev dependencies
 ```
+
+The Makefile will use npm to install all the dev dependencies, build, and test.
 
 How to release
 --------------

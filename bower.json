@@ -23,7 +23,6 @@
     "underscore": "~1.4.x",
     "raphael": "~2.1.x"
   },
-  "//" : "Must also install jspp",
   "devDependencies": {
     "qunit": "1.11.x",
     "lodash": "3.8.x",

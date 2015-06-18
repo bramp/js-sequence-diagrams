@@ -7,10 +7,11 @@
 	"use strict";
 	/*global Diagram */
 
-	/*> ../build/diagram-grammar.js */
-	/*> ../fonts/daniel/daniel_700.font.js */
-	/*> sequence-diagram.js */
-	/*> jquery-plugin.js */
+	// The following are included by preprocessor */
+	// #include "build/diagram-grammar.js"
+	// #include "fonts/daniel/daniel_700.font.js"
+	// #include "src/sequence-diagram.js"
+	// #include "src/jquery-plugin.js"
 
 	// Taken from what underscore.js:
 	// Establish the root object, `window` (`self`) in the browser, or `global` on the server.

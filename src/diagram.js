@@ -128,8 +128,8 @@
 		/* jshint +W103 */
 	}
 
-	/** The following is included by jspp */
-	/*> ../build/grammar.js */
+	/** The following is included by preprocessor */
+	// #include "build/grammar.js"
 
 	/**
 	 * jison doesn't have a good exception, so we make one.
