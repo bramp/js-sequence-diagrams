@@ -69,13 +69,31 @@ $(".diagram").sequenceDiagram({theme: 'hand'});
 
 Build requirements
 ------------------
-The build is managed by a Makefile, and uses various tools available from npm. Thus both `make` and `npm` are required, and can easily be installed on any Linux or Mac machine.
+The build is managed by a Makefile, and uses various tools available from npm. Thus both `make` and [npm](https://github.com/npm/npm) are required, and can easily be installed on any Linux or Mac machine.
 
 ```bash
 make
 ```
 
 The Makefile will use npm to install all the dev dependencies, build, and test.
+
+Testing
+-------
+
+We use [qunit](https://qunitjs.com/) for testing. It can be ran from the command line, or via a browser. The command line actually tests multiple permutations of [lodash](https://lodash.com/), [Underscore](http://underscorejs.org/), and with and without minification.
+
+```bash
+make test
+...
+Global summary:
+┌───────┬───────┬────────────┬────────┬────────┬─────────┐
+│ Files │ Tests │ Assertions │ Failed │ Passed │ Runtime │
+├───────┼───────┼────────────┼────────┼────────┼─────────┤
+│ 1     │ 13    │ 231        │ 0      │ 231    │ 250     │
+└───────┴───────┴────────────┴────────┴────────┴─────────┘
+```
+
+or `make` and then open test/qunit.html in a browser. Finally a simple playground is available at test/test.html.
 
 How to release
 --------------
@@ -93,6 +111,7 @@ TODO
 ----
 * Other themes
 * Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper library
+* Automate the release process
 * Dozens of other issues on https://github.com/bramp/js-sequence-diagrams/issues
 
 Contributors
@@ -115,7 +134,7 @@ Related
 Licence (Simplified BSD License)
 -------
 
-Copyright (c) 2012-2013, Andrew Brampton  
+Copyright (c) 2012-2015, Andrew Brampton  
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
