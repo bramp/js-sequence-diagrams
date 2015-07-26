@@ -107,6 +107,12 @@ How to release
 * ``git tag -a v1.x.x -m v1.x.x``
 * ``git push origin v1.x.x``
 
+Adding a Font
+-------------
+
+Raphael requires Cufon style fonts. Find the font you want in ttf or otf format, visit [Cufon's site](http://cufon.shoqolate.com/generate/) and process it into a javascript file. Then ensure the font is included via the HTML, or recompile after altering main.js. So far only the hand drawn font, Daniel Bold, has been included.
+
+
 TODO
 ----
 * Other themes

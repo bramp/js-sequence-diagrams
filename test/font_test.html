@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>Raphael Font Test</title>
+		<style type="text/css">
+            #canvas_container {
+                width: 1600px;
+                height: 1200px;
+                border: 1px solid #aaa;
+            }
+        </style>
+
+        <script src="../bower_components/raphael/raphael-min.js"></script>
+	    <script src="../fonts/daniel/daniel_700.font.js"></script>
+
+        <script type="text/javascript">
+
+			/**
+			 * Prints, but aligns text in a similar way to text(...)
+			 */
+			Raphael.fn.print_center = function(x, y, string, font, size, letter_spacing) {
+				var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
+				var bb = path.getBBox();
+
+				// Translate the text so it's centered.
+				var dx = (x - bb.x) - bb.width / 2;
+				var dy = (y - bb.y) - bb.height / 2;
+
+				// Due to an issue in Raphael 2.1.0 (that seems to be fixed later)
+				// we remap the path itself, instead of using a transformation matrix
+				var m = new Raphael.matrix();
+				m.translate(dx, dy);
+				return path.attr('path', Raphael.mapPath(path.attr('path'), m));
+
+				// otherwise we would do this:
+				//return path.transform("t" + dx + "," + dy);
+			};
+
+	        window.onload = function() {
+
+	        	var cols = 32;
+	        	var x_spacing = 48;
+	        	var y_spacing = 84;
+	        	var y_gap = 38;
+
+				var font = {
+					'font-size': 32,
+					//'font-family': 'daniel'
+				};
+
+	        	var canvas = document.getElementById('canvas_container')
+	        	var paper = new Raphael(canvas);
+				var font_obj = paper.getFont('daniel');
+
+				/*
+				// Print all chars in range
+				for (var c = 32; c < 256; c++) {
+					var x = (c % cols) * x_spacing + x_spacing/2;
+					var y = Math.floor((c-32) / cols) * y_spacing + y_spacing/2;
+					var t = paper.text(x, y, String.fromCharCode(c));
+					t.attr(font);
+
+					paper.print_center(x, y + y_gap, String.fromCharCode(c), font_obj, font['font-size']);
+				}
+				*/
+
+				// Print all chars supported by font
+				keys = Object.keys(font_obj.glyphs).sort();
+				for (var i = 0; i < keys.length; i++) {
+					var c = keys[i];
+					var x = (i % cols) * x_spacing + x_spacing/2;
+					var y = Math.floor(i / cols) * y_spacing + y_spacing/2;
+
+					var t = paper.text(x, y, c);
+					t.attr(font);
+
+					paper.print_center(x, y + y_gap, c, font_obj, font['font-size']);
+				}
+
+	        }
+        </script>
+    </head>
+    <body>
+        <div id="canvas_container"></div>
+    </body>
+</html>
