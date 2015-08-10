@@ -40,25 +40,25 @@ test: dependencies build/sequence-diagram-min.js
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram.js \
 		-t test/*-tests.js \
-		-d test/raphael-mock.js $(BOWER_COMPONENTS)/underscore/underscore-min.js
+		-d test/snap-mock.js $(BOWER_COMPONENTS)/underscore/underscore-min.js
 
 	# Test the un-minifed file (with lodash)
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram.js \
 		-t test/*-tests.js \
-		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
+		-d test/snap-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
 
 	# Test the minifed file (with underscore)
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram-min.js \
 		-t test/*-tests.js \
-		-d test/raphael-mock.js $(BOWER_COMPONENTS)/underscore/underscore-min.js
+		-d test/snap-mock.js $(BOWER_COMPONENTS)/underscore/underscore-min.js
 
 	# Test the minifed file (with lodash)
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram-min.js \
 		-t test/*-tests.js \
-		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
+		-d test/snap-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
 
 build/grammar.js: src/grammar.jison
 	$(NODE_MODULES)/jison $< -o $@.tmp
@@ -75,7 +75,7 @@ build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
 	$(NODE_MODULES)/preprocess $< . > $@
 
-build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js fonts/daniel/daniel_700.font.js src/sequence-diagram.js
+build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js
 	#
 	# Finally combine all javascript files together
 	#
