@@ -39,12 +39,11 @@
 	var ARROWTYPE = Diagram.ARROWTYPE;
 
 	var LINE = {
-		'stroke': '#000',
+		'stroke': '#000000',
 		'stroke-width': 2
 	};
 
 	var RECT = {
-		'fill': "#fff"
 	};
 
 	function AssertException(message) { this.message = message; }
@@ -79,13 +78,17 @@
 /******************
  * Raphaël extras
  ******************/
+	Snap.plugin(function (Snap, Element, Paper, global, Fragment) {
+		Snap.newmethod = function () { };
+		Element.prototype.newmethod = function () { };
+		Paper.prototype.newmethod = function () { };
 
-	Raphael.fn.line = function(x1, y1, x2, y2) {
+		Element.prototype.line = function (x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
 	};
 
-	Raphael.fn.wobble = function(x1, y1, x2, y2) {
+		Element.prototype.wobble = function (x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 
 		var wobble = Math.sqrt( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
@@ -115,25 +118,31 @@
 	/**
 	 * Returns the text's bounding box
 	 */
-	Raphael.fn.text_bbox = function (text, font) {
-		var p;
-		if (font._obj) {
-			p = this.print_center(0, 0, text, font._obj, font['font-size']);
-		} else {
-			p = this.text(0, 0, text);
-			p.attr(font);
-		}
+		Element.prototype.text_bbox = function (text, font) {
+			var p;
+			text = text.split("\n");
+			if (font._obj) {
+				p = this.print_center(0, 0, text, font._obj, font['font-size']);
+			} else {
+				p = this.text(0, 0, text);
+				p.attr(font);
+			}
+			if (text.length > 1) {
+				p.selectAll("tspan:nth-child(n+2)").attr({
+					dy: "1.2em",
+					x: 0
+				});
+			}
 
-		var bb = p.getBBox();
-		p.remove();
+			var bb = p.getBBox();
+			p.remove();
 
-		return bb;
-	};
-
+			return bb;
+		};
 	/**
 	 * Draws a wobbly (hand drawn) rect
 	 */
-	Raphael.fn.handRect = function (x, y, w, h) {
+		Element.prototype.handRect = function (x, y, w, h) {
 		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
 		return this.path("M" + x + "," + y +
 			this.wobble(x, y, x + w, y) +
@@ -146,7 +155,7 @@
 	/**
 	 * Draws a wobbly (hand drawn) line
 	 */
-	Raphael.fn.handLine = function (x1, y1, x2, y2) {
+		Element.prototype.handLine = function (x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
 	};
@@ -154,7 +163,7 @@
 	/**
 	 * Prints, but aligns text in a similar way to text(...)
 	 */
-	Raphael.fn.print_center = function(x, y, string, font, size, letter_spacing) {
+		Element.prototype.print_center = function (x, y, string, font, size, letter_spacing) {
 		var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
 		var bb = path.getBBox();
 
@@ -171,6 +180,7 @@
 		// otherwise we would do this:
 		//return path.transform("t" + dx + "," + dy);
 	};
+	});
 
 /******************
  * BaseTheme
@@ -192,16 +202,29 @@
 			this._signals_height = 0;
 
 			var a = this.arrow_types = {};
-			a[ARROWTYPE.FILLED] = 'block';
-			a[ARROWTYPE.OPEN]   = 'open';
+			a[ARROWTYPE.FILLED] = 'Block';
+			a[ARROWTYPE.OPEN]   = 'Open';
 
 			var l = this.line_types = {};
 			l[LINETYPE.SOLID]  = '';
-			l[LINETYPE.DOTTED] = '-';
+			l[LINETYPE.DOTTED] = '6,2';
 		},
 
-		init_paper : function(container) {
-			this._paper = new Raphael(container, 320, 200);
+		init_paper: function (container) {
+			this._paper = Snap(container);
+			this._paper.clear();
+			this._paper.addClass("sequence");
+
+			var a = this.arrow_markers = {};
+			var arrow = this._paper.path("M 0 0 L 5 2.5 L 0 5 z");
+			var marker = arrow.marker(0, 0, 5, 5, 5, 2.5);
+			marker.attr({ id: "markerArrowBlock" });
+			a[ARROWTYPE.FILLED] = marker;
+
+			arrow = this._paper.path("M 9.6,8 1.92,16 0,13.7 5.76,8 0,2.286 1.92,0 9.6,8 z");
+			marker = arrow.marker(0, 0, 9.6, 16, 9.6, 8);
+			marker.attr({ markerWidth: "4", id: "markerArrowOpen" });
+			a[ARROWTYPE.OPEN] = marker;
 		},
 
 		init_font : function() {},
@@ -219,12 +242,17 @@
 			this.init_paper(container);
 			this.init_font();
 
+			this.pre_process();
+
 			this.layout();
+
 
 			var title_height = this._title ? this._title.height : 0;
 
-			this._paper.setStart();
-			this._paper.setSize(diagram.width, diagram.height);
+			this._paper.attr({
+				width: diagram.width + 'px',
+				height: diagram.height + 'px'
+			});
 
 			var y = DIAGRAM_MARGIN + title_height;
 
@@ -232,7 +260,7 @@
 			this.draw_actors(y);
 			this.draw_signals(y + this._actors_height);
 
-			this._paper.setFinish();
+			this.post_process();
 		},
 
 		layout : function() {
@@ -388,8 +416,11 @@
 
 		draw_title : function() {
 			var title = this._title;
-			if (title)
-				this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font);
+			if (title) {
+				var group = this._paper.group();
+				group.attr({ 'class': 'title' });
+				this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font, group);
+			}
 		},
 
 		draw_actors : function(offsetY) {
@@ -413,7 +444,9 @@
 		draw_actor : function (actor, offsetY, height) {
 			actor.y      = offsetY;
 			actor.height = height;
-			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
+			var group = this._paper.group();
+			group.attr({ 'class': 'actor' });
+			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font, group);
 		},
 
 		draw_signals : function (offsetY) {
@@ -461,12 +494,15 @@
 			line.attr(attr);
 
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, aX, y2);
-			attr['arrow-end'] = this.arrow_types[signal.arrowtype] + '-wide-long';
+			attr['marker-end'] = this.arrow_markers[signal.arrowtype];
 			line.attr(attr);
-		},
+        },
 
 		draw_signal : function (signal, offsetY) {
-			var aX = getCenterX( signal.actorA );
+			var group = this._paper.group();
+			group.attr({ 'class': 'signal' });
+
+			var aX = getCenterX(signal.actorA);
 			var bX = getCenterX( signal.actorB );
 
 			// Mid point between actors
@@ -474,17 +510,17 @@
 			var y = offsetY + SIGNAL_MARGIN + 2*SIGNAL_PADDING;
 
 			// Draw the text in the middle of the signal
-			this.draw_text(x, y, signal.message, this._font);
+			this.draw_text(x, y, signal.message, this._font, group);
 
 			// Draw the line along the bottom of the signal
 			y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
 			var line = this.draw_line(aX, y, bX, y);
+			group.add(line);
 			line.attr(LINE);
 			line.attr({
-				'arrow-end': this.arrow_types[signal.arrowtype] + '-wide-long',
-				'stroke-dasharray': this.line_types[signal.linetype]
+				markerEnd: this.arrow_markers[signal.arrowtype],
+				strokeDasharray: this.line_types[signal.linetype]
 			});
-
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
 			//draw_arrowhead(bX, offsetY, ARROW_SIZE, dir);
@@ -514,8 +550,9 @@
 				default:
 					throw new Error("Unhandled note placement:" + note.placement);
 			}
-
-			this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font);
+                        var group = this._paper.group();
+                        group.attr({ 'class': 'note' });
+			this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font, group);
 		},
 
 		/**
@@ -523,25 +560,50 @@
 		 * x,y (int) x,y center point for this text
 		 * TODO Horz center the text when it's multi-line print
 		 */
-		draw_text : function (x, y, text, font) {
+		draw_text : function (x, y, text, font, group) {
 			var paper = this._paper;
 			var f = font || {};
 			var t;
+			text = text.split("\n");
+
 			if (f._obj) {
 				t = paper.print_center(x, y, text, f._obj, f['font-size']);
 			} else {
-				t = paper.text(x, y, text);
+				t = paper.text(0, y, text);
 				t.attr(f);
 			}
+			t.attr({ dy: "1em" });
+			if (text.length > 1) {
+				t.selectAll("tspan:nth-child(n+2)").attr({
+					dy: "1.2em",
+					x: 0
+				});
+			}
+
 			// draw a rect behind it
 			var bb = t.getBBox();
-			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
-			r.attr({'fill': "#fff", 'stroke': 'none'});
 
-			t.toFront();
+			x = x - bb.width / 2;
+			y = y - bb.height / 2;
+			t.attr({ x: x, y: y });
+			if (text.length > 1) {
+				t.selectAll("tspan:nth-child(n+2)").attr({
+					dy: "1.2em",
+					x: x
+				});
+			}
+			var r = paper.rect(x, y, bb.width, bb.height);
+			r.attr({'stroke': 'none'});
+
+			if (group) {
+				group.add(r);
+				group.add(t);
+			} else {
+				t.before(r);
+			}
 		},
 
-		draw_text_box : function (box, text, margin, padding, font) {
+		draw_text_box : function (box, text, margin, padding, font,group) {
 			var x = box.x + margin;
 			var y = box.y + margin;
 			var w = box.width  - 2 * margin;
@@ -549,14 +611,20 @@
 
 			// Draw inner box
 			var rect = this.draw_rect(x, y, w, h);
+			if (group)
+				group.add(rect);
 			rect.attr(LINE);
 
 			// Draw text (in the center)
 			x = getCenterX(box);
 			y = getCenterY(box);
 
-			this.draw_text(x, y, text, font);
-		}
+			this.draw_text(x, y, text, font, group);
+		},
+
+		pre_process: function () { },
+
+		post_process: function () { }
 
 		/**
 		 * Draws a arrow head
@@ -583,8 +651,9 @@
 
 		init_font : function() {
 			this._font = {
-				'font-size': 16,
-				'font-family': 'Andale Mono, monospace'
+				//'font-size': 16,
+				//'font-family': 'Daniel',
+				//'src': "local('Daniel'), url('daniel.otf') format('opentype')"
 			};
 		}
 
@@ -602,11 +671,9 @@
 	_.extend(HandRaphaelTheme.prototype, BaseTheme.prototype, {
 		init_font : function() {
 			this._font = {
-				'font-size': 16,
-				'font-family': 'daniel'
+				//'font-size': 16,
+				//'font-family': 'daniel'
 			};
-
-			this._font._obj = this._paper.getFont('daniel');
 		},
 
 		draw_line : function(x1, y1, x2, y2) {
@@ -615,6 +682,10 @@
 
 		draw_rect : function(x, y, w, h) {
 			return this._paper.handRect(x, y, w, h);
+		},
+
+		pre_process: function () {
+			this._paper.addClass("hand");
 		}
 	});
 
