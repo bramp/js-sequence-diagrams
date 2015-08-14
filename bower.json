@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "underscore": "~1.4.x",
+    "raphael": "~2.1.x",
     "snap.svg": "~0.4.1",
     "bower-webfontloader": "~1.5.16"
   },

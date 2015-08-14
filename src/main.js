@@ -9,10 +9,14 @@
 
 	// The following are included by preprocessor */
 	// #include "build/diagram-grammar.js"
+	// #include "src/theme.js"
+	// #include "src/theme-snap.js"
+	// #include "src/theme-raphael.js"
+	// #include "fonts/daniel/daniel_700.font.js"
 	// #include "src/sequence-diagram.js"
 	// #include "src/jquery-plugin.js"
 
-	// Taken from what underscore.js:
+	// Taken from underscore.js:
 	// Establish the root object, `window` (`self`) in the browser, or `global` on the server.
 	// We use `self` instead of `window` for `WebWorker` support.
 	var root = (typeof self == 'object' && self.self == self && self) ||

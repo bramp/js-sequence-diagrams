@@ -75,7 +75,7 @@ build/diagram-grammar.js: src/diagram.js build/grammar.js
 	#
 	$(NODE_MODULES)/preprocess $< . > $@
 
-build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js
+build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js src/theme.js src/theme-snap.js src/theme-raphael.js fonts/daniel/daniel_700.font.js
 	#
 	# Finally combine all javascript files together
 	#
