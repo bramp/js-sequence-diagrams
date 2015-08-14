@@ -232,7 +232,7 @@ if (Snap) {
 			// draw a rect behind it. TODO This is not needed if the text is within a box already!
 			if (background) {
 				var r = paper.rect(x, y, bb.width, bb.height);
-				r.attr({'stroke': 'none'});
+				r.attr(RECT).attr({'stroke': 'none'});
 				this.push_to_stack(r);
 			}
 
