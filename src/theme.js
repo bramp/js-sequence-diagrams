@@ -317,8 +317,9 @@ _.extend(BaseTheme.prototype, {
 
 	draw_title : function() {
 		var title = this._title;
-		if (title)
-			this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font, ALIGN_LEFT);
+		if (title) {
+            this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font, ALIGN_LEFT);
+        }
 	},
 
 	draw_actors : function(offsetY) {

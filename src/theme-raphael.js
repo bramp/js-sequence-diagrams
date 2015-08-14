@@ -27,7 +27,6 @@ if (typeof Raphael != 'undefined') {
 		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
 	};
 
-
 	/******************
 	 * RaphaelTheme
 	 ******************/
@@ -170,7 +169,6 @@ if (typeof Raphael != 'undefined') {
 
 	// Take the standard RaphaelTheme and make all the lines wobbly
 	_.extend(RaphaelHandTheme.prototype, RaphaelTheme.prototype, {
-
         setup_paper : function(container) {
             RaphaelTheme.prototype.setup_paper.call(this, container);
             this._font._obj = this._paper.getFont('daniel');

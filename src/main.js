@@ -40,5 +40,4 @@
 	} else {
 		root.Diagram = Diagram;
 	}
-
 }());

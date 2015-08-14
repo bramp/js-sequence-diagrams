@@ -40,8 +40,7 @@ Diagram.prototype.getActorWithAlias = function(input) {
 	} else {
 		name = alias = input;
 	}
-
-	return this.getActor(alias, name);
+    return this.getActor(alias, name);
 };
 
 Diagram.prototype.setTitle = function(title) {
@@ -145,7 +144,6 @@ Diagram.ParseError = ParseError;
 
 Diagram.parse = function(input) {
 	// TODO jison v0.4.17 changed their API slightly, so parser is no longer defined:
-
 	// Create the object to track state and deal with errors
 	parser.yy = new Diagram();
 	parser.yy.parseError = function(message, hash) {

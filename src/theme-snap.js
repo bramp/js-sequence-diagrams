@@ -258,7 +258,6 @@ if (typeof Snap != 'undefined') {
 
 	// Take the standard SnapTheme and make all the lines wobbly
 	_.extend(SnapHandTheme.prototype, SnapTheme.prototype, {
-
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.path(handLine(x1, y1, x2, y2)).attr(LINE);
 			if (arrowhead !== undefined) {
