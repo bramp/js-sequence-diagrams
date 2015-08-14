@@ -78,8 +78,7 @@ if (Raphael) {
 			this.wobble(x, y, x + w, y) +
 			this.wobble(x + w, y, x + w, y + h) +
 			this.wobble(x + w, y + h, x, y + h) +
-			this.wobble(x, y + h, x, y))
-			.attr(RECT);
+			this.wobble(x, y + h, x, y));
 	};
 
 	/**
@@ -87,7 +86,7 @@ if (Raphael) {
 	 */
 	Raphael.fn.handLine = function (x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
-		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2)).attr(LINE);
+		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
 	};
 
 	/**
@@ -191,17 +190,17 @@ if (Raphael) {
 			var f = font || {};
 			var t;
 			if (f._obj) {
+				// When using a font, we use a different text method, to ensure text is correctly aligned.
 				t = paper.print_center(x, y, text, f._obj, f['font-size']);
 			} else {
 				t = paper.text(x, y, text);
 				t.attr(f);
 			}
-			// draw a rect behind it
+			// draw a rect behind it. TODO Remove this rect if this text is already in a box
 			var bb = t.getBBox();
 			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
-			r.attr({'fill': "#fff", 'stroke': 'none'});
+			r.attr(RECT).attr({'stroke': 'none'});
 			t.toFront();
-			return t;
 		},
 	});
 
@@ -225,7 +224,7 @@ if (Raphael) {
 		},
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
-			var line = this._paper.handLine(x1, y1, x2, y2);
+			var line = this._paper.handLine(x1, y1, x2, y2).attr(LINE);
 			if (arrowhead != undefined) {
 				line.attr('arrow-end', this.arrow_types[arrowhead] + '-wide-long');
 			}

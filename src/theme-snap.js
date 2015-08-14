@@ -6,6 +6,7 @@
 /*global Diagram, Snap, _ */
 
 if (Snap) {
+	var xmlns = "http://www.w3.org/2000/svg";
 
 	var LINE = {
 		'stroke': '#000000',
@@ -83,8 +84,7 @@ if (Snap) {
 				this.wobble(x, y, x + w, y) +
 				this.wobble(x + w, y, x + w, y + h) +
 				this.wobble(x + w, y + h, x, y + h) +
-				this.wobble(x, y + h, x, y))
-				.attr(RECT);
+				this.wobble(x, y + h, x, y));
 		};
 
 		/**
@@ -145,31 +145,38 @@ if (Snap) {
 			l[LINETYPE.DOTTED] = '6,2';
 		},
 
+		add_description: function(svg, description) {
+            var desc = document.createElementNS(xmlns, 'desc')
+            desc.appendChild(document.createTextNode(description));
+            svg.appendChild(desc);
+		},
+
 		init_paper: function (container) {
-            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            var svg = document.createElementNS(xmlns, 'svg');
             container.appendChild(svg);
 
+            this.add_description(svg, this.diagram.title || '');
+
 			this._paper = Snap(svg);
-			this._paper.clear();
 			this._paper.addClass("sequence");
 			this._paper.addClass(this._css_class);
 
+			this.clear_group();
+
 			var a = this.arrow_markers = {};
 			var arrow = this._paper.path("M 0 0 L 5 2.5 L 0 5 z");
-			var marker = arrow.marker(0, 0, 5, 5, 5, 2.5);
-			marker.attr({ id: "markerArrowBlock" });
-			a[ARROWTYPE.FILLED] = marker;
+			a[ARROWTYPE.FILLED] = arrow.marker(0, 0, 5, 5, 5, 2.5)
+				.attr({ id: "markerArrowBlock" });
 
 			arrow = this._paper.path("M 9.6,8 1.92,16 0,13.7 5.76,8 0,2.286 1.92,0 9.6,8 z");
-			marker = arrow.marker(0, 0, 9.6, 16, 9.6, 8);
-			marker.attr({ markerWidth: "4", id: "markerArrowOpen" });
-			a[ARROWTYPE.OPEN] = marker;
+			a[ARROWTYPE.OPEN] = arrow.marker(0, 0, 9.6, 16, 9.6, 8)
+				.attr({ markerWidth: "4", id: "markerArrowOpen" });
 		},
 
 		init_font : function() {
 			this._font = {
-				//'font-size': 16,
-				//'font-family': 'daniel'
+				'font-size': 16,
+				'font-family': 'Andale Mono, monospace'
 			};
 		},
 
@@ -185,6 +192,21 @@ if (Snap) {
 			return this._paper.text_bbox(text, font);
 		},
 
+		push_to_stack: function(element) {
+			this._stack.push(element);
+			return element
+		},
+
+		clear_group: function() {
+			this._stack = new Array();
+		},
+
+		finish_group: function() {
+			var g = this._paper.group.apply(this._paper, this._stack);
+			this.clear_group();
+			return g;
+		},
+
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.line(x1, y1, x2, y2).attr(LINE);
 			if (arrowhead != undefined) {
@@ -193,11 +215,12 @@ if (Snap) {
 			if (arrowhead != undefined) {
 				line.attr('strokeDasharray', this.line_types[linetype]);
 			}
-			return line;
+			return this.push_to_stack(line);
 		},
 
 		draw_rect : function(x, y, w, h) {
-			return this._paper.rect(x, y, w, h).attr(RECT);
+			var rect = this._paper.rect(x, y, w, h).attr(RECT);
+			return this.push_to_stack(rect);
 		},
 
 		/**
@@ -206,7 +229,7 @@ if (Snap) {
 		 * TODO Horz center the text when it's multi-line print
 		 * TODO Determine what the group param is for
 		 */
-		draw_text : function (x, y, text, font, group) {
+		draw_text : function (x, y, text, font) {
 			var paper = this._paper;
 			var f = font || {};
 			var t;
@@ -226,7 +249,7 @@ if (Snap) {
 				});
 			}
 
-			// draw a rect behind it
+			// draw a rect behind it. TODO This is not needed if the text is within a box already!
 			var bb = t.getBBox();
 
 			x = x - bb.width / 2;
@@ -241,29 +264,38 @@ if (Snap) {
 			var r = paper.rect(x, y, bb.width, bb.height);
 			r.attr({'stroke': 'none'});
 
-			if (group) {
-				group.add(r);
-				group.add(t);
-			} else {
-				t.before(r);
-			}
+			this.push_to_stack(r);
+			this.push_to_stack(t);
 		},
 
 		draw_title : function() {	
-			var title = this._title;
-			if (title) {
-				var group = this._paper.group();
-				group.attr({ 'class': 'title' });
-				this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font, group);
-			}
+			this.clear_group();
+			BaseTheme.prototype.draw_title.call(this);
+			return this.finish_group().addClass('title');
 		},
 
 		draw_actor : function (actor, offsetY, height) {
-			actor.y      = offsetY;
-			actor.height = height;
-			var group = this._paper.group();
-			group.attr({ 'class': 'actor' });
-			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font, group);
+			this.clear_group();
+			BaseTheme.prototype.draw_actor.call(this, actor, offsetY, height);
+			return this.finish_group().addClass('actor');
+		},
+
+		draw_signal : function (signal, offsetY) {
+			this.clear_group();
+			BaseTheme.prototype.draw_signal.call(this, signal, offsetY);
+			return this.finish_group().addClass('signal');
+		},
+
+		draw_self_signal : function(signal, offsetY) {
+			this.clear_group();
+			BaseTheme.prototype.draw_self_signal.call(this, signal, offsetY);
+			return this.finish_group().addClass('signal');
+		},
+
+		draw_note : function (note, offsetY) {
+			this.clear_group();
+			BaseTheme.prototype.draw_note.call(this, note, offsetY);
+			return this.finish_group().addClass('note');
 		},
 	});
 
@@ -279,8 +311,8 @@ if (Snap) {
 	_.extend(SnapHandTheme.prototype, SnapTheme.prototype, {
 		init_font : function() {
 			this._font = {
-				//'font-size': 16,
-				//'font-family': 'daniel'
+				'font-size': 16,
+				'font-family': 'daniel'
 			};
 		},
 
@@ -292,11 +324,12 @@ if (Snap) {
 			if (arrowhead != undefined) {
 				line.attr('strokeDasharray', this.line_types[linetype]);
 			}
-			return line;
+			return this.push_to_stack(line);
 		},
 
 		draw_rect : function(x, y, w, h) {
-			return this._paper.handRect(x, y, w, h);
+			var rect = this._paper.handRect(x, y, w, h).attr(RECT);
+			return this.push_to_stack(rect);
 		},
 	});
 

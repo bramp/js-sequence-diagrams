@@ -330,9 +330,6 @@ _.extend(BaseTheme.prototype, {
     },
 
 	draw_signal : function (signal, offsetY) {
-		//var group = this._paper.group(); //TODO
-		//group.attr({ 'class': 'signal' });
-
 		var aX = getCenterX(signal.actorA);
 		var bX = getCenterX( signal.actorB );
 
@@ -372,8 +369,6 @@ _.extend(BaseTheme.prototype, {
 			default:
 				throw new Error("Unhandled note placement:" + note.placement);
 		}
-        //var group = this._paper.group();
-        //group.attr({ 'class': 'note' });
 		this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font);
 	},
 
@@ -385,8 +380,6 @@ _.extend(BaseTheme.prototype, {
 
 		// Draw inner box
 		this.draw_rect(x, y, w, h);
-		//if (group)
-		//	group.add(rect);
 
 		// Draw text (in the center)
 		x = getCenterX(box);
