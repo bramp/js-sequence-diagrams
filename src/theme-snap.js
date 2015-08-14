@@ -54,14 +54,10 @@ if (Snap) {
 		 * TODO Is this method needed with Snap?
 		 */
 		Element.prototype.text_bbox = function (text, font) {
-			var p;
+			// TODO We can share code between this and draw_text
 			text = text.split("\n");
-			if (font._obj) {
-				p = this.print_center(0, 0, text, font._obj, font['font-size']);
-			} else {
-				p = this.text(0, 0, text);
-				p.attr(font);
-			}
+			var p = this.text(0, 0, text);
+			p.attr(font);
 			if (text.length > 1) {
 				p.selectAll("tspan:nth-child(n+2)").attr({
 					dy: "1.2em",
@@ -93,28 +89,6 @@ if (Snap) {
 		Element.prototype.handLine = function (x1, y1, x2, y2) {
 			assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 			return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
-		};
-
-		/**
-		 * Prints, but aligns text in a similar way to text(...)
-		 */
-		Element.prototype.print_center = function (x, y, string, font, size, letter_spacing) {
-			var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
-			var bb = path.getBBox();
-
-			// Translate the text so it's centered.
-			var dx = (x - bb.x) - bb.width / 2;
-			var dy = (y - bb.y) - bb.height / 2;
-
-			// TODO Remove Raphael
-			// Due to an issue in Raphael 2.1.0 (that seems to be fixed later)
-			// we remap the path itself, instead of using a transformation matrix
-			var m = new Raphael.matrix();
-			m.translate(dx, dy);
-			return path.attr('path', Raphael.mapPath(path.attr('path'), m));
-
-			// otherwise we would do this:
-			//return path.transform("t" + dx + "," + dy);
 		};
 	});
 
@@ -232,16 +206,10 @@ if (Snap) {
 		draw_text : function (x, y, text, font, background) {
 			var paper = this._paper;
 			var f = font || {};
-			var t;
 			text = text.split("\n");
 
-			if (f._obj) {
-				t = paper.print_center(x, y, text, f._obj, f['font-size']);
-			} else {
-				t = paper.text(0, y, text);
-				t.attr(f);
-			}
-			t.attr({ dy: "1em" });
+			var t = paper.text(0, y, text);
+			t.attr(f).attr({ dy: "1em" });
 			if (text.length > 1) {
 				t.selectAll("tspan:nth-child(n+2)").attr({
 					dy: "1.2em",
@@ -249,7 +217,6 @@ if (Snap) {
 				});
 			}
 
-			// draw a rect behind it. TODO This is not needed if the text is within a box already!
 			var bb = t.getBBox();
 
 			x = x - bb.width / 2;
