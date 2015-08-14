@@ -185,7 +185,7 @@ if (Raphael) {
 		 * x,y (int) x,y center point for this text
 		 * TODO Horz center the text when it's multi-line print
 		 */
-		draw_text : function (x, y, text, font) {
+		draw_text : function (x, y, text, font, background) {
 			var paper = this._paper;
 			var f = font || {};
 			var t;
@@ -196,11 +196,14 @@ if (Raphael) {
 				t = paper.text(x, y, text);
 				t.attr(f);
 			}
-			// draw a rect behind it. TODO Remove this rect if this text is already in a box
-			var bb = t.getBBox();
-			var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
-			r.attr(RECT).attr({'stroke': 'none'});
-			t.toFront();
+			if (background) {
+				// draw a rect behind the text
+				var bb = t.getBBox();
+				var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
+				r.attr(RECT).attr({'stroke': 'none'});
+				t.toFront();
+			}
+			return t;
 		},
 	});
 

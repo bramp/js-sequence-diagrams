@@ -229,7 +229,7 @@ if (Snap) {
 		 * TODO Horz center the text when it's multi-line print
 		 * TODO Determine what the group param is for
 		 */
-		draw_text : function (x, y, text, font) {
+		draw_text : function (x, y, text, font, background) {
 			var paper = this._paper;
 			var f = font || {};
 			var t;
@@ -261,11 +261,16 @@ if (Snap) {
 					x: x
 				});
 			}
-			var r = paper.rect(x, y, bb.width, bb.height);
-			r.attr({'stroke': 'none'});
 
-			this.push_to_stack(r);
+			// draw a rect behind it. TODO This is not needed if the text is within a box already!
+			if (background) {
+				var r = paper.rect(x, y, bb.width, bb.height);
+				r.attr({'stroke': 'none'});
+				this.push_to_stack(r);
+			}
+
 			this.push_to_stack(t);
+			return t;
 		},
 
 		draw_title : function() {	

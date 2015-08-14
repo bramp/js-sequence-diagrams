@@ -318,7 +318,7 @@ _.extend(BaseTheme.prototype, {
 		var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
 		var y = offsetY + signal.height / 2;
 
-		this.draw_text(x, y, signal.message, this._font);
+		this.draw_text(x, y, signal.message, this._font, true);
 
 		var y1 = offsetY + SIGNAL_MARGIN;
 		var y2 = y1 + signal.height - SIGNAL_MARGIN;
@@ -338,7 +338,7 @@ _.extend(BaseTheme.prototype, {
 		var y = offsetY + SIGNAL_MARGIN + 2*SIGNAL_PADDING;
 
 		// Draw the text in the middle of the signal
-		this.draw_text(x, y, signal.message, this._font);
+		this.draw_text(x, y, signal.message, this._font, true);
 
 		// Draw the line along the bottom of the signal
 		y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
@@ -385,7 +385,7 @@ _.extend(BaseTheme.prototype, {
 		x = getCenterX(box);
 		y = getCenterY(box);
 
-		return this.draw_text(x, y, text, font);
+		return this.draw_text(x, y, text, font, false);
 	},
 
 });
