@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+            <style type="text/css">
+        @font-face {
+          font-family: 'Daniel';
+          font-style: normal;
+          font-weight: normal;
+          src: local('Daniel'), url('../fonts/daniel/daniel.otf') format('opentype');
+        }
+
+        .sequence.hand {
+            font-size: 16px;
+            font-family: 'Daniel';
+        }
+        .signal rect {
+            opacity: 0;
+        }
+        .signal text {
+            fill: #000000;
+        }
+
+        .note rect,
+        .note path {
+            fill: #ffff00;
+        }
+        .title rect,
+        .title path,
+        .actor rect,
+        .actor path {
+            fill: #ffffff
+        }
+        .signal text:hover {
+            fill: #aaaaaa
+        }
+    </style>
+    </head>
+    <body bgcolor="#eeeeee">
+        <textarea class="language" rows="10" cols="35">
+        Title: Here is a title
+        A->B: Normal line
+        B-->C: Dashed line
+        C->>D: Open arrow
+        D-->>A: Dashed open arrow
+        D->D: Self
+        </textarea>
+        <textarea class="language" rows="10" cols="35">
+        # Example of a comment.
+        Note left of A: Note to the\n left of A
+        Note right of A: Note to the\n right of A
+        Note over A: Note over A
+        Note over A,B: Note over both A and B
+        </textarea>
+        <textarea class="language" rows="10" cols="35">
+        participant C
+        participant B
+        participant A
+        Note right of A: By listing the participants\n you can change their order
+        </textarea>
+
+        <table id="results"></table>
+
+        <script src="../bower_components/jquery/jquery.min.js"></script>
+
+        <!--script src="../bower_components/underscore/underscore-min.js"></script-->
+        <script src="../bower_components/lodash/lodash.min.js"></script>
+
+        <script src="../bower_components/raphael/raphael-min.js"></script>
+        <script src="../bower_components/snap.svg/dist/snap.svg.js"></script>
+        <script src="../bower_components/bower-webfontloader/webfont.js"></script>
+        <script src="../bower_components/raphael/raphael-min.js"></script>
+
+        <script src="../build/diagram-grammar.js"></script>
+        <script src="../src/theme.js"></script>
+        <script src="../src/theme-snap.js"></script>
+        <script src="../src/theme-raphael.js"></script>
+        <script src="../fonts/daniel/daniel_700.font.js"></script>
+
+        <script src="../src/sequence-diagram.js"></script>
+        <script src="../src/jquery-plugin.js"></script>
+
+        <!--script src="../build/sequence-diagram.js"></script-->
+        <!--script src="../build/sequence-diagram-min.js"></script-->
+        <script>
+            $(document).ready(function(){
+
+                var themes = Diagram.themes;
+
+                var table = $("#results");
+                var row = $("<tr>").append("<td>")
+                _.each(themes, function(value, theme) {
+                    row.append( $("<td>" + theme + "</td>") );
+                });
+                table.append(row);
+
+                $('textarea.language').each(function(i){                    
+                    var textarea = $(this);
+                    var row = $("<tr>");
+                    var td = $("<td>");
+                    var containers = [];
+
+                    // Move the text area into the cell
+                    textarea.appendTo(td);
+                    row.append(td)
+
+                    // Now add one diagram per theme
+                    _.each(themes, function(value, theme) {
+                            var td = $("<td>").appendTo(row);
+                            containers.push(td[0]);
+                    });
+
+                    table.append(row);
+
+                    textarea.on('change input propertychange', function() {
+                        var value = $(this).val();
+                        var diagram = Diagram.parse(value);
+                        var i = 0;
+
+                        _.each(themes, function(value, theme) {
+                            var container = containers[i++];
+                            container.innerHTML = "";
+                            diagram.drawSVG(container, {
+                              theme: theme
+                            });
+                        });
+                    });
+                    textarea.change();
+                });
+            });
+        </script>
+    </body>
+</html>
+
+
+
