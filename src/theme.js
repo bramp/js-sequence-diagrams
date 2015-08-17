@@ -38,6 +38,9 @@ var PLACEMENT = Diagram.PLACEMENT;
 var LINETYPE  = Diagram.LINETYPE;
 var ARROWTYPE = Diagram.ARROWTYPE;
 
+var ALIGN_LEFT   = 0;
+var ALIGN_CENTER = 1;
+
 function AssertException(message) { this.message = message; }
 AssertException.prototype.toString = function () {
 	return 'AssertException: ' + this.message;
@@ -111,7 +114,6 @@ _.extend(BaseTheme.prototype, {
 	layout : function() {
 		// Local copies
 		var diagram = this.diagram;
-		var paper   = this._paper;
 		var font    = this._font;
 		var actors  = diagram.actors;
 		var signals = diagram.signals;
@@ -122,7 +124,7 @@ _.extend(BaseTheme.prototype, {
 		// Setup some layout stuff
 		if (diagram.title) {
 			var title = this._title = {};
-			var bb = paper.text_bbox(diagram.title, font);
+			var bb = this.text_bbox(diagram.title, font);
 			title.text_bb = bb;
 			title.message = diagram.title;
 
@@ -136,7 +138,7 @@ _.extend(BaseTheme.prototype, {
 		}
 
 		_.each(actors, function(a) {
-			var bb = paper.text_bbox(a.name, font);
+			var bb = this.text_bbox(a.name, font);
 			a.text_bb = bb;
 
 			//var bb = t.attr("text", a.name).getBBox();
@@ -169,7 +171,7 @@ _.extend(BaseTheme.prototype, {
 		_.each(signals, function(s) {
 			var a, b; // Indexes of the left and right actors involved
 
-			var bb = paper.text_bbox(s.message, font);
+			var bb = this.text_bbox(s.message, font);
 
 			//var bb = t.attr("text", s.message).getBBox();
 			s.text_bb = bb;
@@ -265,7 +267,7 @@ _.extend(BaseTheme.prototype, {
 	draw_title : function() {
 		var title = this._title;
 		if (title)
-			this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font);
+			this.draw_text_box(title, title.message, TITLE_MARGIN, TITLE_PADDING, this._font, ALIGN_LEFT);
 	},
 
 	draw_actors : function(offsetY) {
@@ -288,7 +290,7 @@ _.extend(BaseTheme.prototype, {
 	draw_actor : function (actor, offsetY, height) {
 		actor.y      = offsetY;
 		actor.height = height;
-		this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
+		this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font, ALIGN_CENTER);
 	},
 
 	draw_signals : function (offsetY) {
@@ -318,7 +320,7 @@ _.extend(BaseTheme.prototype, {
 		var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
 		var y = offsetY + signal.height / 2;
 
-		this.draw_text(x, y, signal.message, this._font, true);
+		this.draw_text(x, y, signal.message, this._font, true, ALIGN_LEFT);
 
 		var y1 = offsetY + SIGNAL_MARGIN;
 		var y2 = y1 + signal.height - SIGNAL_MARGIN;
@@ -338,11 +340,11 @@ _.extend(BaseTheme.prototype, {
 		var y = offsetY + SIGNAL_MARGIN + 2*SIGNAL_PADDING;
 
 		// Draw the text in the middle of the signal
-		this.draw_text(x, y, signal.message, this._font, true);
+		this.draw_text(x, y, signal.message, this._font, true, ALIGN_CENTER);
 
 		// Draw the line along the bottom of the signal
 		y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
-		this.draw_line(aX, y, bX, y, signal.linetype, signal.arrowtype)
+		this.draw_line(aX, y, bX, y, signal.linetype, signal.arrowtype);
 	},
 
 	draw_note : function (note, offsetY) {
@@ -369,10 +371,11 @@ _.extend(BaseTheme.prototype, {
 			default:
 				throw new Error("Unhandled note placement:" + note.placement);
 		}
-		this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font);
+		this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font, ALIGN_LEFT);
 	},
 
-	draw_text_box : function (box, text, margin, padding, font) {
+	// Draw left aligned text surrounded in a box
+	draw_text_box : function (box, text, margin, padding, font, align) {
 		var x = box.x + margin;
 		var y = box.y + margin;
 		var w = box.width  - 2 * margin;
@@ -382,10 +385,15 @@ _.extend(BaseTheme.prototype, {
 		this.draw_rect(x, y, w, h);
 
 		// Draw text (in the center)
-		x = getCenterX(box);
-		y = getCenterY(box);
+		if (align == ALIGN_CENTER) {
+			x = getCenterX(box);
+			y = getCenterY(box);
+		} else {
+			x += padding;
+			y += padding;
+		}
 
-		return this.draw_text(x, y, text, font, false);
+		return this.draw_text(x, y, text, font, false, align);
 	},
 
 });

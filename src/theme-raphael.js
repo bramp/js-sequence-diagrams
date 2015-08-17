@@ -52,24 +52,6 @@ if (Raphael) {
 	};
 
 	/**
-	 * Returns the text's bounding box
-	 */
-	Raphael.fn.text_bbox = function (text, font) {
-		var p;
-		if (font._obj) {
-			p = this.print_center(0, 0, text, font._obj, font['font-size']);
-		} else {
-			p = this.text(0, 0, text);
-			p.attr(font);
-		}
-
-		var bb = p.getBBox();
-		p.remove();
-
-		return bb;
-	};
-
-	/**
 	 * Draws a wobbly (hand drawn) rect
 	 */
 	Raphael.fn.handRect = function (x, y, w, h) {
@@ -87,27 +69,6 @@ if (Raphael) {
 	Raphael.fn.handLine = function (x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
-	};
-
-	/**
-	 * Prints, but aligns text in a similar way to text(...)
-	 */
-	Raphael.fn.print_center = function(x, y, string, font, size, letter_spacing) {
-		var path = this.print(x, y, string, font, size, 'baseline', letter_spacing);
-		var bb = path.getBBox();
-
-		// Translate the text so it's centered.
-		var dx = (x - bb.x) - bb.width / 2;
-		var dy = (y - bb.y) - bb.height / 2;
-
-		// Due to an issue in Raphael 2.1.0 (that seems to be fixed later)
-		// we remap the path itself, instead of using a transformation matrix
-		var m = new Raphael.matrix();
-		m.translate(dx, dy);
-		return path.attr('path', Raphael.mapPath(path.attr('path'), m));
-
-		// otherwise we would do this:
-		//return path.transform("t" + dx + "," + dy);
 	};
 
 	/******************
@@ -161,16 +122,41 @@ if (Raphael) {
 			);
 		},
 
+		/**
+		 * Strip whitespace from each newline
+		 */
+		clean_text: function(text) {
+			text = _.invoke(text.split("\n"), 'trim');
+			return text.join("\n");
+		},
+
+		/**
+		 * Returns the text's bounding box
+		 */
 		text_bbox: function(text, font) {
-			return this._paper.text_bbox(text, font);
+			text = this.clean_text(text);
+			font = font || {};
+			var p;
+			if (font._obj) {
+				p = this._paper.print(0, 0, text, font._obj, font['font-size']);
+			} else {
+				p = this._paper.text(0, 0, text);
+				p.attr(font);
+				//p.attr({"text-anchor": "start"});
+			}
+
+			var bb = p.getBBox();
+			p.remove();
+
+			return bb;
 		},
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.line(x1, y1, x2, y2);
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('arrow-end', this.arrow_types[arrowhead] + '-wide-long');
 			}
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('stroke-dasharray', this.line_types[linetype]);
 			}
 			return line;
@@ -181,25 +167,35 @@ if (Raphael) {
 		},
 
 		/**
-		 * Draws text with a white background
-		 * x,y (int) x,y center point for this text
-		 * TODO Horz center the text when it's multi-line print
+		 * Draws text with a optional white background
+		 * x,y (int) x,y top left point of the text
 		 */
-		draw_text : function (x, y, text, font, background) {
+		draw_text : function (x, y, text, font, background, align) {
+			text = this.clean_text(text);
+			font = font || {};
+			align = align || ALIGN_LEFT;
+
 			var paper = this._paper;
-			var f = font || {};
-			var t;
-			if (f._obj) {
-				// When using a font, we use a different text method, to ensure text is correctly aligned.
-				t = paper.print_center(x, y, text, f._obj, f['font-size']);
-			} else {
-				t = paper.text(x, y, text);
-				t.attr(f);
+			var bb = this.text_bbox(text, font);
+
+			if (align == ALIGN_CENTER) {
+				x = x - bb.width / 2;
+				y = y - bb.height / 2;
 			}
+
+			var t;
+			if (font._obj) {
+				// When using a font, we have to use .print(..)
+				t = paper.print(x - bb.x, y - bb.y, text, font._obj, font['font-size']);
+			} else {
+				t = paper.text(x - bb.x - bb.width / 2, y - bb.y, text);
+				t.attr(font);
+				t.attr({"text-anchor": "start"});
+			}
+
 			if (background) {
 				// draw a rect behind the text
-				var bb = t.getBBox();
-				var r = paper.rect(bb.x, bb.y, bb.width, bb.height);
+				var r = paper.rect(x, y, bb.width, bb.height);
 				r.attr(RECT).attr({'stroke': 'none'});
 				t.toFront();
 			}
@@ -228,10 +224,10 @@ if (Raphael) {
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.handLine(x1, y1, x2, y2).attr(LINE);
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('arrow-end', this.arrow_types[arrowhead] + '-wide-long');
 			}
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('stroke-dasharray', this.line_types[linetype]);
 			}
 			return line;

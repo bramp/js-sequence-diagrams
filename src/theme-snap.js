@@ -50,28 +50,6 @@ if (Snap) {
 		};
 
 		/**
-		 * Returns the text's bounding box
-		 * TODO Is this method needed with Snap?
-		 */
-		Element.prototype.text_bbox = function (text, font) {
-			// TODO We can share code between this and draw_text
-			text = text.split("\n");
-			var p = this.text(0, 0, text);
-			p.attr(font);
-			if (text.length > 1) {
-				p.selectAll("tspan:nth-child(n+2)").attr({
-					dy: "1.2em",
-					x: 0
-				});
-			}
-
-			var bb = p.getBBox();
-			p.remove();
-
-			return bb;
-		};
-
-		/**
 		 * Draws a wobbly (hand drawn) rect
 		 */
 		Element.prototype.handRect = function (x, y, w, h) {
@@ -120,7 +98,7 @@ if (Snap) {
 		},
 
 		add_description: function(svg, description) {
-            var desc = document.createElementNS(xmlns, 'desc')
+            var desc = document.createElementNS(xmlns, 'desc');
             desc.appendChild(document.createTextNode(description));
             svg.appendChild(desc);
 		},
@@ -163,16 +141,19 @@ if (Snap) {
 		},
 
 		text_bbox: function(text, font) {
-			return this._paper.text_bbox(text, font);
+			var t = this.create_text(text, font);
+			var bb = t.getBBox();
+			t.remove();
+			return bb;
 		},
 
 		push_to_stack: function(element) {
 			this._stack.push(element);
-			return element
+			return element;
 		},
 
 		clear_group: function() {
-			this._stack = new Array();
+			this._stack = [];
 		},
 
 		finish_group: function() {
@@ -181,12 +162,27 @@ if (Snap) {
 			return g;
 		},
 
+		create_text: function(text, font) {
+			text = _.invoke(text.split("\n"), 'trim');
+			var t = this._paper.text(0, 0, text);
+			t.attr(font || {});
+			if (text.length > 1) {
+				// Every row after the first, set tspan to be 1.2em below the previous line
+				t.selectAll("tspan:nth-child(n+2)").attr({
+					dy: "1.2em",
+					x: 0
+				});
+			}
+
+			return t;
+		},
+
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.line(x1, y1, x2, y2).attr(LINE);
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('markerEnd', this.arrow_markers[arrowhead]);
 			}
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('strokeDasharray', this.line_types[linetype]);
 			}
 			return this.push_to_stack(line);
@@ -198,43 +194,34 @@ if (Snap) {
 		},
 
 		/**
-		 * Draws text with a white background
-		 * x,y (int) x,y center point for this text
-		 * TODO Horz center the text when it's multi-line print
-		 * TODO Determine what the group param is for
+		 * Draws text with a optional white background
+		 * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
+		 * text (string) text to print
+		 * font (Object)
+		 * background (boolean) draw a white background behind the text
+		 * align (string) ALIGN_LEFT or ALIGN_CENTER
 		 */
-		draw_text : function (x, y, text, font, background) {
+		draw_text : function (x, y, text, font, background, align) {
 			var paper = this._paper;
-			var f = font || {};
-			text = text.split("\n");
-
-			var t = paper.text(0, y, text);
-			t.attr(f).attr({ dy: "1em" });
-			if (text.length > 1) {
-				t.selectAll("tspan:nth-child(n+2)").attr({
-					dy: "1.2em",
-					x: 0
-				});
-			}
-
+			var t = this.create_text(text, font);
 			var bb = t.getBBox();
 
-			x = x - bb.width / 2;
-			y = y - bb.height / 2;
-			t.attr({ x: x, y: y });
-			if (text.length > 1) {
-				t.selectAll("tspan:nth-child(n+2)").attr({
-					dy: "1.2em",
-					x: x
-				});
+			if (align == ALIGN_CENTER) {
+				x = x - bb.width / 2;
+				y = y - bb.height / 2;
 			}
 
-			// draw a rect behind it. TODO This is not needed if the text is within a box already!
+			// draw a rect behind it
 			if (background) {
 				var r = paper.rect(x, y, bb.width, bb.height);
 				r.attr(RECT).attr({'stroke': 'none'});
 				this.push_to_stack(r);
 			}
+
+			// Now move the text into place
+			// `y - bb.y` because text(..) is positioned from the baseline, so this moves it down.
+			t.attr({x: x - bb.x, y: y - bb.y});
+			t.selectAll("tspan").attr({x: x});
 
 			this.push_to_stack(t);
 			return t;
@@ -290,10 +277,10 @@ if (Snap) {
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.handLine(x1, y1, x2, y2).attr(LINE);
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('markerEnd', this.arrow_markers[arrowhead]);
 			}
-			if (arrowhead != undefined) {
+			if (arrowhead !== undefined) {
 				line.attr('strokeDasharray', this.line_types[linetype]);
 			}
 			return this.push_to_stack(line);
