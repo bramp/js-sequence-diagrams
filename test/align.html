@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Text Alignment Test</title>
+
+        <script src="../bower_components/jquery/jquery.min.js"></script>
+        <script src="../bower_components/lodash/lodash.min.js"></script>
+
+        <script src="../bower_components/snap.svg/dist/snap.svg.js"></script>
+        <script src="../bower_components/bower-webfontloader/webfont.js"></script>
+
+        <script type="text/javascript">
+
+            $(document).ready(function(){
+                var paper = Snap("#svg")
+
+                var RECT = {
+                    'stroke': '#000000',
+                    'stroke-width': 1,
+                    'fill': "none"
+                };
+
+                function draw_cross(x, y) {
+                    var SIZE = 25;
+                    paper.line(x, y - SIZE, x, y + SIZE).attr(RECT);
+                    paper.line(x - SIZE, y, x + SIZE, y).attr(RECT);
+                    draw_coord(x, y);
+
+                }
+
+                function draw_coord(x, y) {
+                    var p = paper.text(x, y, x.toFixed(0) + "," + y.toFixed(0));
+                    p.attr({'font-size': 10});
+                }
+
+                function draw_bb(bb) {
+                    paper.rect(bb.x, bb.y, bb.width, bb.height).attr(RECT);
+
+                    draw_coord(bb.x, bb.y);
+                    draw_coord(bb.x + bb.width, bb.y);
+                    draw_coord(bb.x, bb.y + bb.height);
+                    draw_coord(bb.x + bb.width, bb.y + bb.height);
+                }
+
+                function draw_text(x, y, text, font) {
+                    // TODO We can share code between this and draw_text
+                    text = _.invoke(text.split("\n"), 'trim');
+                    var t = paper.text(x, y, text);
+                    t.attr(font || {});
+
+                    // Every row after the first, set tspan to be 1.2em below the previous line
+                    t.selectAll("tspan:nth-child(n+2)").attr({
+                        dy: "1em",
+                        x: x
+                    });
+
+                    return t;
+                }
+
+                var font = {'font-size': '64px'}
+
+                //////////
+                draw_cross(100, 100);
+                var p = paper.text(100, 100, "Text\n100,100\nThird");
+                p.attr(font);
+                draw_bb( p.getBBox() );
+
+                console.log(p.getBBox());
+
+                //////////
+                draw_cross(100, 200);
+                var p = draw_text(100, 200, "Text\n100,100\nThird", font);
+                draw_bb( p.getBBox() );
+
+                console.log(p.getBBox());
+                console.log(p.getBBox().height / 3);
+
+                /*
+                var font = paper.getFont('daniel')
+                var p = paper.print(100, 300, "Print\n100,300\nThird", font, 32, 'baseline');
+
+                draw_bb( p.getBBox() );
+
+                //////////
+                draw_cross(100, 500);
+                var font = paper.getFont('daniel')
+                var p = paper.print_center(100, 500, "MyPrint\n100,500\nThird", font, 32);
+
+                draw_bb( p.getBBox() );
+                */
+            });
+        </script>
+    </head>
+    <body>
+        <svg id="svg" width="800" height="600"></svg>
+
+    </body>
