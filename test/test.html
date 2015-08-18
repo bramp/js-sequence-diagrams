@@ -50,7 +50,7 @@ Note over A,B: Note over A,B
     	</textarea>
     	<button id="parse" type="button">Click Me!</button>  
 
-    	<svg id="diagram"></svg>
+    	<div id="diagram"></svg>
 
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
         <script src="../bower_components/jquery/jquery.min.js"></script>
@@ -83,15 +83,7 @@ Note over A,B: Note over A,B
                     //try {
                         var diagram = Diagram.parse($('#language').val());
                         console.log(diagram);
-
-                        WebFont.load({
-                            custom: {
-                                families: ['Daniel']
-                            },
-                            active: function () {
-                                diagram.drawSVG('#diagram', {theme: 'hand'});
-                            }
-                        });
+                        diagram.drawSVG('diagram', {theme: 'hand'});
                     //} catch (e) {
                     //    console.log(e);
                     //}

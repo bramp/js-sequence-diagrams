@@ -23,6 +23,7 @@
  * License information:
  * http://creativecommons.org/licenses/by-nd/3.0/
  */
+if (typeof Raphael !== "undefined") {
 Raphael.registerFont({
     "w": 327,
     "face": {
@@ -990,3 +991,4 @@ Raphael.registerFont({
         }
     }
 });
+}

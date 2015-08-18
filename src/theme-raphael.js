@@ -5,7 +5,7 @@
  */
 /*global Diagram, Raphael, _ */
 
-if (Raphael) {
+if (typeof Raphael !== "undefined") {
 
 	var LINE = {
 		'stroke': '#000000',

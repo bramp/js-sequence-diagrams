@@ -5,7 +5,7 @@
  */
 /*global Diagram, Snap, _ */
 // TODO Move defintion of font onto the <svg>, so it can easily be override at each level
-if (Snap) {
+if (typeof Snap !== "undefined") {
 	var xmlns = "http://www.w3.org/2000/svg";
 
 	var LINE = {
@@ -104,6 +104,9 @@ if (Snap) {
 		},
 
 		init_paper: function (container) {
+			if (typeof container === "string") {
+				container = document.getElementById(container);
+			}
             var svg = document.createElementNS(xmlns, 'svg');
             container.appendChild(svg);
 
@@ -294,4 +297,12 @@ if (Snap) {
 
 	registerTheme("simple", SnapTheme);
 	registerTheme("hand",   SnapHandTheme);
+	
+	if (typeof WebFont !== "undefined") {	
+		WebFont.load({
+			custom: {
+				families: ['Daniel']
+			}
+		});
+	}
 }
