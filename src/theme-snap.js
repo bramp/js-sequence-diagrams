@@ -5,16 +5,14 @@
  */
 /*global Diagram, Snap, _ */
 // TODO Move defintion of font onto the <svg>, so it can easily be override at each level
-if (typeof Snap !== "undefined") {
+if (typeof Snap !== "undefined") (function () {
 	var xmlns = "http://www.w3.org/2000/svg";
 
 	var LINE = {
-		'stroke': '#000000',
 		'stroke-width': 2
 	};
 
 	var RECT = _.extend(LINE, {
-		'fill': "#fff"
 	});
 
 	/******************
@@ -103,13 +101,26 @@ if (typeof Snap !== "undefined") {
             svg.appendChild(desc);
 		},
 
+		add_style: function (svg) {
+			var style = document.createElementNS(xmlns, 'style');
+			style.type = 'text/css';
+			style.appendChild(document.createTextNode(
+				"\n" +
+				".sequence { font-size: 16px; font-family: 'Daniel'; }\n" +
+				".sequence line { stroke: #000000; }\n" +
+				".sequence rect { stroke: #000000; fill: #ffffff;}\n" +
+				".sequence path { stroke: #000000; fill: #ffffff;}\n"));
+			svg.appendChild(style);
+		},
+
 		init_paper: function (container) {
 			if (typeof container === "string") {
 				container = document.getElementById(container);
 			}
             var svg = document.createElementNS(xmlns, 'svg');
-            container.appendChild(svg);
+            $(container).prepend(svg);
 
+			this.add_style(svg);
             this.add_description(svg, this.diagram.title || '');
 
 			this._paper = Snap(svg);
@@ -119,11 +130,11 @@ if (typeof Snap !== "undefined") {
 			this.clear_group();
 
 			var a = this.arrow_markers = {};
-			var arrow = this._paper.path("M 0 0 L 5 2.5 L 0 5 z");
+			var arrow = this._paper.path("M 0 0 L 5 2.5 L 0 5 z").attr({ style: "fill: #000000" });
 			a[ARROWTYPE.FILLED] = arrow.marker(0, 0, 5, 5, 5, 2.5)
 				.attr({ id: "markerArrowBlock" });
 
-			arrow = this._paper.path("M 9.6,8 1.92,16 0,13.7 5.76,8 0,2.286 1.92,0 9.6,8 z");
+			arrow = this._paper.path("M 9.6,8 1.92,16 0,13.7 5.76,8 0,2.286 1.92,0 9.6,8 z").attr({ style: "fill: #000000"});
 			a[ARROWTYPE.OPEN] = arrow.marker(0, 0, 9.6, 16, 9.6, 8)
 				.attr({ markerWidth: "4", id: "markerArrowOpen" });
 		},
@@ -217,7 +228,7 @@ if (typeof Snap !== "undefined") {
 			// draw a rect behind it
 			if (background) {
 				var r = paper.rect(x, y, bb.width, bb.height);
-				r.attr(RECT).attr({'stroke': 'none'});
+				r.attr(RECT).attr({'style': 'stroke: none;'});
 				this.push_to_stack(r);
 			}
 
@@ -273,8 +284,8 @@ if (typeof Snap !== "undefined") {
 	_.extend(SnapHandTheme.prototype, SnapTheme.prototype, {
 		init_font : function() {
 			this._font = {
-				'font-size': 16,
-				'font-family': 'daniel'
+				//'font-size': 16,
+				//'font-family': 'daniel'
 			};
 		},
 
@@ -305,4 +316,4 @@ if (typeof Snap !== "undefined") {
 			}
 		});
 	}
-}
+})();

@@ -5,7 +5,7 @@
  */
 /*global Diagram, Raphael, _ */
 
-if (typeof Raphael !== "undefined") {
+if (typeof Raphael !== "undefined")  (function () {
 
 	var LINE = {
 		'stroke': '#000000',
@@ -240,4 +240,4 @@ if (typeof Raphael !== "undefined") {
 
 	registerTheme("oldSimple", RaphaelTheme);
 	registerTheme("oldHand",   RaphaelHandTheme);
-}
+})();
