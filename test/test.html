@@ -78,7 +78,7 @@ A -->> B: bye
 
             <script src="../build/sequence-diagram-min.js"></script>
             <script>
-                $(document).ready(function () {
+                $(window).load(function () {
                     function draw() {
                         $("#diagram").empty();
 
@@ -89,9 +89,8 @@ A -->> B: bye
                         });
                     }
 
-                    $(document).ready(function () {
-                        draw();
-                    });
+                    draw();
+                    
                     $('input[name=themeChoice]').on("change", function() { draw() });
                     $('#language').on("change input paste", _.throttle(function () {
                         //try {

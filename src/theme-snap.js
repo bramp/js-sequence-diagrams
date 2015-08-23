@@ -307,8 +307,10 @@ if (typeof Snap !== "undefined") (function () {
 	});
 
 	registerTheme("simple", SnapTheme);
-	registerTheme("hand",   SnapHandTheme);
-	
+	registerTheme("hand", SnapHandTheme);
+
+	$("body").prepend("<div style='font-family: Daniel; position: absolute;top:-1000px;'>js-sequence. make sure font is loaded. This should be invisible</div>");
+
 	if (typeof WebFont !== "undefined") {	
 		WebFont.load({
 			custom: {
