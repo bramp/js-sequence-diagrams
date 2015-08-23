@@ -26,8 +26,8 @@ if (typeof Snap !== "undefined") (function () {
 			var wobble = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
 
 			// Distance along line
-			var r1 = Math.random();
-			var r2 = Math.random();
+			var r1 = 0.05 + Math.random() * 0.9;
+			var r2 = 0.05 + Math.random() * 0.9;
 
 			var xfactor = Math.random() > 0.5 ? wobble : -wobble;
 			var yfactor = Math.random() > 0.5 ? wobble : -wobble;
