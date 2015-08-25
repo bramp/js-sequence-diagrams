@@ -59,24 +59,28 @@
 		this.index = index;
 	};
 
-	Diagram.Signal = function(actorA, signaltype, actorB, message) {
+	Diagram.Signal = function(actorA, signaltype, actorB, message, indent) {
 		this.type       = "Signal";
 		this.actorA     = actorA;
 		this.actorB     = actorB;
 		this.linetype   = signaltype & 3;
 		this.arrowtype  = (signaltype >> 2) & 3;
 		this.message    = message;
+		if (indent) this.offset = 0;
+		else this.offset = 1;
 	};
 
 	Diagram.Signal.prototype.isSelf = function() {
 		return this.actorA.index == this.actorB.index;
 	};
 
-	Diagram.Note = function(actor, placement, message) {
+	Diagram.Note = function(actor, placement, message, indent) {
 		this.type      = "Note";
 		this.actor     = actor;
 		this.placement = placement;
 		this.message   = message;
+		if (indent) this.offset = 0;
+		else this.offset = 1;
 
 		if (this.hasManyActors() && actor[0] == actor[1]) {
 			throw new Error("Note should be over two different actors");
@@ -158,6 +162,3 @@
 		delete diagram.parseError;
 		return diagram;
 	};
-
-
-
