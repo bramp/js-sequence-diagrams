@@ -2,6 +2,6 @@
 (function () {
 	"use strict";
 	this.Snap = {
-		// TODO
+		plugin: function(){},
 	};
 }).call(this); 
