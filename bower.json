@@ -22,7 +22,7 @@
   "dependencies": {
     "underscore": "~1.4.x",
     "raphael": "~2.1.x",
-    "snap.svg": "~0.4.1",
+    "snap.svg": "~0.4.1"
   },
   "devDependencies": {
     "qunit": "1.11.x",
