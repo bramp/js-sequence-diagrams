@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
@@ -15,54 +15,55 @@
           src: local('Daniel'), url('../fonts/daniel/daniel.otf') format('opentype');
         }
 
-        .sequence.hand {
+        /* Override Snap defaults examples */
+        /*override the default font for the "hand" theme*/
+        /*.sequence.hand {
             font-size: 16px;
-            font-family: 'Daniel';
-        }
-        .signal rect {
-            opacity: 0;
-        }
-        .signal text {
-            fill: #000000;
-        }
+            font-family: 'Consolas';
+        }*/
 
-        .note rect,
-        .note path {
+        /* override background color of note */
+        /*.sequence .note rect,
+        .sequence .note path {
             fill: #ffff00;
-        }
-        .title rect,
-        .title path,
-        .actor rect,
-        .actor path {
-            fill: #ffffff
-        }
-        .signal text:hover {
-            fill: #aaaaaa
+        }*/
+
+        /* hover signal text color */
+        .sequence .signal line:hover,
+        .sequence .signal path:hover {
+            stroke: #777777;
+            fill: #777777;
         }
     </style>
     </head>
     <body>
-    	<textarea id="language" rows="10" cols="50">
+    <textarea id="language" rows="10" cols="50">
 #Note left of A: Note to the\n left of A
 #Note right of A: Note to the\n right of A
 #Note over A: Note over A
 Note over A,B: Note over A,B
-    	</textarea>
-    	<button id="parse" type="button">Click Me!</button>  
+A -> B: hello
+A -->> B: bye
+    </textarea>
+    <div style="display: inline-block">
+        <label style="display: block"><input type="checkbox" name="themeChoice" value="hand" checked="checked">SVG hand</label>
+        <label style="display: block"><input type="checkbox" name="themeChoice" value="simple" checked="checked">SVG simple</label>
+        <label style="display: block"><input type="checkbox" name="themeChoice" value="oldHand">Raphaël hand</label>
+        <label style="display: block"><input type="checkbox" name="themeChoice" value="oldSimple">Raphaël simple</label>
+    </div> 
 
-    	<svg id="diagram"></svg>
+            <div id="diagram"></div>
 
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
-        <script src="../bower_components/jquery/jquery.min.js"></script>
+            <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+            <script src="../bower_components/jquery/jquery.min.js"></script>
 
-        <script src="../bower_components/underscore/underscore-min.js"></script>
-        <script src="../bower_components/lodash/lodash.min.js"></script>
-        <script src="../bower_components/snap.svg/dist/snap.svg.js"></script>
-        <script src="../bower_components/bower-webfontloader/webfont.js"></script>
-        <script src="../bower_components/raphael/raphael-min.js"></script>
+            <script src="../bower_components/underscore/underscore-min.js"></script>
+            <script src="../bower_components/lodash/lodash.min.js"></script>
+            <script src="../bower_components/snap.svg/dist/snap.svg.js"></script>
+            <script src="../bower_components/raphael/raphael-min.js"></script>
 
-        
-        <!--
+
+            <!--
         <script src="../build/diagram-grammar.js"></script>
         <script src="../src/theme.js"></script>
         <script src="../src/theme-snap.js"></script>
@@ -72,34 +73,32 @@ Note over A,B: Note over A,B
         <script src="../src/sequence-diagram.js"></script>
         <script src="../src/jquery-plugin.js"></script>
         -->
+            <!--script src="../build/sequence-diagram.js"></script-->
 
-        <!--script src="../build/sequence-diagram.js"></script-->
+            <script src="../build/sequence-diagram-min.js"></script>
+            <script>
+                $(window).load(function () {
+                    function draw() {
+                        $("#diagram").empty();
 
-        <script src="../build/sequence-diagram-min.js"></script>
-        <script>
-            $(document).ready(function(){
-                $('#parse').click(_.throttle( function() {
-
-                    //try {
                         var diagram = Diagram.parse($('#language').val());
                         console.log(diagram);
-
-                        WebFont.load({
-                            custom: {
-                                families: ['Daniel']
-                            },
-                            active: function () {
-                                diagram.drawSVG('#diagram', {theme: 'hand'});
-                            }
+                        $($('input[name=themeChoice]:checked').get().reverse()).each(function () {
+                            diagram.drawSVG('diagram', { theme: $(this).val() });
                         });
-                    //} catch (e) {
-                    //    console.log(e);
-                    //}
-                }, 100));
-            });
-        </script>
-    </body>
+                    }
+
+                    draw();
+                    
+                    $('input[name=themeChoice]').on("change", function() { draw() });
+                    $('#language').on("change input paste", _.throttle(function () {
+                        //try {
+                        draw();
+                        //} catch (e) {
+                        //    console.log(e);
+                        //}
+                    }, 100));
+                });
+            </script>
+</body>
 </html>
-
-
-
