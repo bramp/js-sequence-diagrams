@@ -2,9 +2,6 @@
 (function () {
 	"use strict";
 	this.Snap = {
-		// TODO
-		plugin: function(plug) {
-			plug(this.plugin, this.plugin, this.plugin, this.plugin, this.plugin);
-		}
-	}
+		plugin: function(){},
+	};
 }).call(this); 
