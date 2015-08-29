@@ -309,13 +309,10 @@ if (typeof Snap !== "undefined") (function () {
 	registerTheme("simple", SnapTheme);
 	registerTheme("hand", SnapHandTheme);
 
-	$("body").prepend("<div style='font-family: Daniel; position: absolute;top:-1000px;'>js-sequence. make sure font is loaded. This should be invisible</div>");
-
-	if (typeof WebFont !== "undefined") {	
-		WebFont.load({
-			custom: {
-				families: ['Daniel']
-			}
-		});
+    if(typeof document !== "undefined") {
+		var element = document.createElement("div");
+		element.style.cssText = "font-family: Daniel; position: absolute;top:-1000px;";
+		element.innerHTML = 'js-sequence: This is inserted to make sure the font is loaded. This should be invisible in the page';
+		document.body.insertBefore(element, document.body.firstChild);
 	}
 })();
