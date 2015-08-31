@@ -374,7 +374,9 @@ _.extend(BaseTheme.prototype, {
 		this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font, ALIGN_LEFT);
 	},
 
-	// Draw left aligned text surrounded in a box
+	/**
+	 * Draw text surrounded by a box
+	 */
 	draw_text_box : function (box, text, margin, padding, font, align) {
 		var x = box.x + margin;
 		var y = box.y + margin;

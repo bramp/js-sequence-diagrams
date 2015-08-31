@@ -168,7 +168,11 @@ if (Raphael) {
 
 		/**
 		 * Draws text with a optional white background
-		 * x,y (int) x,y top left point of the text
+		 * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
+		 * text (string) text to print
+		 * font (Object)
+		 * background (boolean) draw a white background behind the text
+		 * align (string) ALIGN_LEFT or ALIGN_CENTER
 		 */
 		draw_text : function (x, y, text, font, background, align) {
 			text = this.clean_text(text);
