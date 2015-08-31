@@ -317,7 +317,7 @@ _.extend(BaseTheme.prototype, {
 		var text_bb = signal.text_bb;
 		var aX = getCenterX(signal.actorA);
 
-		var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
+		var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING;
 		var y = offsetY + signal.height / 2;
 
 		this.draw_text(x, y, signal.message, this._font, true, ALIGN_LEFT);
