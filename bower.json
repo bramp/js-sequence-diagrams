@@ -35,6 +35,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bramp/js-sequence-diagrams.git"
+    "url": "https://github.com/bramp/js-sequence-diagrams.git"
   }
 }
