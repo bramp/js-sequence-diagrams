@@ -1,4 +1,10 @@
 {
+  "name": "js-sequence-diagrams",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bramp/js-sequence-diagrams.git"
+  },
+  "license": "BSD",
   "devDependencies": {
     "jison": "0.4.15",
     "jshint": "2.7.x",
