@@ -16,7 +16,7 @@ bower_components: bower.json
 	#
 	# Bower update needed.
 	#
-	bower update
+	$(NODE_MODULES)/bower update
 	touch $@
 
 dependencies: node_modules bower_components

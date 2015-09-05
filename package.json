@@ -5,7 +5,8 @@
     "jsonlint": "1.6.x",
     "preprocessor": "1.4.x",
     "qunit": "0.7.x",
-    "uglify-js": "2.4.x"
+    "uglify-js": "2.4.x",
+    "bower": "1.5.x"
   },
   "scripts": {
     "test": "make test"
