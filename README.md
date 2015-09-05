@@ -1,4 +1,4 @@
-JS Sequence Diagrams
+JS Sequence Diagrams [![Build Status](https://travis-ci.org/bramp/js-sequence-diagrams.svg?branch=master)](https://travis-ci.org/bramp/js-sequence-diagrams)
 =============================================
 **Generates UML sequence diagrams from simple text**  
 <https://bramp.github.io/js-sequence-diagrams/>
