@@ -134,7 +134,7 @@ Many thanks to [Web Sequence Diagrams](http://www.websequencediagrams.com/) whic
 Related
 -------
 
-* [Web Sequence Diagrams](http://www.websequencediagrams.com/) Server side version with a commerical offering
+* [Web Sequence Diagrams](http://www.websequencediagrams.com/) Server side version with a commercial offering
 * [flowchart.js](http://adrai.github.io/flowchart.js/) A similar project that draws flow charts in the browser
 
 Licence (Simplified BSD License)
