@@ -44,5 +44,4 @@ Diagram.prototype.drawSVG = function (container, options) {
     themeFunc(this, options, function(drawing) {
         drawing.draw(div);
     });
-
 }; // end of drawSVG

@@ -133,6 +133,7 @@ if (typeof Snap != 'undefined') {
 			// TODO getBBox will return the bounds with any whitespace/kerning. This makes some of our aligments screwed up
 			var t = this.create_text(text, font);
 			var bb = t.getBBox();
+			console.log(bb);
 			t.remove();
 			return bb;
 		},

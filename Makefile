@@ -13,6 +13,7 @@ js: build/sequence-diagram-min.js build/sequence-diagram-raphael-min.js build/se
 css: build/sequence-diagram-min.css font
 font: build/danielbd.woff2 build/danielbd.woff
 
+
 node_modules: package.json
 	#
 	# NPM update needed.
@@ -115,6 +116,7 @@ build/%.woff2: fonts/daniel/%.woff2
 
 #build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js
 build/%-min.js build/%-min.js.map: build/%.js
+
 	#
 	# Please ignore the warnings below (these are in combined js code)
 	#
