@@ -3,6 +3,7 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
+/*global jQuery */
 if (typeof jQuery != 'undefined') {
 	(function( $ ) {
 		$.fn.sequenceDiagram = function( options ) {

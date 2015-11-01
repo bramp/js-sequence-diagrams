@@ -9,15 +9,16 @@
         <title></title>
             <style type="text/css">
         @font-face {
-          font-family: 'Daniel';
-          font-style: normal;
-          font-weight: normal;
-          src: local('Daniel'), url('../fonts/daniel/daniel.otf') format('opentype');
+            font-family: 'danielbd';
+            src: url('../fonts/daniel/danielbd.woff2') format('woff2'),
+                 url('../fonts/daniel/danielbd.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
         }
 
         .sequence.hand {
-            font-size: 16px;
-            font-family: 'Daniel';
+            font-size: 32px;
+            font-family: 'danielbd';
         }
         .signal rect {
             opacity: 0;
@@ -50,7 +51,7 @@ Note over A,B: Note over A,B
     	</textarea>
     	<button id="parse" type="button">Click Me!</button>  
 
-    	<svg id="diagram"></svg>
+    	<div id="diagram"></div>
 
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
         <script src="../bower_components/jquery/jquery.min.js"></script>
@@ -59,10 +60,8 @@ Note over A,B: Note over A,B
         <script src="../bower_components/lodash/lodash.min.js"></script>
         <script src="../bower_components/snap.svg/dist/snap.svg.js"></script>
         <script src="../bower_components/bower-webfontloader/webfont.js"></script>
-        <script src="../bower_components/raphael/raphael-min.js"></script>
+        <!--script src="../bower_components/raphael/raphael-min.js"></script-->
 
-        
-        <!--
         <script src="../build/diagram-grammar.js"></script>
         <script src="../src/theme.js"></script>
         <script src="../src/theme-snap.js"></script>
@@ -71,11 +70,9 @@ Note over A,B: Note over A,B
 
         <script src="../src/sequence-diagram.js"></script>
         <script src="../src/jquery-plugin.js"></script>
-        -->
 
         <!--script src="../build/sequence-diagram.js"></script-->
-
-        <script src="../build/sequence-diagram-min.js"></script>
+        <!--script src="../build/sequence-diagram-min.js"></script-->
         <script>
             $(document).ready(function(){
                 $('#parse').click(_.throttle( function() {
@@ -84,14 +81,7 @@ Note over A,B: Note over A,B
                         var diagram = Diagram.parse($('#language').val());
                         console.log(diagram);
 
-                        WebFont.load({
-                            custom: {
-                                families: ['Daniel']
-                            },
-                            active: function () {
-                                diagram.drawSVG('#diagram', {theme: 'hand'});
-                            }
-                        });
+                        diagram.drawSVG('diagram', {theme: 'hand'});
                     //} catch (e) {
                     //    console.log(e);
                     //}

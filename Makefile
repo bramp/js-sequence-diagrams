@@ -3,7 +3,11 @@
 NODE_MODULES := node_modules/.bin
 BOWER_COMPONENTS := bower_components
 
-all: node_modules lint build/sequence-diagram-min.js test
+all: lint build/sequence-diagram-min.js test
+	#
+	# Copy minified file to site
+	#
+	cp build/sequence-diagram*-min.js* _site/
 
 node_modules: package.json
 	#
@@ -69,25 +73,34 @@ build/grammar.js: src/grammar.jison
 		$@.tmp -o $@ \
 		--comments all --compress --beautify
 
+#
+# Compiling grammar
+#
 build/diagram-grammar.js: src/diagram.js build/grammar.js
-	#
-	# Compiling grammar
-	#
 	$(NODE_MODULES)/preprocess $< . > $@
 
+# Combine all javascript files together (Raphael and Snap.svg)
 build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js src/theme.js src/theme-snap.js src/theme-raphael.js fonts/daniel/daniel_700.font.js
-	#
-	# Finally combine all javascript files together
-	#
-	$(NODE_MODULES)/preprocess $< . > $@
+	$(NODE_MODULES)/preprocess $< . -SNAP=true -RAPHAEL=true  > $@	
 
-build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js
+# Combine just Raphael theme
+build/sequence-diagram-raphael.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js src/theme.js src/theme-raphael.js fonts/daniel/daniel_700.font.js
+	$(NODE_MODULES)/preprocess $< . -RAPHAEL=true > $@
+
+# Combine just Snap.svg theme
+build/sequence-diagram-snap.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js src/theme.js src/theme-snap.js
+	$(NODE_MODULES)/preprocess $< . -SNAP=true > $@
+
+# Minify the final combined javascript (both Raphael and Snap.svg)
+#build/sequence-diagram-raphael-min.js build/sequence-diagram-raphael-min.js.map: build/sequence-diagram-raphael.js 
+#build/sequence-diagram-snap-min.js build/sequence-diagram-snap-min.js.map: build/sequence-diagram-snap.js 
+
+build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js 
 	#
 	# Please ignore the warnings below (these are in combined js code)
 	#
 	$(NODE_MODULES)/uglifyjs \
-		build/sequence-diagram.js \
-		-o build/sequence-diagram-min.js \
+		$< -o $@ \
 		--compress --comments --lint \
 		--source-map build/sequence-diagram-min.js.map \
 		--source-map-url sequence-diagram-min.js.map
@@ -95,4 +108,4 @@ build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-
 	#
 	# Copy minified file to site
 	#
-	cp build/sequence-diagram-min.js* _site/
+	cp build/sequence-diagram*-min.js* _site/

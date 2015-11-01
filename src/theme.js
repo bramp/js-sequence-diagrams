@@ -58,9 +58,9 @@ if (!String.prototype.trim) {
 	};
 }
 
-var themes = {};
+Diagram.themes = {};
 function registerTheme(name, theme) {
-	themes[name] = theme;
+	Diagram.themes[name] = theme;
 }
 
 /******************
@@ -75,6 +75,56 @@ function getCenterY(box) {
 	return box.y + box.height / 2;
 }
 
+/******************
+ * SVG Path extras
+ ******************/
+
+function wobble (x1, y1, x2, y2) {
+	assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+
+	var factor = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
+
+	// Distance along line
+	var r1 = Math.random();
+	var r2 = Math.random();
+
+	var xfactor = Math.random() > 0.5 ? factor : -factor;
+	var yfactor = Math.random() > 0.5 ? factor : -factor;
+
+	var p1 = {
+		x: (x2 - x1) * r1 + x1 + xfactor,
+		y: (y2 - y1) * r1 + y1 + yfactor
+	};
+
+	var p2 = {
+		x: (x2 - x1) * r2 + x1 - xfactor,
+		y: (y2 - y1) * r2 + y1 - yfactor
+	};
+
+	return "C" + p1.x + "," + p1.y +
+		" " + p2.x + "," + p2.y +
+		" " + x2 + "," + y2;
+}
+
+/**
+ * Draws a wobbly (hand drawn) rect
+ */
+function handRect(x, y, w, h) {
+	assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
+	return "M" + x + "," + y +
+		wobble(x, y, x + w, y) +
+		wobble(x + w, y, x + w, y + h) +
+		wobble(x + w, y + h, x, y + h) +
+		wobble(x, y + h, x, y);
+}
+
+/**
+ * Draws a wobbly (hand drawn) line
+ */
+function handLine(x1, y1, x2, y2) {
+	assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+	return "M" + x1 + "," + y1 + wobble(x1, y1, x2, y2);
+}
 
 /******************
  * BaseTheme
@@ -186,6 +236,7 @@ _.extend(BaseTheme.prototype, {
 				s.height += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
 
 				if (s.isSelf()) {
+					// TODO Self signals need a min height
 					a = s.actorA.index;
 					b = a + 1;
 					s.width += SELF_SIGNAL_WIDTH;
@@ -261,7 +312,8 @@ _.extend(BaseTheme.prototype, {
 		return this;
 	},
 
-	// TODO Instead of one text_bbox, create a layout_title, layout_actor, etc that returns it's bounding box
+	// TODO Instead of one text_bbox function, create a function for each element type, e.g
+	//      layout_title, layout_actor, etc that returns it's bounding box
 	text_bbox: function(text, font) {},
 
 	draw_title : function() {
@@ -296,6 +348,7 @@ _.extend(BaseTheme.prototype, {
 	draw_signals : function (offsetY) {
 		var y = offsetY;
 		_.each(this.diagram.signals, function(s) {
+			// TODO Add debug mode, that draws padding/margin box
 			if (s.type == "Signal") {
 				if (s.isSelf()) {
 					this.draw_self_signal(s, y);
@@ -318,12 +371,12 @@ _.extend(BaseTheme.prototype, {
 		var aX = getCenterX(signal.actorA);
 
 		var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING;
-		var y = offsetY + signal.height / 2;
+		var y = offsetY + SIGNAL_PADDING + signal.height / 2 + text_bb.y;
 
 		this.draw_text(x, y, signal.message, this._font, true, ALIGN_LEFT);
 
-		var y1 = offsetY + SIGNAL_MARGIN;
-		var y2 = y1 + signal.height - SIGNAL_MARGIN;
+		var y1 = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
+		var y2 = y1 + signal.height - 2*SIGNAL_MARGIN - SIGNAL_PADDING;
 
 		// Draw three lines, the last one with a arrow
 		this.draw_line(aX, y1, aX + SELF_SIGNAL_WIDTH, y1, signal.linetype);
@@ -333,7 +386,7 @@ _.extend(BaseTheme.prototype, {
 
 	draw_signal : function (signal, offsetY) {
 		var aX = getCenterX(signal.actorA);
-		var bX = getCenterX( signal.actorB );
+		var bX = getCenterX(signal.actorB);
 
 		// Mid point between actors
 		var x = (bX - aX) / 2 + aX;
@@ -369,9 +422,9 @@ _.extend(BaseTheme.prototype, {
 				}
 				break;
 			default:
-				throw new Error("Unhandled note placement:" + note.placement);
+				throw new Error("Unhandled note placement: " + note.placement);
 		}
-		this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font, ALIGN_LEFT);
+		return this.draw_text_box(note, note.message, NOTE_MARGIN, NOTE_PADDING, this._font, ALIGN_LEFT);
 	},
 
 	/**

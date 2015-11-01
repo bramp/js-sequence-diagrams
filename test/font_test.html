@@ -2,15 +2,28 @@
     <head>
         <title>Raphael Font Test</title>
 		<style type="text/css">
-            #canvas_container {
+            .container {
                 width: 1600px;
-                height: 1200px;
+                height: 700px;
                 border: 1px solid #aaa;
             }
+
+	        @font-face {
+	            font-family: 'daniel';
+	            src: url('../fonts/daniel/danielbd.woff2') format('woff2'),
+	                 url('../fonts/daniel/danielbd.woff') format('woff'),
+	                 url('../fonts/daniel/danielbd.otf') format('opentype');
+	            font-weight: normal;
+	            font-style: normal;
+	        }
+
         </style>
 
-        <script src="../bower_components/raphael/raphael-min.js"></script>
+        <script src="../bower_components/raphael/raphael.js"></script>
 	    <script src="../fonts/daniel/daniel_700.font.js"></script>
+
+        <script src="../bower_components/snap.svg/dist/snap.svg.js"></script>
+        <script src="../bower_components/bower-webfontloader/webfont.js"></script>
 
         <script type="text/javascript">
 
@@ -35,8 +48,9 @@
 				//return path.transform("t" + dx + "," + dy);
 			};
 
-	        window.onload = function() {
+			var font_obj;
 
+			function drawRaphaelChart(container, font_name) {
 	        	var cols = 32;
 	        	var x_spacing = 48;
 	        	var y_spacing = 84;
@@ -47,9 +61,9 @@
 					//'font-family': 'daniel'
 				};
 
-	        	var canvas = document.getElementById('canvas_container')
+	        	var canvas = document.getElementById(container)
 	        	var paper = new Raphael(canvas);
-				var font_obj = paper.getFont('daniel');
+				font_obj = paper.getFont(font_name); // Store this outside our scope, to use the glyth names in the drawSnap...
 
 				/*
 				// Print all chars in range
@@ -70,16 +84,60 @@
 					var x = (i % cols) * x_spacing + x_spacing/2;
 					var y = Math.floor(i / cols) * y_spacing + y_spacing/2;
 
-					var t = paper.text(x, y, c);
-					t.attr(font);
+					// Normal font
+					paper.text(x, y, c).attr(font);
 
+					// Hand drawn font
 					paper.print_center(x, y + y_gap, c, font_obj, font['font-size']);
 				}
+			}
 
+			function drawSnapChart(container, font_name) {
+	        	var cols = 32;
+	        	var x_spacing = 48;
+	        	var y_spacing = 84;
+	        	var y_gap = 38;
+
+				var font = {
+					'font-size': 32,
+				};
+
+				var font2 = {
+					'font-size': 32,
+					'font-family': font_name
+				};
+
+	        	var canvas = document.getElementById(container)
+	            var svg = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+	            canvas.appendChild(svg);
+
+	        	var paper = Snap(svg);
+	        	paper.addClass("container");
+
+				// Print all chars supported by font
+				keys = Object.keys(font_obj.glyphs).sort();
+				for (var i = 0; i < keys.length; i++) {
+					var c = keys[i];
+					var x = (i % cols) * x_spacing + x_spacing/2;
+					var y = Math.floor(i / cols) * y_spacing + y_spacing/2;
+
+					// Normal font
+					paper.text(x, y, c).attr(font);
+
+					// Hand drawn font
+					//paper.print_center(x, y + y_gap, c, font_obj, font['font-size']);
+					paper.text(x, y + y_gap, c).attr(font2);
+				}
+			}
+
+	        window.onload = function() {
+	        	drawRaphaelChart('raphael_container', 'daniel');
+				drawSnapChart('snap_container', 'daniel')
 	        }
         </script>
     </head>
     <body>
-        <div id="canvas_container"></div>
+        <div id="raphael_container" class="container"></div>
+        <div id="snap_container" class="container"></div>
     </body>
 </html>

@@ -5,7 +5,7 @@
  */
 /*global Diagram, Raphael, _ */
 
-if (Raphael) {
+if (typeof Raphael != 'undefined') {
 
 	var LINE = {
 		'stroke': '#000000',
@@ -24,52 +24,6 @@ if (Raphael) {
 		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2).attr(LINE);
 	};
 
-	Raphael.fn.wobble = function(x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
-
-		var wobble = Math.sqrt( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
-
-		// Distance along line
-		var r1 = Math.random();
-		var r2 = Math.random();
-
-		var xfactor = Math.random() > 0.5 ? wobble : -wobble;
-		var yfactor = Math.random() > 0.5 ? wobble : -wobble;
-
-		var p1 = {
-			x: (x2 - x1) * r1 + x1 + xfactor,
-			y: (y2 - y1) * r1 + y1 + yfactor
-		};
-
-		var p2 = {
-			x: (x2 - x1) * r2 + x1 - xfactor,
-			y: (y2 - y1) * r2 + y1 - yfactor
-		};
-
-		return "C" + p1.x + "," + p1.y +
-			" " + p2.x + "," + p2.y +
-			" " + x2 + "," + y2;
-	};
-
-	/**
-	 * Draws a wobbly (hand drawn) rect
-	 */
-	Raphael.fn.handRect = function (x, y, w, h) {
-		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
-		return this.path("M" + x + "," + y +
-			this.wobble(x, y, x + w, y) +
-			this.wobble(x + w, y, x + w, y + h) +
-			this.wobble(x + w, y + h, x, y + h) +
-			this.wobble(x, y + h, x, y));
-	};
-
-	/**
-	 * Draws a wobbly (hand drawn) line
-	 */
-	Raphael.fn.handLine = function (x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
-		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
-	};
 
 	/******************
 	 * RaphaelTheme
@@ -227,7 +181,7 @@ if (Raphael) {
 		},
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
-			var line = this._paper.handLine(x1, y1, x2, y2).attr(LINE);
+			var line = this._paper.path(handLine(x1, y1, x2, y2)).attr(LINE);
 			if (arrowhead !== undefined) {
 				line.attr('arrow-end', this.arrow_types[arrowhead] + '-wide-long');
 			}
@@ -238,7 +192,7 @@ if (Raphael) {
 		},
 
 		draw_rect : function(x, y, w, h) {
-			return this._paper.handRect(x, y, w, h).attr(RECT);
+			return this._paper.path(handRect(x, y, w, h)).attr(RECT);
 		}
 	});
 

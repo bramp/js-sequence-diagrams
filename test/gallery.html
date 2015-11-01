@@ -8,12 +8,22 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title></title>
         <style type="text/css">
+        /*
             @font-face {
               font-family: 'Daniel';
               font-style: normal;
               font-weight: normal;
               src: local('Daniel'), url('../fonts/daniel/daniel.otf') format('opentype');
             }
+        */
+        @font-face {
+            font-family: 'daniel';
+            src: url('../fonts/daniel/danielbd.woff2') format('woff2'),
+                 url('../fonts/daniel/danielbd.woff') format('woff'),
+                 url('../fonts/daniel/danielbd.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
 
             .signal rect {
                 opacity: 0.5;
@@ -37,11 +47,15 @@
     <body bgcolor="#eeeeee">
 <textarea class="language" rows="10" cols="35">
 Title: Here is a title
+A->B:
+B->C:
+C->C:
 A->B: Normal line
 B-->C: Dashed line
 C->>D: Open arrow
 D-->>A: Dashed open arrow
 D->D: Self
+D->D: Many\nLines
 </textarea>
 <textarea class="language" rows="10" cols="35">
 # Example of a comment.
@@ -58,6 +72,8 @@ Note right of A: By listing the participants\n you can change their order
 </textarea>
 
         <table id="results"></table>
+
+        <script src="../bower_components/seedrandom/seedrandom.min.js"></script>
 
         <script src="../bower_components/jquery/jquery.min.js"></script>
 
@@ -117,6 +133,7 @@ Note right of A: By listing the participants\n you can change their order
                         _.each(themes, function(value, theme) {
                             var container = containers[i++];
                             container.innerHTML = "";
+                            Math.seedrandom('');
                             diagram.drawSVG(container, {
                               theme: theme
                             });

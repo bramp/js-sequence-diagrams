@@ -10,9 +10,16 @@
 	// The following are included by preprocessor */
 	// #include "build/diagram-grammar.js"
 	// #include "src/theme.js"
+
+	// #ifdef SNAP
 	// #include "src/theme-snap.js"
+	// #endif
+
+	// #ifdef RAPHAEL
 	// #include "src/theme-raphael.js"
 	// #include "fonts/daniel/daniel_700.font.js"
+	// #endif
+
 	// #include "src/sequence-diagram.js"
 	// #include "src/jquery-plugin.js"
 

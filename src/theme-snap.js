@@ -3,9 +3,14 @@
  *  (c) 2012-2015 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
-/*global Diagram, Snap, _ */
+/*global Diagram, Snap, WebFont _ */
 // TODO Move defintion of font onto the <svg>, so it can easily be override at each level
-if (Snap) {
+if (typeof Snap != 'undefined') {
+
+	if (typeof WebFont == 'undefined') {
+		throw new Error("WebFont is required (https://github.com/typekit/webfontloader).");
+	}
+
 	var xmlns = "http://www.w3.org/2000/svg";
 
 	var LINE = {
@@ -22,52 +27,7 @@ if (Snap) {
 	 ******************/
 	Snap.plugin(function (Snap, Element, Paper, global, Fragment) {
 
-		Element.prototype.wobble = function (x1, y1, x2, y2) {
-			assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 
-			var wobble = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
-
-			// Distance along line
-			var r1 = Math.random();
-			var r2 = Math.random();
-
-			var xfactor = Math.random() > 0.5 ? wobble : -wobble;
-			var yfactor = Math.random() > 0.5 ? wobble : -wobble;
-
-			var p1 = {
-				x: (x2 - x1) * r1 + x1 + xfactor,
-				y: (y2 - y1) * r1 + y1 + yfactor
-			};
-
-			var p2 = {
-				x: (x2 - x1) * r2 + x1 - xfactor,
-				y: (y2 - y1) * r2 + y1 - yfactor
-			};
-
-			return "C" + p1.x + "," + p1.y +
-				" " + p2.x + "," + p2.y +
-				" " + x2 + "," + y2;
-		};
-
-		/**
-		 * Draws a wobbly (hand drawn) rect
-		 */
-		Element.prototype.handRect = function (x, y, w, h) {
-			assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
-			return this.path("M" + x + "," + y +
-				this.wobble(x, y, x + w, y) +
-				this.wobble(x + w, y, x + w, y + h) +
-				this.wobble(x + w, y + h, x, y + h) +
-				this.wobble(x, y + h, x, y));
-		};
-
-		/**
-		 * Draws a wobbly (hand drawn) line
-		 */
-		Element.prototype.handLine = function (x1, y1, x2, y2) {
-			assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
-			return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
-		};
 	});
 
 
@@ -104,6 +64,7 @@ if (Snap) {
 		},
 
 		init_paper: function (container) {
+			// Container must be a SVG element. We assume it's a div, so lets create a SVG and insert
             var svg = document.createElementNS(xmlns, 'svg');
             container.appendChild(svg);
 
@@ -113,8 +74,9 @@ if (Snap) {
 			this._paper.addClass("sequence");
 			this._paper.addClass(this._css_class);
 
-			this.clear_group();
+			this.begin_group();
 
+			// TODO Perhaps only include the markers if we actually use them.
 			var a = this.arrow_markers = {};
 			var arrow = this._paper.path("M 0 0 L 5 2.5 L 0 5 z");
 			a[ARROWTYPE.FILLED] = arrow.marker(0, 0, 5, 5, 5, 2.5)
@@ -143,22 +105,26 @@ if (Snap) {
 		text_bbox: function(text, font) {
 			var t = this.create_text(text, font);
 			var bb = t.getBBox();
+			console.log(bb);
 			t.remove();
 			return bb;
 		},
 
+		// For each drawn element, push onto the stack, so it can be wrapped in a single outer element
 		push_to_stack: function(element) {
 			this._stack.push(element);
 			return element;
 		},
 
-		clear_group: function() {
+		// Begin a group of elements
+		begin_group: function() {
 			this._stack = [];
 		},
 
+		// Finishes the group, and returns the <group> element
 		finish_group: function() {
 			var g = this._paper.group.apply(this._paper, this._stack);
-			this.clear_group();
+			this.begin_group(); // Reset the group
 			return g;
 		},
 
@@ -202,7 +168,6 @@ if (Snap) {
 		 * align (string) ALIGN_LEFT or ALIGN_CENTER
 		 */
 		draw_text : function (x, y, text, font, background, align) {
-			var paper = this._paper;
 			var t = this.create_text(text, font);
 			var bb = t.getBBox();
 
@@ -213,6 +178,7 @@ if (Snap) {
 
 			// draw a rect behind it
 			if (background) {
+				var paper = this._paper;
 				var r = paper.rect(x, y, bb.width, bb.height);
 				r.attr(RECT).attr({'stroke': 'none'});
 				this.push_to_stack(r);
@@ -228,31 +194,31 @@ if (Snap) {
 		},
 
 		draw_title : function() {	
-			this.clear_group();
+			this.begin_group();
 			BaseTheme.prototype.draw_title.call(this);
 			return this.finish_group().addClass('title');
 		},
 
 		draw_actor : function (actor, offsetY, height) {
-			this.clear_group();
+			this.begin_group();
 			BaseTheme.prototype.draw_actor.call(this, actor, offsetY, height);
 			return this.finish_group().addClass('actor');
 		},
 
 		draw_signal : function (signal, offsetY) {
-			this.clear_group();
+			this.begin_group();
 			BaseTheme.prototype.draw_signal.call(this, signal, offsetY);
 			return this.finish_group().addClass('signal');
 		},
 
 		draw_self_signal : function(signal, offsetY) {
-			this.clear_group();
+			this.begin_group();
 			BaseTheme.prototype.draw_self_signal.call(this, signal, offsetY);
 			return this.finish_group().addClass('signal');
 		},
 
 		draw_note : function (note, offsetY) {
-			this.clear_group();
+			this.begin_group();
 			BaseTheme.prototype.draw_note.call(this, note, offsetY);
 			return this.finish_group().addClass('note');
 		},
@@ -268,15 +234,33 @@ if (Snap) {
 
 	// Take the standard SnapTheme and make all the lines wobbly
 	_.extend(SnapHandTheme.prototype, SnapTheme.prototype, {
+
+		draw : function(container) {
+			var that = this;
+			WebFont.load({
+				custom: {
+					families: ['daniel'] // TODO replace this with somethign that reads the css
+				},
+				classes: false, // No need to place classes on the DOM, just use JS Events
+				active: function() {
+					SnapTheme.prototype.draw.call(that, container);
+				},
+				inactive: function() {
+					// If we fail to fetch the font, still continue.
+					SnapTheme.prototype.draw.call(that, container);
+				},
+			});
+		},
+
 		init_font : function() {
-			this._font = {
+			this._font = { // TODO is this needed? CSS should handle?
 				'font-size': 16,
 				'font-family': 'daniel'
 			};
 		},
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
-			var line = this._paper.handLine(x1, y1, x2, y2).attr(LINE);
+			var line = this._paper.path(handLine(x1, y1, x2, y2)).attr(LINE);
 			if (arrowhead !== undefined) {
 				line.attr('markerEnd', this.arrow_markers[arrowhead]);
 			}
@@ -287,7 +271,7 @@ if (Snap) {
 		},
 
 		draw_rect : function(x, y, w, h) {
-			var rect = this._paper.handRect(x, y, w, h).attr(RECT);
+			var rect = this._paper.path(handRect(x, y, w, h)).attr(RECT);
 			return this.push_to_stack(rect);
 		},
 	});
