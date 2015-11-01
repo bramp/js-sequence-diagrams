@@ -2,8 +2,12 @@ Random Design Notes
 -------------------
 
 ## Supported Browsers
-IE9+
-Modern Chrome/Firefox/Opera (not sure what versions)
+IE 9+
+Safari 5.1+
+Firefox 3.6+
+Opera 11.50+
+Android 4.4+
+iOS 5.1+
 
 ## Text Alignment
 Title: Left aligned
