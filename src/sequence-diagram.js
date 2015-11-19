@@ -214,7 +214,7 @@
 			return this._paper.rect(x, y, w, h);
 		},
 
-		draw : function(container) {
+		draw : function(container, options) {
 			var diagram = this.diagram;
 			this.init_paper(container);
 			this.init_font();
@@ -224,7 +224,8 @@
 			var title_height = this._title ? this._title.height : 0;
 
 			this._paper.setStart();
-			this._paper.setSize(diagram.width, diagram.height);
+			this._paper.setSize(diagram.width * options.scale, diagram.height * options.scale);
+			this._paper.setViewBox(0, 0, diagram.width, diagram.height);
 
 			var y = DIAGRAM_MARGIN + title_height;
 
@@ -625,7 +626,8 @@
 
 	Diagram.prototype.drawSVG = function (container, options) {
 		var default_options = {
-			theme: 'hand'
+			theme: 'hand',
+			scale: 1
 		};
 
 		options = _.defaults(options || {}, default_options);
@@ -634,7 +636,7 @@
 			throw new Error("Unsupported theme: " + options.theme);
 
 		var drawing = new themes[options.theme](this);
-		drawing.draw(container);
+		drawing.draw(container, options);
 
 	}; // end of drawSVG
 
