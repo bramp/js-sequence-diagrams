@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/bramp/js-sequence-diagrams.git"
   },
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "devDependencies": {
     "jison": "0.4.15",
     "jshint": "2.7.x",
