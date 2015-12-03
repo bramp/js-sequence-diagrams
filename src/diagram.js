@@ -10,7 +10,6 @@ function Diagram() {
 	this.actors  = [];
 	this.signals = [];
 }
-
 /*
  * Return an existing actor with this alias, or creates a new one with alias and name.
  */
@@ -89,7 +88,7 @@ Diagram.Note.prototype.hasManyActors = function() {
 
 Diagram.unescape = function(s) {
 	// Turn "\\n" into "\n"
-	return s.trim().replace(/\\n/gm, "\n");
+    return s.trim().replace(/^"(.*)"$/m, "$1").replace(/\\n/gm, "\n");
 };
 
 Diagram.LINETYPE = {
