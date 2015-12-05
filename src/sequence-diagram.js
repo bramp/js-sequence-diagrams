@@ -230,7 +230,7 @@
 
 			this.draw_title();
 			this.draw_actors(y);
-			this.draw_signals(y + this._actors_height);
+			this.draw_signals(y, this._actors_height);
 
 			this._paper.setFinish();
 		},
@@ -293,6 +293,7 @@
 				}
 			}
 
+			var currentLineHeight = 0;
 			_.each(signals, function(s) {
 				var a, b; // Indexes of the left and right actors involved
 
@@ -354,8 +355,14 @@
 				}
 
 				actor_ensure_distance(a, b, s.width + extra_width);
-				this._signals_height += s.height;
+
+				currentLineHeight = Math.max(currentLineHeight, s.height);
+				if (s.offset == 1) {
+				  this._signals_height += currentLineHeight;
+					currentLineHeight = 0;
+				}
 			}, this);
+			this._signals_height += currentLineHeight;
 
 			// Re-jig the positions
 			var actors_x = 0;
@@ -416,9 +423,16 @@
 			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
 		},
 
-		draw_signals : function (offsetY) {
+		draw_signals : function (offsetY, currentLineHeight) {
 			var y = offsetY;
 			_.each(this.diagram.signals, function(s) {
+				if (s.offset == 1) {
+				  y += currentLineHeight;
+					currentLineHeight = s.height;
+			  } else {
+			    currentLineHeight = Math.max(currentLineHeight, s.height);
+				}
+
 				if (s.type == "Signal") {
 					if (s.isSelf()) {
 						this.draw_self_signal(s, y);
@@ -430,7 +444,6 @@
 					this.draw_note(s, y);
 				}
 
-				y += s.height;
 			}, this);
 		},
 
@@ -637,4 +650,3 @@
 		drawing.draw(container);
 
 	}; // end of drawSVG
-

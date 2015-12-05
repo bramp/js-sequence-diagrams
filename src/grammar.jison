@@ -23,6 +23,7 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
+"="               return 'INDENT';
 [^\->:,\r\n]+     return 'ACTOR';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
@@ -60,8 +61,8 @@ statement
 	;
 
 note_statement
-	: 'note' placement actor message   { $$ = new Diagram.Note($3, $2, $4); }
-	| 'note' 'over' actor_pair message { $$ = new Diagram.Note($3, Diagram.PLACEMENT.OVER, $4); }
+	: indent 'note' placement actor message   { $$ = new Diagram.Note($4, $3, $5, $1); }
+	| indent 'note' 'over' actor_pair message { $$ = new Diagram.Note($4, Diagram.PLACEMENT.OVER, $5, $1); }
 	;
 
 actor_pair
@@ -75,9 +76,14 @@ placement
 	;
 
 signal
-	: actor signaltype actor message
-	{ $$ = new Diagram.Signal($1, $2, $3, $4); }
+	: indent actor signaltype actor message
+	{ $$ = new Diagram.Signal($2, $3, $4, $5, $1); }
 	;
+
+indent
+        : /* empty */ { $$ = false }
+        | 'INDENT'    { $$ = true }
+        ;
 
 actor
 	: ACTOR { $$ = yy.parser.yy.getActor(Diagram.unescape($1)); }
