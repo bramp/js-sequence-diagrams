@@ -3,7 +3,10 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
-	/*global Diagram, Raphael, _ */
+var Raphael = require('raphael');
+require('../fonts/daniel/daniel_700.font');
+var Diagram = require('./diagram');
+var _ = require('lodash');
 
 	// Following the CSS convention
 	// Margin is the gap outside the box
@@ -81,12 +84,12 @@
  ******************/
 
 	Raphael.fn.line = function(x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+		assert(_.every([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
 	};
 
 	Raphael.fn.wobble = function(x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+		assert(_.every([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 
 		var wobble = Math.sqrt( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
 
@@ -134,7 +137,7 @@
 	 * Draws a wobbly (hand drawn) rect
 	 */
 	Raphael.fn.handRect = function (x, y, w, h) {
-		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
+		assert(_.every([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
 		return this.path("M" + x + "," + y +
 			this.wobble(x, y, x + w, y) +
 			this.wobble(x + w, y, x + w, y + h) +
@@ -147,7 +150,7 @@
 	 * Draws a wobbly (hand drawn) line
 	 */
 	Raphael.fn.handLine = function (x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+		assert(_.every([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
 	};
 
@@ -274,7 +277,7 @@
 				a.distances = [];
 				a.padding_right = 0;
 				this._actors_height = Math.max(a.height, this._actors_height);
-			}, this);
+			}.bind(this));
 
 			function actor_ensure_distance(a, b, d) {
 				assert(a < b, "a must be less than or equal to b");
@@ -355,7 +358,7 @@
 
 				actor_ensure_distance(a, b, s.width + extra_width);
 				this._signals_height += s.height;
-			}, this);
+			}.bind(this));
 
 			// Re-jig the positions
 			var actors_x = 0;
@@ -375,7 +378,7 @@
 				});
 
 				actors_x = a.x + a.width + a.padding_right;
-			}, this);
+			}.bind(this));
 
 			diagram.width = Math.max(actors_x, diagram.width);
 
@@ -407,7 +410,7 @@
 					aX, y + this._actors_height - ACTOR_MARGIN,
 					aX, y + this._actors_height + ACTOR_MARGIN + this._signals_height);
 				line.attr(LINE);
-			}, this);
+			}.bind(this));
 		},
 
 		draw_actor : function (actor, offsetY, height) {
@@ -431,7 +434,7 @@
 				}
 
 				y += s.height;
-			}, this);
+			}.bind(this));
 		},
 
 		draw_self_signal : function(signal, offsetY) {
@@ -637,4 +640,3 @@
 		drawing.draw(container);
 
 	}; // end of drawSVG
-

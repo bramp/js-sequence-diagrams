@@ -3,7 +3,7 @@
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
-	/*global grammar _ */
+var _ = require('lodash');
 
 	function Diagram() {
 		this.title   = undefined;
@@ -128,9 +128,6 @@
 		/* jshint +W103 */
 	}
 
-	/** The following is included by preprocessor */
-	// #include "build/grammar.js"
-
 	/**
 	 * jison doesn't have a good exception, so we make one.
 	 * This is brittle as it depends on jison internals
@@ -145,6 +142,9 @@
 	Diagram.ParseError = ParseError;
 
 	Diagram.parse = function(input) {
+		// TODO figure out how to pass Diagram as argument to new parser object
+		window.Diagram = Diagram;
+		var parser = require('./grammar').parser;
 		// Create the object to track state and deal with errors
 		parser.yy = new Diagram();
 		parser.yy.parseError = function(message, hash) {
@@ -159,5 +159,4 @@
 		return diagram;
 	};
 
-
-
+module.exports = Diagram;

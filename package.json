@@ -1,20 +1,35 @@
 {
   "name": "js-sequence-diagrams",
+  "main": "./index",
   "repository": {
     "type": "git",
     "url": "https://github.com/bramp/js-sequence-diagrams.git"
   },
   "license": "BSD-2-Clause",
   "devDependencies": {
-    "jison": "0.4.15",
-    "jshint": "2.7.x",
-    "jsonlint": "1.6.x",
+    "babel-loader": "^6.2.1",
+    "bower": "^1.7.2",
+    "express": "^4.13.3",
+    "imports-loader": "^0.6.5",
+    "jison": "0.4.16",
+    "jquery": "^2.2.0",
+    "jshint": "^2.7.0",
+    "jsonlint": "^1.6.2",
     "preprocessor": "1.4.x",
     "qunit": "0.7.x",
-    "uglify-js": "2.4.x",
-    "bower": "1.5.x"
+    "uglify-js": "^2.6.1",
+    "webpack": "^1.12.11",
+    "webpack-dev-middleware": "^1.4.0",
+    "webpack-hot-middleware": "^2.6.0"
+  },
+  "dependencies": {
+    "lodash": "^4.0.0",
+    "raphael": "git://github.com/DmitryBaranovskiy/raphael.git"
   },
   "scripts": {
-    "test": "make test"
+    "start": "node devserver.js",
+    "lint": "jshint ./src",
+    "test": "make test",
+    "build:grammar": "node build-grammar.js"
   }
 }
