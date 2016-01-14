@@ -640,3 +640,5 @@ var _ = require('lodash');
 		drawing.draw(container);
 
 	}; // end of drawSVG
+
+module.exports = Diagram;

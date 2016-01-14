@@ -143,7 +143,11 @@ var _ = require('lodash');
 
 	Diagram.parse = function(input) {
 		// TODO figure out how to pass Diagram as argument to new parser object
-		window.Diagram = Diagram;
+		if (typeof window !== 'undefined') {
+			window.Diagram = Diagram;
+		} else {
+			global.Diagram = Diagram;
+		}
 		var parser = require('./grammar').parser;
 		// Create the object to track state and deal with errors
 		parser.yy = new Diagram();

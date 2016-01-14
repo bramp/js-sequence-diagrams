@@ -8,6 +8,7 @@ const defines = new webpack.DefinePlugin({
 	},
 });
 
+const outname = 'sequence-diagram';
 const config = {
 	entry: [
 		'webpack-hot-middleware/client',
@@ -15,7 +16,7 @@ const config = {
 	],
 	output: {
 		path: path.join(__dirname, 'build'),
-		filename: 'bundle.js',
+		filename: outname + '.js',
 		publicPath: '/build/',
 	},
 	plugins: [
@@ -41,7 +42,7 @@ const config = {
 		modulesDirectories: ['src', 'node_modules'],
 		alias: {
 			'dev/raphael.core.js': './dev/raphael.core.js',
-			'raphael.core': './raphael.core.js', 
+			'raphael.core': './raphael.core.js',
 			'raphael.svg': './dev/raphael.svg.js',
 			'raphael.vml': './dev/raphael.vml.js',
 		},
@@ -53,23 +54,35 @@ if (NODE_ENV === 'development') {
 }
 
 if (NODE_ENV === 'production') {
-	config.entry = ['./index'];
+	const minified = process.env.MINIFIED == '1';
+	const filename = minified ? outname + '-min.js' : outname + '.js';
+	const uglifyOptions = {
+		sourceMap: false,
+		comments: false,
+		compressor: {
+			warnings: false,
+			dead_code: true,
+		},
+	};
+	if (!minified) {
+		uglifyOptions.sourceMap = true;
+		uglifyOptions.beautify = true;
+		uglifyOptions.mangle = false;
+		uglifyOptions.comments = 'all';
+	}
+	config.entry = './index';
+	config.externals = {
+		raphael: 'Raphael',
+		lodash: '_',
+	};
 	config.output = {
-		path: path.join(__dirname, 'dist'),
-		filename: 'sequence-diagram.js',
+		path: path.join(__dirname, 'build'),
+		filename: filename,
 	};
 	config.plugins = [
 		new webpack.optimize.OccurenceOrderPlugin(),
 		defines,
-		new webpack.optimize.UglifyJsPlugin({
-			beautify: true,
-			mangle: false,
-			comments: 'all',
-			compressor: {
-				warnings: false,
-				dead_code: true,
-			},
-		}),
+		new webpack.optimize.UglifyJsPlugin(uglifyOptions),
 	];
 }
 

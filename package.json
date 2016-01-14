@@ -8,6 +8,7 @@
   },
   "license": "BSD-2-Clause",
   "devDependencies": {
+    "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",
     "bower": "^1.7.2",
     "express": "^4.13.3",
@@ -29,8 +30,13 @@
   },
   "scripts": {
     "start": "node devserver.js",
-    "lint": "jshint ./src",
+    "jsonlint": "jsonlint package.json -q && jsonlint bower.json -q",
+    "jshint": "jshint --verbose ./src ./test",
+    "lint": "npm run jshint && npm run jsonlint",
     "test": "make test",
-    "build:grammar": "node build-grammar.js"
+    "build:unminified": "NODE_ENV=production webpack --config webpack.config.js",
+    "build:minified": "NODE_ENV=production MINIFIED=1 webpack --config webpack.config.js",
+    "build:grammar": "node build-grammar.js",
+    "build": "npm run build:unminified && npm run build:minified"
   }
 }
