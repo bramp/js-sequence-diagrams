@@ -23,7 +23,8 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
-[^\->:,\r\n]+     return 'ACTOR';
+[^\->:,\r\n"]+    return 'ACTOR';
+\"[^"]+\"         return 'ACTOR';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';

@@ -181,6 +181,12 @@ test( "Newlines", function() {
 	assertSingleActor(Diagram.parse("Participant A\r\nNote left of A: Hello"), "A");
 });
 
+test( "Quoted names", function() {
+	assertSingleArrow(Diagram.parse("\"->:\"->B: M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "->:", "B", "M");
+	assertSingleArrow(Diagram.parse("A->\"->:\": M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "A", "->:", "M");
+	assertSingleActor(Diagram.parse("Participant \"->:\""), "->:");
+});
+
 test( "API", function() {
 	// Public API
 	ok(typeof Diagram.parse == "function");
