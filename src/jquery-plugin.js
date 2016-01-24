@@ -4,6 +4,7 @@
  *  Simplified BSD license.
  */
 if (typeof jQuery != 'undefined') {
+	var Diagram = require('./diagram');
 	(function( $ ) {
 		$.fn.sequenceDiagram = function( options ) {
 			return this.each(function() {

@@ -1,25 +1,26 @@
+var Raphael = require('raphael');
 /*!
  * The following copyright notice may not be removed under any circumstances.
- * 
+ *
  * Copyright:
  * Copyright (c) 2011 by Daniel Midgley. All rights reserved.
- * 
+ *
  * Trademark:
  * Please refer to the Copyright section for the font trademark attribution
  * notices.
- * 
+ *
  * Full name:
  * Daniel-Bold
- * 
+ *
  * Description:
  * Daniel Bold is a font by Daniel Midgley.
- * 
+ *
  * Designer:
  * Daniel Midgley
- * 
+ *
  * Vendor URL:
  * http://goodreasonblog.blogspot.com/p/fontery.html
- * 
+ *
  * License information:
  * http://creativecommons.org/licenses/by-nd/3.0/
  */
