@@ -1,3 +1,8 @@
+function assertInterfaceActor(d, hasInterface){
+	equal(d.actors.length, 2, "Correct actors count");
+	var a = d.actors[0];
+	equal(a.published, hasInterface, "Actors property");
+}
 function assertSingleActor(d, alias, name) {
 
 	name = name || alias;
@@ -90,6 +95,10 @@ test("Regex Tests", function() {
 	regextest(/^(.+) as (\S+)\s*$/i, " as as as b");
 });
 */
+
+test( "Actors with interface", function() {
+	assertInterfaceActor(Diagram.parse(":o:A->B: Message"), true);
+});
 
 test( "Solid Arrow", function() {
 	var d = Diagram.parse("A->B: Message");
