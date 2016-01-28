@@ -130,6 +130,15 @@
 		return bb;
 	};
 
+	Raphael.fn.handOval = function(x, y, w, h){
+		var r_x = w/2;
+		var r_y = h/2;
+		var start_x = x + r_x;
+		var start_y = y + r_y;
+		var ellipse = [["M", (start_x - r_x), (start_y)], ["a", r_x, r_y ,0, 1,1, 0,0.1 ],"z"];
+		return this.path(ellipse).attr(RECT);
+	};
+
 	/**
 	 * Draws a wobbly (hand drawn) rect
 	 */
@@ -210,6 +219,9 @@
 			return this._paper.line(x1, y1, x2, y2);
 		},
 
+		draw_oval : function(x, y, w, h){
+			return this._paper.ellipse(x, y, w, h);
+		},
 		draw_rect : function(x, y, w, h) {
 			return this._paper.rect(x, y, w, h);
 		},
@@ -413,7 +425,10 @@
 		draw_actor : function (actor, offsetY, height) {
 			actor.y      = offsetY;
 			actor.height = height;
-			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
+			if( actor.published )
+				this.draw_text_oval(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
+			else
+				this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
 		},
 
 		draw_signals : function (offsetY) {
@@ -541,6 +556,22 @@
 			t.toFront();
 		},
 
+		draw_text_oval: function (box, text, margin, padding, font) {
+			var x = box.x + margin;
+			var y = box.y + margin;
+			var w = box.width  - 2 * margin;
+			var h = box.height - 2 * margin;
+
+			// Draw inner box
+			var rect = this.draw_oval(x, y, w, h);
+			rect.attr(LINE);
+
+			// Draw text (in the center)
+			x = getCenterX(box);
+			y = getCenterY(box);
+
+			this.draw_text(x, y, text, font);
+		},
 		draw_text_box : function (box, text, margin, padding, font) {
 			var x = box.x + margin;
 			var y = box.y + margin;
@@ -613,6 +644,9 @@
 			return this._paper.handLine(x1, y1, x2, y2);
 		},
 
+		draw_oval : function(x, y, w, h) {
+			return this._paper.handOval(x, y, w, h);
+		},
 		draw_rect : function(x, y, w, h) {
 			return this._paper.handRect(x, y, w, h);
 		}
