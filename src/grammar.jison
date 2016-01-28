@@ -25,6 +25,7 @@
 ","               return ',';
 [^\->:,\r\n"]+    return 'ACTOR';
 \"[^"]+\"         return 'ACTOR';
+":o:"             return 'PI';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';
@@ -76,8 +77,8 @@ placement
 	;
 
 signal
-	: actor signaltype actor message
-	{ $$ = new Diagram.Signal($1, $2, $3, $4); }
+	: PI actor signaltype actor message { $$ = new Diagram.Signal($2, $3, $4, $5, $1); }
+	| actor signaltype actor message { $$ = new Diagram.Signal($1, $2, $3, $4); }
 	;
 
 actor
