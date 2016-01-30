@@ -59,10 +59,11 @@
 		this.index = index;
 	};
 
-	Diagram.Signal = function(actorA, signaltype, actorB, message, published) {
+	Diagram.Signal = function(actorA, signaltype, actorB, message, published, web) {
 		this.type       = "Signal";
 		this.actorA     = actorA;
 		this.actorA.published = !!published;
+		this.actorA.web = !!web;
 		this.actorB     = actorB;
 		this.linetype   = signaltype & 3;
 		this.arrowtype  = (signaltype >> 2) & 3;

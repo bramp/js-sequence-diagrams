@@ -142,6 +142,18 @@
 	/**
 	 * Draws a wobbly (hand drawn) rect
 	 */
+	Raphael.fn.handRhombus = function (x, y, w, h) {
+		return this.path("M" + (x+w/2) + "," + y +
+			this.wobble( x+w/2, y, x + w, y+h/2) +
+			this.wobble(x + w, y+h/2, x + w/2, y + h) +
+			this.wobble(x+h/2, y + h, x, y + h/2) +
+			this.wobble(x, y + h/2, x+h/2, y))
+			.attr(RECT);
+	};
+
+	/**
+	 * Draws a wobbly (hand drawn) rect
+	 */
 	Raphael.fn.handRect = function (x, y, w, h) {
 		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
 		return this.path("M" + x + "," + y +
@@ -221,6 +233,10 @@
 
 		draw_oval : function(x, y, w, h){
 			return this._paper.ellipse(x, y, w, h);
+		},
+		draw_rhombus: function(x, y, w, h){
+			var xStep = w/2, yStep=h/2;
+			return this._paper.path("M "+x+" "+(y+yStep)+" l"+xStep+" -"+yStep+" l"+xStep+" "+yStep+" l-"+xStep+" "+yStep+"  l-"+xStep+" -"+yStep);
 		},
 		draw_rect : function(x, y, w, h) {
 			return this._paper.rect(x, y, w, h);
@@ -426,6 +442,8 @@
 			actor.y      = offsetY;
 			actor.height = height;
 			if( actor.published )
+				this.draw_text_rhombus(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
+			else if( actor.web )
 				this.draw_text_oval(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
 			else
 				this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
@@ -572,6 +590,22 @@
 
 			this.draw_text(x, y, text, font);
 		},
+		draw_text_rhombus: function (box, text, margin, padding, font) {
+			var x = box.x + margin;
+			var y = box.y + margin;
+			var w = box.width  - 2 * margin;
+			var h = box.height - 2 * margin;
+
+			// Draw inner box
+			var rect = this.draw_rhombus(x, y, w, h);
+			rect.attr(LINE);
+
+			// Draw text (in the center)
+			x = getCenterX(box);
+			y = getCenterY(box);
+
+			this.draw_text(x, y, text, font);
+		},
 		draw_text_box : function (box, text, margin, padding, font) {
 			var x = box.x + margin;
 			var y = box.y + margin;
@@ -646,6 +680,9 @@
 
 		draw_oval : function(x, y, w, h) {
 			return this._paper.handOval(x, y, w, h);
+		},
+		draw_rhombus : function(x, y, w, h) {
+			return this._paper.handRhombus(x, y, w, h);
 		},
 		draw_rect : function(x, y, w, h) {
 			return this._paper.handRect(x, y, w, h);

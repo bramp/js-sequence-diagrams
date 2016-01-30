@@ -23,9 +23,10 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
-[^\->:,\r\n"]+    return 'ACTOR';
+"<>"              return 'PI';
+"()"              return 'PW';
+[^\->\:()<,\r\n"]+ return 'ACTOR';
 \"[^"]+\"         return 'ACTOR';
-":o:"             return 'PI';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';
@@ -78,6 +79,7 @@ placement
 
 signal
 	: PI actor signaltype actor message { $$ = new Diagram.Signal($2, $3, $4, $5, $1); }
+	| PW actor signaltype actor message { $$ = new Diagram.Signal($2, $3, $4, $5, null, $1); }
 	| actor signaltype actor message { $$ = new Diagram.Signal($1, $2, $3, $4); }
 	;
 
