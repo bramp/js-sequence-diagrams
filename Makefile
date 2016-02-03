@@ -1,4 +1,5 @@
 .PHONY : all test dependencies clean veryclean lint
+.PHONY : all test dependencies clean veryclean lint
 
 NODE_MODULES := node_modules/.bin
 BOWER_COMPONENTS := bower_components

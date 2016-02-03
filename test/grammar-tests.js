@@ -1,3 +1,13 @@
+function assertInterfaceActor(d, hasInterface){
+	equal(d.actors.length, 2, "Correct actors count");
+	var a = d.actors[0];
+	equal(a.published, hasInterface, "Actors property");
+}
+function assertWebActor(d, hasWeb){
+	equal(d.actors.length, 2, "Correct actors count");
+	var a = d.actors[0];
+	equal(a.web, hasWeb, "Actors property");
+}
 function assertSingleActor(d, alias, name) {
 
 	name = name || alias;
@@ -90,6 +100,14 @@ test("Regex Tests", function() {
 	regextest(/^(.+) as (\S+)\s*$/i, " as as as b");
 });
 */
+
+test( "Actors with rhombus", function() {
+	assertWebActor(Diagram.parse("()A->B: Message"), true);
+});
+
+test( "Actors with circle", function() {
+	assertInterfaceActor(Diagram.parse("<>A->B: Message"), true);
+});
 
 test( "Solid Arrow", function() {
 	var d = Diagram.parse("A->B: Message");
