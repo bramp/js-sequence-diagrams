@@ -143,11 +143,13 @@
 	 * Draws a wobbly (hand drawn) rect
 	 */
 	Raphael.fn.handRhombus = function (x, y, w, h) {
-		return this.path("M" + (x+w/2) + "," + y +
-			this.wobble( x+w/2, y, x + w, y+h/2) +
-			this.wobble(x + w, y+h/2, x + w/2, y + h) +
-			this.wobble(x+h/2, y + h, x, y + h/2) +
-			this.wobble(x, y + h/2, x+h/2, y))
+		var w2 = w/2;
+		var h2 = h/2;
+		return this.path("M" + (x+w2) + "," + y +
+			this.wobble( x+w2, y, x + w, y+h2) +
+			this.wobble(x + w, y+h2, x+w2, y+h) +
+			this.wobble(x+h2, y+h, x, y+h2) +
+			this.wobble(x, y+h2, x+w2, y))
 			.attr(RECT);
 	};
 
@@ -591,10 +593,10 @@
 			this.draw_text(x, y, text, font);
 		},
 		draw_text_rhombus: function (box, text, margin, padding, font) {
-			var x = box.x + margin;
-			var y = box.y + margin;
-			var w = box.width  - 2 * margin;
-			var h = box.height - 2 * margin;
+			var x = box.x;
+			var y = box.y;
+			var w = box.width;
+			var h = box.height;
 
 			// Draw inner box
 			var rect = this.draw_rhombus(x, y, w, h);
