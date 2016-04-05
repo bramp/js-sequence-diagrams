@@ -46,7 +46,7 @@ test: dependencies build/sequence-diagram-min.js
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram.js \
 		-t test/*-tests.js \
-		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
+		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/dist/lodash.min.js
 
 	# Test the minifed file (with underscore)
 	$(NODE_MODULES)/qunit \
@@ -58,7 +58,7 @@ test: dependencies build/sequence-diagram-min.js
 	$(NODE_MODULES)/qunit \
 		-c build/sequence-diagram-min.js \
 		-t test/*-tests.js \
-		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/lodash.min.js
+		-d test/raphael-mock.js $(BOWER_COMPONENTS)/lodash/dist/lodash.min.js
 
 build/grammar.js: src/grammar.jison
 	$(NODE_MODULES)/jison $< -o $@.tmp

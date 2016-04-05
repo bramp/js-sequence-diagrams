@@ -81,12 +81,12 @@
  ******************/
 
 	Raphael.fn.line = function(x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+		assert(_.every([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
 	};
 
 	Raphael.fn.wobble = function(x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+		assert(_.every([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 
 		var wobble = Math.sqrt( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
 
@@ -134,7 +134,7 @@
 	 * Draws a wobbly (hand drawn) rect
 	 */
 	Raphael.fn.handRect = function (x, y, w, h) {
-		assert(_.all([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
+		assert(_.every([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
 		return this.path("M" + x + "," + y +
 			this.wobble(x, y, x + w, y) +
 			this.wobble(x + w, y, x + w, y + h) +
@@ -147,7 +147,7 @@
 	 * Draws a wobbly (hand drawn) line
 	 */
 	Raphael.fn.handLine = function (x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
+		assert(_.every([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 		return this.path("M" + x1 + "," + y1 + this.wobble(x1, y1, x2, y2));
 	};
 
@@ -262,6 +262,7 @@
 				diagram.height += title.height;
 			}
 
+			var self = this;
 			_.each(actors, function(a) {
 				var bb = paper.text_bbox(a.name, font);
 				a.text_bb = bb;
@@ -273,8 +274,8 @@
 
 				a.distances = [];
 				a.padding_right = 0;
-				this._actors_height = Math.max(a.height, this._actors_height);
-			}, this);
+				self._actors_height = Math.max(a.height, self._actors_height);
+			});
 
 			function actor_ensure_distance(a, b, d) {
 				assert(a < b, "a must be less than or equal to b");
@@ -345,7 +346,7 @@
 						a = s.actor.index;
 						actor_ensure_distance(a - 1, a, s.width / 2);
 						actor_ensure_distance(a, a + 1, s.width / 2);
-						this._signals_height += s.height;
+						self._signals_height += s.height;
 
 						return; // Bail out early
 					}
@@ -354,8 +355,8 @@
 				}
 
 				actor_ensure_distance(a, b, s.width + extra_width);
-				this._signals_height += s.height;
-			}, this);
+				self._signals_height += s.height;
+			});
 
 			// Re-jig the positions
 			var actors_x = 0;
@@ -394,20 +395,21 @@
 
 		draw_actors : function(offsetY) {
 			var y = offsetY;
+			var self = this;
 			_.each(this.diagram.actors, function(a) {
 				// Top box
-				this.draw_actor(a, y, this._actors_height);
+				self.draw_actor(a, y, self._actors_height);
 
 				// Bottom box
-				this.draw_actor(a, y + this._actors_height + this._signals_height, this._actors_height);
+				self.draw_actor(a, y + self._actors_height + self._signals_height, self._actors_height);
 
 				// Veritical line
 				var aX = getCenterX(a);
-				var line = this.draw_line(
-					aX, y + this._actors_height - ACTOR_MARGIN,
-					aX, y + this._actors_height + ACTOR_MARGIN + this._signals_height);
+				var line = self.draw_line(
+					aX, y + self._actors_height - ACTOR_MARGIN,
+					aX, y + self._actors_height + ACTOR_MARGIN + self._signals_height);
 				line.attr(LINE);
-			}, this);
+			});
 		},
 
 		draw_actor : function (actor, offsetY, height) {
@@ -418,20 +420,21 @@
 
 		draw_signals : function (offsetY) {
 			var y = offsetY;
+			var self = this;
 			_.each(this.diagram.signals, function(s) {
 				if (s.type == "Signal") {
 					if (s.isSelf()) {
-						this.draw_self_signal(s, y);
+						self.draw_self_signal(s, y);
 					} else {
-						this.draw_signal(s, y);
+						self.draw_signal(s, y);
 					}
 
 				} else if (s.type == "Note") {
-					this.draw_note(s, y);
+					self.draw_note(s, y);
 				}
 
 				y += s.height;
-			}, this);
+			});
 		},
 
 		draw_self_signal : function(signal, offsetY) {
@@ -637,4 +640,3 @@
 		drawing.draw(container);
 
 	}; // end of drawSVG
-
