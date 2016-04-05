@@ -45,4 +45,3 @@ Diagram.prototype.drawSVG = function (container, options) {
 	});
 
 }; // end of drawSVG
-
