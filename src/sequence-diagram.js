@@ -185,6 +185,7 @@
 			this.diagram = diagram;
 			this._paper  = undefined;
 			this._font   = undefined;
+			this._actors_font  = undefined;
 
 			this._title  = undefined; // hack - This should be somewhere better
 
@@ -264,7 +265,7 @@
 
 			var self = this;
 			_.each(actors, function(a) {
-				var bb = paper.text_bbox(a.name, font);
+				var bb = paper.text_bbox(a.name, this._actors_font);
 				a.text_bb = bb;
 
 				//var bb = t.attr("text", a.name).getBBox();
@@ -415,7 +416,7 @@
 		draw_actor : function (actor, offsetY, height) {
 			actor.y      = offsetY;
 			actor.height = height;
-			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
+			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._actors_font);
 		},
 
 		draw_signals : function (offsetY) {
@@ -589,6 +590,10 @@
 				'font-size': 16,
 				'font-family': 'Andale Mono, monospace'
 			};
+			this._actors_font = _.extend({}, this._font, {
+				'font-size': 20,
+				'font-weight': 'bold'
+			});
 		}
 
 	});
@@ -608,6 +613,10 @@
 				'font-size': 16,
 				'font-family': 'daniel'
 			};
+			this._actors_font = _.extend({}, this._font, {
+				'font-size': 20,
+				'font-weight': 'bold'
+			});
 
 			this._font._obj = this._paper.getFont('daniel');
 		},
