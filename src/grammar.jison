@@ -23,11 +23,11 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
-[^\->:,\r\n"+]+    return 'ACTOR';
+[^\->:,\r\n"+]+   return 'ACTOR';
 \"[^"]+\"         return 'ACTOR';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
-"+"              return 'PLUS';
+"+"               return 'PLUS';
 ">>"              return 'OPENARROW';
 ">"               return 'ARROW';
 :[^\r\n]+         return 'MESSAGE';
@@ -82,7 +82,7 @@ signal
 	;
 
 execution_modifier
-	: /* empty */ { $$ = Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED}
+	: /* empty */ { $$ = Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED }
 	| LINE { $$ = Diagram.EXEC_SPEC_LVL_CHANGE.DECREASE_LEVEL }
 	| PLUS { $$ = Diagram.EXEC_SPEC_LVL_CHANGE.INCREASE_LEVEL }
 	;
