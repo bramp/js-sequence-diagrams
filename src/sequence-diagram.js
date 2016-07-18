@@ -34,6 +34,9 @@
 
 	var SELF_SIGNAL_WIDTH = 20; // How far out a self signal goes
 
+	var EXECUTION_SPECIFICATION_WIDTH = 10;
+	var OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET = EXECUTION_SPECIFICATION_WIDTH * 0.5;
+
 	var PLACEMENT = Diagram.PLACEMENT;
 	var LINETYPE  = Diagram.LINETYPE;
 	var ARROWTYPE = Diagram.ARROWTYPE;
@@ -45,6 +48,12 @@
 
 	var RECT = {
 		'fill': "#fff"
+	};
+
+	var EXECUTION_SPECIFICATION_RECT = {
+		'stroke': '#000',
+		'stroke-width': 2,
+		'fill': '#e6e6e6' // Color taken from the UML specification examples
 	};
 
 	function AssertException(message) { this.message = message; }
@@ -75,6 +84,28 @@
 	function getCenterY(box) {
 		return box.y + box.height / 2;
 	}
+
+/******************
+ * Drawing related extra diagram methods.
+ ******************/
+
+	Diagram.Actor.prototype.execSpecMarginLeft = function(signal) {
+		var level = this.execSpecLevelAtSignal(signal);
+		if (level < 0) {
+			return 0;
+		} else {
+			return -(EXECUTION_SPECIFICATION_WIDTH * 0.5) + level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+		}
+	};
+
+	Diagram.Actor.prototype.execSpecMarginRight = function(signal) {
+		var level = this.execSpecLevelAtSignal(signal);
+		if (level < 0) {
+			return 0;
+		} else {
+			return (EXECUTION_SPECIFICATION_WIDTH * 0.5) + level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+		}
+	};
 
 /******************
  * Raphaël extras
@@ -133,14 +164,17 @@
 	/**
 	 * Draws a wobbly (hand drawn) rect
 	 */
-	Raphael.fn.handRect = function (x, y, w, h) {
+	Raphael.fn.handRect = function (x, y, w, h, rect) {
 		assert(_.every([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
+		if (!rect) {
+			rect = RECT;
+		}
 		return this.path("M" + x + "," + y +
 			this.wobble(x, y, x + w, y) +
 			this.wobble(x + w, y, x + w, y + h) +
 			this.wobble(x + w, y + h, x, y + h) +
 			this.wobble(x, y + h, x, y))
-			.attr(RECT);
+			.attr(rect);
 	};
 
 	/**
@@ -231,6 +265,7 @@
 			this.draw_title();
 			this.draw_actors(y);
 			this.draw_signals(y + this._actors_height);
+			this.draw_execution_specifications();
 
 			this._paper.setFinish();
 		},
@@ -274,6 +309,9 @@
 
 				a.distances = [];
 				a.padding_right = 0;
+				if (a.maxExecutionSpecificationLevel >= 0) {
+					a.padding_right = (EXECUTION_SPECIFICATION_WIDTH/2.0) + a.maxExecutionSpecificationLevel * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+				}
 				self._actors_height = Math.max(a.height, self._actors_height);
 			});
 
@@ -418,6 +456,29 @@
 			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
 		},
 
+		draw_execution_specifications : function () {
+			var self = this;
+			_.each(this.diagram.actors, function(a) {
+				self.draw_actors_execution_specifications(a);
+			});
+		},
+
+		draw_actors_execution_specifications : function (actor) {
+			var self = this;
+			_.each(actor.executionSpecifications, function (e) {
+				var aX = getCenterX(actor);
+				aX += e.level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+				var x = aX - EXECUTION_SPECIFICATION_WIDTH/2.0;
+				var y = e.startSignal.endY;
+				var w = EXECUTION_SPECIFICATION_WIDTH;
+				var h = e.endSignal ? e.endSignal.startY - y : (actor.y - y);
+
+				// Draw inner box
+				var rect = self.draw_rect(x, y, w, h);
+				rect.attr(EXECUTION_SPECIFICATION_RECT);
+			});
+		},
+
 		draw_signals : function (offsetY) {
 			var y = offsetY;
 			var self = this;
@@ -442,6 +503,7 @@
 
 			var text_bb = signal.text_bb;
 			var aX = getCenterX(signal.actorA);
+			aX += signal.actorA.execSpecMarginRight(signal);
 
 			var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
 			var y = offsetY + signal.height / 2;
@@ -452,25 +514,46 @@
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
 
+			var x1 = aX;
+			var x2 = aX;
 			var y1 = offsetY + SIGNAL_MARGIN;
 			var y2 = y1 + signal.height - SIGNAL_MARGIN;
 
+			var topExecSpec = signal.actorA.topExecSpecAtSignal(signal);
+			if (topExecSpec.startSignal === signal) {
+				x1 -= OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+			}
+			if (topExecSpec.endSignal === signal) {
+				x2 -= OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+			}
+
 			// Draw three lines, the last one with a arrow
 			var line;
-			line = this.draw_line(aX, y1, aX + SELF_SIGNAL_WIDTH, y1);
+			line = this.draw_line(x1, y1, aX + SELF_SIGNAL_WIDTH, y1);
 			line.attr(attr);
 
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2);
 			line.attr(attr);
 
-			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, aX, y2);
+			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, x2, y2);
 			attr['arrow-end'] = this.arrow_types[signal.arrowtype] + '-wide-long';
 			line.attr(attr);
+
+			signal.startY = y1;
+			signal.endY = y2;
 		},
 
 		draw_signal : function (signal, offsetY) {
 			var aX = getCenterX( signal.actorA );
 			var bX = getCenterX( signal.actorB );
+
+			if (bX > aX) {
+				aX += signal.actorA.execSpecMarginRight(signal);
+				bX += signal.actorB.execSpecMarginLeft(signal);
+			} else {
+				aX += signal.actorA.execSpecMarginLeft(signal);
+				bX += signal.actorB.execSpecMarginRight(signal);
+			}
 
 			// Mid point between actors
 			var x = (bX - aX) / 2 + aX;
@@ -487,6 +570,9 @@
 				'arrow-end': this.arrow_types[signal.arrowtype] + '-wide-long',
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
+
+			signal.startY = y;
+			signal.endY = y;
 
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;

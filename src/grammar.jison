@@ -23,10 +23,11 @@
 "note"            return 'note';
 "title"           return 'title';
 ","               return ',';
-[^\->:,\r\n"]+    return 'ACTOR';
+[^\->:,\r\n"+]+    return 'ACTOR';
 \"[^"]+\"         return 'ACTOR';
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
+"+"              return 'PLUS';
 ">>"              return 'OPENARROW';
 ">"               return 'ARROW';
 :[^\r\n]+         return 'MESSAGE';
@@ -76,8 +77,14 @@ placement
 	;
 
 signal
-	: actor signaltype actor message
-	{ $$ = new Diagram.Signal($1, $2, $3, $4); }
+	: execution_modifier actor signaltype execution_modifier actor message
+		{ $$ = new Diagram.Signal($2, $3, $5, $6, $1, $4); }
+	;
+
+execution_modifier
+	: /* empty */ { $$ = Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED}
+	| LINE { $$ = Diagram.EXEC_SPEC_LVL_CHANGE.DECREASE_LEVEL }
+	| PLUS { $$ = Diagram.EXEC_SPEC_LVL_CHANGE.INCREASE_LEVEL }
 	;
 
 actor

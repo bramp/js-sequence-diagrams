@@ -50,6 +50,8 @@
 	};
 
 	Diagram.prototype.addSignal = function(signal) {
+		// Set the numerical index of the signal.
+		signal.index = this.signals.length;
 		this.signals.push( signal );
 	};
 
@@ -57,15 +59,24 @@
 		this.alias = alias;
 		this.name  = name;
 		this.index = index;
+		this.executionSpecificationStack = [];
+		this.executionSpecifications = [];
+		// A value of -1 indicates that this actor/lifeline has no execution
+		// specifications.
+		this.maxExecutionSpecificationLevel = -1;
 	};
 
-	Diagram.Signal = function(actorA, signaltype, actorB, message) {
+	Diagram.Signal = function(actorA, signaltype, actorB, message,
+	                          execSpecLevelChangeA, execSpecLevelChangeB) {
 		this.type       = "Signal";
 		this.actorA     = actorA;
 		this.actorB     = actorB;
 		this.linetype   = signaltype & 3;
 		this.arrowtype  = (signaltype >> 2) & 3;
 		this.message    = message;
+		this.index      = null;
+		this.actorA.changeExecSpecLevel(execSpecLevelChangeA, this);
+		this.actorB.changeExecSpecLevel(execSpecLevelChangeB, this);
 	};
 
 	Diagram.Signal.prototype.isSelf = function() {
@@ -81,6 +92,66 @@
 		if (this.hasManyActors() && actor[0] == actor[1]) {
 			throw new Error("Note should be over two different actors");
 		}
+	};
+
+	Diagram.ExecutionSpecification = function(actor, startSignal, level) {
+		this.actor = actor;
+		this.startSignal = startSignal;
+		this.endSignal = null;
+		this.level = level;
+	};
+
+	Diagram.Actor.prototype.changeExecSpecLevel = function(change, signal) {
+		switch (change) {
+			case Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED:
+				break;
+			case Diagram.EXEC_SPEC_LVL_CHANGE.INCREASE_LEVEL:
+				var newLevel = this.executionSpecificationStack.length;
+				this.maxExecutionSpecificationLevel =
+					Math.max(this.maxExecutionSpecificationLevel, newLevel);
+				var executionSpecification =
+					new Diagram.ExecutionSpecification(this, signal, newLevel);
+				this.executionSpecificationStack.push(executionSpecification);
+				this.executionSpecifications.push(executionSpecification);
+				break;
+			case Diagram.EXEC_SPEC_LVL_CHANGE.DECREASE_LEVEL:
+				if (this.executionSpecificationStack.length >= 0) {
+					this.executionSpecificationStack.pop().setEndSignal(signal);
+				} else {
+					throw new Error("The execution specification level for actor " + this.name + " was dropped below 0.");
+				}
+				break;
+		}
+	};
+
+	/*
+	 * Returns the execution specification level for the actor at the point in
+	 * the sequence that the given signal is executed.
+	 */
+	Diagram.Actor.prototype.execSpecLevelAtSignal = function (signal) {
+		var level = -1;
+		_.each(this.executionSpecifications, function (e) {
+			if ((e.startSignal.index <= signal.index) &&
+					(e.endSignal === null || (e.endSignal.index >= signal.index))) {
+				level += 1;
+			}
+		});
+		return level;
+	};
+
+	Diagram.Actor.prototype.topExecSpecAtSignal = function (signal) {
+		var execSpec = null;
+		_.each(this.executionSpecifications, function (e) {
+			if ((e.startSignal.index <= signal.index) &&
+				(e.endSignal === null || (e.endSignal.index >= signal.index))) {
+				execSpec = e;
+			}
+		});
+		return execSpec;
+	};
+
+	Diagram.ExecutionSpecification.prototype.setEndSignal = function (signal) {
+		this.endSignal = signal;
 	};
 
 	Diagram.Note.prototype.hasManyActors = function() {
@@ -106,6 +177,12 @@
 		LEFTOF  : 0,
 		RIGHTOF : 1,
 		OVER    : 2
+	};
+
+	Diagram.EXEC_SPEC_LVL_CHANGE = {
+		UNCHANGED      :  0,
+		INCREASE_LEVEL :  1,
+		DECREASE_LEVEL : -1
 	};
 
 
