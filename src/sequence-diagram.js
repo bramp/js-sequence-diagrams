@@ -264,8 +264,8 @@
 
 			this.draw_title();
 			this.draw_actors(y);
+			this.draw_execution_specifications(y + this._actors_height);
 			this.draw_signals(y + this._actors_height);
-			this.draw_execution_specifications();
 
 			this._paper.setFinish();
 		},
@@ -456,8 +456,23 @@
 			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
 		},
 
-		draw_execution_specifications : function () {
+		draw_execution_specifications : function (offsetY) {
+			var y = offsetY;
 			var self = this;
+
+			_.each(this.diagram.signals, function(s) {
+				if (s.type == "Signal") {
+					if (s.isSelf()) {
+						s.startY = y + SIGNAL_MARGIN;
+						s.endY = s.startY + s.height - SIGNAL_MARGIN;
+					} else {
+						s.startY = s.endY = y + s.height - SIGNAL_MARGIN - SIGNAL_PADDING;
+					}
+				}
+
+				y += s.height;
+			});
+
 			_.each(this.diagram.actors, function(a) {
 				self.draw_actors_execution_specifications(a);
 			});
@@ -538,9 +553,6 @@
 			line = this.draw_line(aX + SELF_SIGNAL_WIDTH, y2, x2, y2);
 			attr['arrow-end'] = this.arrow_types[signal.arrowtype] + '-wide-long';
 			line.attr(attr);
-
-			signal.startY = y1;
-			signal.endY = y2;
 		},
 
 		draw_signal : function (signal, offsetY) {
@@ -570,9 +582,6 @@
 				'arrow-end': this.arrow_types[signal.arrowtype] + '-wide-long',
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
-
-			signal.startY = y;
-			signal.endY = y;
 
 			//var ARROW_SIZE = 16;
 			//var dir = this.actorA.x < this.actorB.x ? 1 : -1;
