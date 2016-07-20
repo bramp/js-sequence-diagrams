@@ -34,8 +34,8 @@
 
 	var SELF_SIGNAL_WIDTH = 20; // How far out a self signal goes
 
-	var EXECUTION_SPECIFICATION_WIDTH = 10;
-	var OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET = EXECUTION_SPECIFICATION_WIDTH * 0.5;
+	var EXECUTION_WIDTH = 10;
+	var OVERLAPPING_EXECUTION_OFFSET = EXECUTION_WIDTH * 0.5;
 
 	var PLACEMENT = Diagram.PLACEMENT;
 	var LINETYPE  = Diagram.LINETYPE;
@@ -50,10 +50,10 @@
 		'fill': "#fff"
 	};
 
-	var EXECUTION_SPECIFICATION_RECT = {
+	var EXECUTION_RECT = {
 		'stroke': '#000',
 		'stroke-width': 2,
-		'fill': '#e6e6e6' // Color taken from the UML specification examples
+		'fill': '#e6e6e6' // Color taken from the UML examples
 	};
 
 	function AssertException(message) { this.message = message; }
@@ -89,23 +89,20 @@
  * Drawing-related extra diagram methods.
  ******************/
 
-	// These functions return the x-offset from the lifeline centre given the current ExecutionSpecification
-	// nesting-level.
-	function execSpecMarginLeft(level) {
+	// These functions return the x-offset from the lifeline centre given the current Execution nesting-level.
+	function executionMarginLeft(level) {
 		if (level < 0) {
 			return 0;
 		} else {
-			return -EXECUTION_SPECIFICATION_WIDTH * 0.5 +
-			       level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+			return -EXECUTION_WIDTH * 0.5 + level * OVERLAPPING_EXECUTION_OFFSET;
 		}
 	}
 
-	function execSpecMarginRight(level) {
+	function executionMarginRight(level) {
 		if (level < 0) {
 			return 0;
 		} else {
-			return EXECUTION_SPECIFICATION_WIDTH * 0.5 +
-			       level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+			return EXECUTION_WIDTH * 0.5 + level * OVERLAPPING_EXECUTION_OFFSET;
 		}
 	}
 
@@ -263,7 +260,7 @@
 
 			this.draw_title();
 			this.draw_actors(y);
-			this.draw_execution_specifications(y + this._actors_height);
+			this.draw_executions(y + this._actors_height);
 			this.draw_signals(y + this._actors_height);
 
 			this._paper.setFinish();
@@ -308,10 +305,10 @@
 
 				a.distances = [];
 				a.padding_right = 0;
-				if (a.maxExecutionSpecificationLevel >= 0) {
-					a.padding_right = (EXECUTION_SPECIFICATION_WIDTH / 2.0) +
-					                  (a.maxExecutionSpecificationLevel *
-					                   OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET);
+				if (a.maxExecutionsLevel >= 0) {
+					a.padding_right = (EXECUTION_WIDTH / 2.0) +
+					                  (a.maxExecutionsLevel *
+					                   OVERLAPPING_EXECUTION_OFFSET);
 				}
 				self._actors_height = Math.max(a.height, self._actors_height);
 			});
@@ -457,11 +454,11 @@
 			this.draw_text_box(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this._font);
 		},
 
-		draw_execution_specifications : function (offsetY) {
+		draw_executions : function (offsetY) {
 			var y = offsetY;
 			var self = this;
 
-			// Calculate the y-positions of each signal before we attempt to draw the executionSpecificaitons.
+			// Calculate the y-positions of each signal before we attempt to draw the executions.
 			_.each(this.diagram.signals, function(s) {
 				if (s.type == "Signal") {
 					if (s.isSelf()) {
@@ -476,18 +473,18 @@
 			});
 
 			_.each(this.diagram.actors, function(a) {
-				self.draw_actors_execution_specifications(a);
+				self.draw_actors_executions(a);
 			});
 		},
 
-		draw_actors_execution_specifications : function (actor) {
+		draw_actors_executions : function (actor) {
 			var self = this;
-			_.each(actor.executionSpecifications, function (e) {
+			_.each(actor.executions, function (e) {
 				var aX = getCenterX(actor);
-				aX += e.level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
-				var x = aX - EXECUTION_SPECIFICATION_WIDTH/2.0;
+				aX += e.level * OVERLAPPING_EXECUTION_OFFSET;
+				var x = aX - EXECUTION_WIDTH / 2.0;
 				var y;
-				var w = EXECUTION_SPECIFICATION_WIDTH;
+				var w = EXECUTION_WIDTH;
 				var h;
 				if (e.startSignal === e.endSignal) {
 					y = e.startSignal.startY;
@@ -497,9 +494,9 @@
 					h = e.endSignal ? e.endSignal.startY - y : (actor.y - y);
 				}
 
-				// Draw actual execution specification.
+				// Draw actual execution.
 				var rect = self.draw_rect(x, y, w, h);
-				rect.attr(EXECUTION_SPECIFICATION_RECT);
+				rect.attr(EXECUTION_RECT);
 			});
 		},
 
@@ -527,7 +524,7 @@
 
 			var text_bb = signal.text_bb;
 			var aX = getCenterX(signal.actorA);
-			aX += execSpecMarginRight(signal.maxExecSpecLevel());
+			aX += executionMarginRight(signal.maxExecutionLevel());
 
 			var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
 			var y = offsetY + signal.height / 2;
@@ -538,8 +535,8 @@
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
 
-			var x1 = getCenterX(signal.actorA) + execSpecMarginRight(signal.startLevel);
-			var x2 = getCenterX(signal.actorA) + execSpecMarginRight(signal.endLevel);
+			var x1 = getCenterX(signal.actorA) + executionMarginRight(signal.startLevel);
+			var x2 = getCenterX(signal.actorA) + executionMarginRight(signal.endLevel);
 			var y1 = offsetY + SIGNAL_MARGIN;
 			var y2 = y1 + signal.height - SIGNAL_MARGIN;
 
@@ -561,11 +558,11 @@
 			var bX = getCenterX( signal.actorB );
 
 			if (bX > aX) {
-				aX += execSpecMarginRight(signal.startLevel);
-				bX += execSpecMarginLeft(signal.endLevel);
+				aX += executionMarginRight(signal.startLevel);
+				bX += executionMarginLeft(signal.endLevel);
 			} else {
-				aX += execSpecMarginLeft(signal.startLevel);
-				bX += execSpecMarginRight(signal.endLevel);
+				aX += executionMarginLeft(signal.startLevel);
+				bX += executionMarginRight(signal.endLevel);
 			}
 
 			// Mid point between actors

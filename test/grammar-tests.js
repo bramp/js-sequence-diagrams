@@ -67,11 +67,11 @@ function assertEmptyDocument(d) {
 	equal(d.signals.length, 0, "Zero signals");
 }
 
-function testExecutionSpecification(execSpec, affectedActorName, startSignal, endSignal, level) {
-	equal(execSpec.actor.name, affectedActorName, "Correct actor");
-	equal(execSpec.startSignal, startSignal, "Start signal of ExecutionSpecification");
-	equal(execSpec.endSignal, endSignal, "End signal of ExecutionSpecification");
-	equal(execSpec.level, level, "Nesting level of ExecutionSpecification");
+function testExecutions(execution, affectedActorName, startSignal, endSignal, level) {
+	equal(execution.actor.name, affectedActorName, "Correct actor");
+	equal(execution.startSignal, startSignal, "Start signal of Execution");
+	equal(execution.endSignal, endSignal, "End signal of Execution");
+	equal(execution.level, level, "Nesting level of Execution");
 }
 
 
@@ -197,7 +197,7 @@ test( "Quoted names", function() {
 	assertSingleArrow(Diagram.parse("\"+A\"->\"+B\": M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "+A", "+B", "M");
 });
 
-test( "ExecutionSpecifications", function () {
+test( "Executions", function () {
 	assertSingleArrow(Diagram.parse("A->+B: M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "A", "B", "M");
 	assertSingleArrow(Diagram.parse("+A->B: M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "A", "B", "M");
 	assertSingleArrow(Diagram.parse("+A-->+B: M"), ARROWTYPE.FILLED, LINETYPE.DOTTED, "A", "B", "M");
@@ -210,19 +210,19 @@ test( "ExecutionSpecifications", function () {
 	var b = d.actors[1];
 	equal(a.name, "A", "Actors A name");
 	equal(b.name, "B", "Actors B name");
-	var execSpecsA = a.executionSpecifications;
-	var execSpecsB = b.executionSpecifications;
+	var execsA = a.executions;
+	var execsB = b.executions;
 
 	equal(d.signals.length, 3, "Correct signals count");
-	equal(execSpecsA.length, 1, "Correct actor A ExecutionSpecification count");
-	equal(execSpecsB.length, 2, "Correct actor B ExecutionSpecification count");
+	equal(execsA.length, 1, "Correct actor A Execution count");
+	equal(execsB.length, 2, "Correct actor B Execution count");
 
-	// More or less normal ExecutionSpecification
-	testExecutionSpecification(execSpecsB[0], "B", d.signals[0], d.signals[2], 0);
-	// Self-signalled ExecutionSpecification
-	testExecutionSpecification(execSpecsB[1], "B", d.signals[1], d.signals[1], 1);
-	// Endless ExecutionSpecification
-	testExecutionSpecification(execSpecsA[0], "A", d.signals[2], null, 0);
+	// More or less normal Execution
+	testExecutions(execsB[0], "B", d.signals[0], d.signals[2], 0);
+	// Self-signalled Execution
+	testExecutions(execsB[1], "B", d.signals[1], d.signals[1], 1);
+	// Endless Execution
+	testExecutions(execsA[0], "A", d.signals[2], null, 0);
 
 	// Make sure we haven't broken the different arrow types.
 	equal(d.signals[0].arrowtype, ARROWTYPE.FILLED, "Signal 1 Arrow Type");

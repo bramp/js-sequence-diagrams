@@ -59,13 +59,13 @@
 		this.alias = alias;
 		this.name  = name;
 		this.index = index;
-		this.executionSpecificationStack = [];
-		this.executionSpecifications = [];
-		this.maxExecutionSpecificationLevel = -1;
+		this.executionStack = [];
+		this.executions = [];
+		this.maxExecutionsLevel = -1;
 	};
 
 	Diagram.Signal = function(actorA, signaltype, actorB, message,
-	                          execSpecLevelChangeA, execSpecLevelChangeB) {
+	                          executionLevelChangeA, executionLevelChangeB) {
 		this.type       = "Signal";
 		this.actorA     = actorA;
 		this.actorB     = actorB;
@@ -73,22 +73,22 @@
 		this.arrowtype  = (signaltype >> 2) & 3;
 		this.message    = message;
 		this.index      = null;
-		// If this is a self-signal and an ExecutionSpecification level modifier was only applied to the
+		// If this is a self-signal and an Execution level modifier was only applied to the
 		// left-hand side of the signal, move it to the right-hand side to prevent rendering issues.
-		if (actorA === actorB && execSpecLevelChangeB === Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED) {
-			execSpecLevelChangeB = execSpecLevelChangeA;
-			execSpecLevelChangeA = Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED;
+		if (actorA === actorB && executionLevelChangeB === Diagram.EXECUTION_LVL_CHANGE.UNCHANGED) {
+			executionLevelChangeB = executionLevelChangeA;
+			executionLevelChangeA = Diagram.EXECUTION_LVL_CHANGE.UNCHANGED;
 		}
 
-		if (actorA === actorB && execSpecLevelChangeA === execSpecLevelChangeB &&
-		    execSpecLevelChangeA !== Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED) {
-			throw new Error("You cannot move the ExecutionSpecification nesting level in the same " +
+		if (actorA === actorB && executionLevelChangeA === executionLevelChangeB &&
+		    executionLevelChangeA !== Diagram.EXECUTION_LVL_CHANGE.UNCHANGED) {
+			throw new Error("You cannot move the Execution nesting level in the same " +
 			                "direction twice on a single self-signal.");
 		}
-		this.actorA.changeExecSpecLevel(execSpecLevelChangeA, this);
-		this.startLevel = this.actorA.executionSpecificationStack.length - 1;
-		this.actorB.changeExecSpecLevel(execSpecLevelChangeB, this);
-		this.endLevel   = this.actorB.executionSpecificationStack.length - 1;
+		this.actorA.changeExecutionLevel(executionLevelChangeA, this);
+		this.startLevel = this.actorA.executionStack.length - 1;
+		this.actorB.changeExecutionLevel(executionLevelChangeB, this);
+		this.endLevel   = this.actorB.executionStack.length - 1;
 	};
 
 	Diagram.Signal.prototype.isSelf = function() {
@@ -96,12 +96,12 @@
 	};
 
 	/*
-	 * If the signal is a self signal, this method returns the higher ExecutionSpecification nesting level
+	 * If the signal is a self signal, this method returns the higher Execution nesting level
 	 * between the start and end of the signal.
 	 */
-	Diagram.Signal.prototype.maxExecSpecLevel = function () {
+	Diagram.Signal.prototype.maxExecutionLevel = function () {
 		if (!this.isSelf()) {
-			throw new Error("maxExecSpecLevel() was called on a non-self signal.");
+			throw new Error("maxExecutionLevel() was called on a non-self signal.");
 		}
 		return Math.max(this.startLevel, this.endLevel);
 	};
@@ -117,38 +117,37 @@
 		}
 	};
 
-	Diagram.ExecutionSpecification = function(actor, startSignal, level) {
+	Diagram.Execution = function(actor, startSignal, level) {
 		this.actor = actor;
 		this.startSignal = startSignal;
 		this.endSignal = null;
 		this.level = level;
 	};
 
-	Diagram.Actor.prototype.changeExecSpecLevel = function(change, signal) {
+	Diagram.Actor.prototype.changeExecutionLevel = function(change, signal) {
 		switch (change) {
-			case Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED:
+			case Diagram.EXECUTION_LVL_CHANGE.UNCHANGED:
 				break;
-			case Diagram.EXEC_SPEC_LVL_CHANGE.INCREASE_LEVEL:
-				var newLevel = this.executionSpecificationStack.length;
-				this.maxExecutionSpecificationLevel =
-					Math.max(this.maxExecutionSpecificationLevel, newLevel);
-				var executionSpecification =
-					new Diagram.ExecutionSpecification(this, signal, newLevel);
-				this.executionSpecificationStack.push(executionSpecification);
-				this.executionSpecifications.push(executionSpecification);
+			case Diagram.EXECUTION_LVL_CHANGE.INCREASE_LEVEL:
+				var newLevel = this.executionStack.length;
+				this.maxExecutionsLevel =
+					Math.max(this.maxExecutionsLevel, newLevel);
+				var execution = new Diagram.Execution(this, signal, newLevel);
+				this.executionStack.push(execution);
+				this.executions.push(execution);
 				break;
-			case Diagram.EXEC_SPEC_LVL_CHANGE.DECREASE_LEVEL:
-				if (this.executionSpecificationStack.length > 0) {
-					this.executionSpecificationStack.pop().setEndSignal(signal);
+			case Diagram.EXECUTION_LVL_CHANGE.DECREASE_LEVEL:
+				if (this.executionStack.length > 0) {
+					this.executionStack.pop().setEndSignal(signal);
 				} else {
-					throw new Error("The execution specification level for actor " + this.name +
+					throw new Error("The execution level for actor " + this.name +
 					                " was dropped below 0.");
 				}
 				break;
 		}
 	};
 
-	Diagram.ExecutionSpecification.prototype.setEndSignal = function (signal) {
+	Diagram.Execution.prototype.setEndSignal = function (signal) {
 		this.endSignal = signal;
 	};
 
@@ -177,7 +176,7 @@
 		OVER    : 2
 	};
 
-	Diagram.EXEC_SPEC_LVL_CHANGE = {
+	Diagram.EXECUTION_LVL_CHANGE = {
 		UNCHANGED      :  0,
 		INCREASE_LEVEL :  1,
 		DECREASE_LEVEL : -1
