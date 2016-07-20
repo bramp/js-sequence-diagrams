@@ -61,8 +61,6 @@
 		this.index = index;
 		this.executionSpecificationStack = [];
 		this.executionSpecifications = [];
-		// A value of -1 indicates that this actor/lifeline has no execution
-		// specifications.
 		this.maxExecutionSpecificationLevel = -1;
 	};
 
@@ -118,7 +116,8 @@
 				if (this.executionSpecificationStack.length >= 0) {
 					this.executionSpecificationStack.pop().setEndSignal(signal);
 				} else {
-					throw new Error("The execution specification level for actor " + this.name + " was dropped below 0.");
+					throw new Error("The execution specification level for actor " + this.name +
+					                " was dropped below 0.");
 				}
 				break;
 		}
@@ -126,24 +125,32 @@
 
 	/*
 	 * Returns the execution specification level for the actor at the point in
-	 * the sequence that the given signal is executed.
+	 * the sequence that the given signal is processed.
 	 */
 	Diagram.Actor.prototype.execSpecLevelAtSignal = function (signal) {
 		var level = -1;
-		_.each(this.executionSpecifications, function (e) {
+		_.each(this.executionSpecifications, function (e, i) {
 			if ((e.startSignal.index <= signal.index) &&
 					(e.endSignal === null || (e.endSignal.index >= signal.index))) {
-				level += 1;
+				level = Math.max(e.level, level);
 			}
 		});
 		return level;
 	};
 
+	/*
+	 * Returns the top level executionSpecification at the point in the sequence
+	 * that the given sequence is processed. Since the matching is inclusive, it
+	 * is used to identify if the signal is at the start or end of the
+	 * executionSpecification.
+	 */
 	Diagram.Actor.prototype.topExecSpecAtSignal = function (signal) {
 		var execSpec = null;
 		_.each(this.executionSpecifications, function (e) {
 			if ((e.startSignal.index <= signal.index) &&
-				(e.endSignal === null || (e.endSignal.index >= signal.index))) {
+			    (e.endSignal === null || (e.endSignal.index >= signal.index)) &&
+			    (execSpec === null || e.level >= execSpec.level))
+			{
 				execSpec = e;
 			}
 		});

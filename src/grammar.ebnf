@@ -15,7 +15,7 @@ statement ::=
 		( 'left of' | 'right of') actor
 		| 'over' (actor | actor ',' actor)
 		) ':' message
-	| actor ( '-' | '--' ) ( '>' | '>>' )? actor ':' message
+	| ( '-' | '+' )? actor ( '-' | '--' ) ( '>' | '>>' )? ( '-' | '+' )? actor ':' message
 	)
 
 /*

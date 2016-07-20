@@ -86,7 +86,7 @@
 	}
 
 /******************
- * Drawing related extra diagram methods.
+ * Drawing-related extra diagram methods.
  ******************/
 
 	Diagram.Actor.prototype.execSpecMarginLeft = function(signal) {
@@ -94,7 +94,8 @@
 		if (level < 0) {
 			return 0;
 		} else {
-			return -(EXECUTION_SPECIFICATION_WIDTH * 0.5) + level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+			return -EXECUTION_SPECIFICATION_WIDTH * 0.5 +
+			       level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
 		}
 	};
 
@@ -103,7 +104,8 @@
 		if (level < 0) {
 			return 0;
 		} else {
-			return (EXECUTION_SPECIFICATION_WIDTH * 0.5) + level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+			return EXECUTION_SPECIFICATION_WIDTH * 0.5 +
+			       level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
 		}
 	};
 
@@ -164,17 +166,14 @@
 	/**
 	 * Draws a wobbly (hand drawn) rect
 	 */
-	Raphael.fn.handRect = function (x, y, w, h, rect) {
+	Raphael.fn.handRect = function (x, y, w, h) {
 		assert(_.every([x, y, w, h], _.isFinite), "x, y, w, h must be numeric");
-		if (!rect) {
-			rect = RECT;
-		}
 		return this.path("M" + x + "," + y +
 			this.wobble(x, y, x + w, y) +
 			this.wobble(x + w, y, x + w, y + h) +
 			this.wobble(x + w, y + h, x, y + h) +
 			this.wobble(x, y + h, x, y))
-			.attr(rect);
+			.attr(RECT);
 	};
 
 	/**
@@ -310,7 +309,9 @@
 				a.distances = [];
 				a.padding_right = 0;
 				if (a.maxExecutionSpecificationLevel >= 0) {
-					a.padding_right = (EXECUTION_SPECIFICATION_WIDTH/2.0) + a.maxExecutionSpecificationLevel * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
+					a.padding_right = (EXECUTION_SPECIFICATION_WIDTH / 2.0) +
+					                  (a.maxExecutionSpecificationLevel *
+					                   OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET);
 				}
 				self._actors_height = Math.max(a.height, self._actors_height);
 			});
@@ -460,6 +461,7 @@
 			var y = offsetY;
 			var self = this;
 
+			// Calculate the y-positions of each signal before we attempt to draw the executionSpecificaitons.
 			_.each(this.diagram.signals, function(s) {
 				if (s.type == "Signal") {
 					if (s.isSelf()) {
@@ -488,7 +490,7 @@
 				var w = EXECUTION_SPECIFICATION_WIDTH;
 				var h = e.endSignal ? e.endSignal.startY - y : (actor.y - y);
 
-				// Draw inner box
+				// Draw actual execution specification.
 				var rect = self.draw_rect(x, y, w, h);
 				rect.attr(EXECUTION_SPECIFICATION_RECT);
 			});
