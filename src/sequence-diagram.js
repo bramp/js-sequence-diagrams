@@ -486,9 +486,16 @@
 				var aX = getCenterX(actor);
 				aX += e.level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
 				var x = aX - EXECUTION_SPECIFICATION_WIDTH/2.0;
-				var y = e.startSignal.endY;
+				var y;
 				var w = EXECUTION_SPECIFICATION_WIDTH;
-				var h = e.endSignal ? e.endSignal.startY - y : (actor.y - y);
+				var h;
+				if (e.startSignal === e.endSignal) {
+					y = e.startSignal.startY;
+					h = e.endSignal ? e.endSignal.endY - y : (actor.y - y);
+				} else {
+					y = e.startSignal.endY;
+					h = e.endSignal ? e.endSignal.startY - y : (actor.y - y);
+				}
 
 				// Draw actual execution specification.
 				var rect = self.draw_rect(x, y, w, h);
