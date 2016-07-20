@@ -89,25 +89,25 @@
  * Drawing-related extra diagram methods.
  ******************/
 
-	Diagram.Actor.prototype.execSpecMarginLeft = function(signal) {
-		var level = this.execSpecLevelAtSignal(signal);
+	// These functions return the x-offset from the lifeline centre given the current ExecutionSpecification
+	// nesting-level.
+	function execSpecMarginLeft(level) {
 		if (level < 0) {
 			return 0;
 		} else {
 			return -EXECUTION_SPECIFICATION_WIDTH * 0.5 +
 			       level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
 		}
-	};
+	}
 
-	Diagram.Actor.prototype.execSpecMarginRight = function(signal) {
-		var level = this.execSpecLevelAtSignal(signal);
+	function execSpecMarginRight(level) {
 		if (level < 0) {
 			return 0;
 		} else {
 			return EXECUTION_SPECIFICATION_WIDTH * 0.5 +
 			       level * OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
 		}
-	};
+	}
 
 /******************
  * Raphaël extras
@@ -520,7 +520,7 @@
 
 			var text_bb = signal.text_bb;
 			var aX = getCenterX(signal.actorA);
-			aX += signal.actorA.execSpecMarginRight(signal);
+			aX += execSpecMarginRight(signal.maxExecSpecLevel());
 
 			var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING - text_bb.x;
 			var y = offsetY + signal.height / 2;
@@ -531,18 +531,10 @@
 				'stroke-dasharray': this.line_types[signal.linetype]
 			});
 
-			var x1 = aX;
-			var x2 = aX;
+			var x1 = getCenterX(signal.actorA) + execSpecMarginRight(signal.startLevel);
+			var x2 = getCenterX(signal.actorA) + execSpecMarginRight(signal.endLevel);
 			var y1 = offsetY + SIGNAL_MARGIN;
 			var y2 = y1 + signal.height - SIGNAL_MARGIN;
-
-			var topExecSpec = signal.actorA.topExecSpecAtSignal(signal);
-			if (topExecSpec.startSignal === signal) {
-				x1 -= OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
-			}
-			if (topExecSpec.endSignal === signal) {
-				x2 -= OVERLAPPING_EXECUTION_SPECIFICATION_OFFSET;
-			}
 
 			// Draw three lines, the last one with a arrow
 			var line;
@@ -562,11 +554,11 @@
 			var bX = getCenterX( signal.actorB );
 
 			if (bX > aX) {
-				aX += signal.actorA.execSpecMarginRight(signal);
-				bX += signal.actorB.execSpecMarginLeft(signal);
+				aX += execSpecMarginRight(signal.startLevel);
+				bX += execSpecMarginLeft(signal.endLevel);
 			} else {
-				aX += signal.actorA.execSpecMarginLeft(signal);
-				bX += signal.actorB.execSpecMarginRight(signal);
+				aX += execSpecMarginLeft(signal.startLevel);
+				bX += execSpecMarginRight(signal.endLevel);
 			}
 
 			// Mid point between actors

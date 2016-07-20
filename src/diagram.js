@@ -73,12 +73,37 @@
 		this.arrowtype  = (signaltype >> 2) & 3;
 		this.message    = message;
 		this.index      = null;
+		// If this is a self-signal and an ExecutionSpecification level modifier was only applied to the
+		// left-hand side of the signal, move it to the right-hand side to prevent rendering issues.
+		if (actorA === actorB && execSpecLevelChangeB === Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED) {
+			execSpecLevelChangeB = execSpecLevelChangeA;
+			execSpecLevelChangeA = Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED;
+		}
+
+		if (actorA === actorB && execSpecLevelChangeA === execSpecLevelChangeB &&
+		    execSpecLevelChangeA !== Diagram.EXEC_SPEC_LVL_CHANGE.UNCHANGED) {
+			throw new Error("You cannot move the ExecutionSpecification nesting level in the same " +
+			                "direction twice on a single self-signal.");
+		}
 		this.actorA.changeExecSpecLevel(execSpecLevelChangeA, this);
+		this.startLevel = this.actorA.executionSpecificationStack.length - 1;
 		this.actorB.changeExecSpecLevel(execSpecLevelChangeB, this);
+		this.endLevel   = this.actorB.executionSpecificationStack.length - 1;
 	};
 
 	Diagram.Signal.prototype.isSelf = function() {
 		return this.actorA.index == this.actorB.index;
+	};
+
+	/*
+	 * If the signal is a self signal, this method returns the higher ExecutionSpecification nesting level
+	 * between the start and end of the signal.
+	 */
+	Diagram.Signal.prototype.maxExecSpecLevel = function () {
+		if (!this.isSelf()) {
+			throw new Error("maxExecSpecLevel() was called on a non-self signal.");
+		}
+		return Math.max(this.startLevel, this.endLevel);
 	};
 
 	Diagram.Note = function(actor, placement, message) {
@@ -113,7 +138,7 @@
 				this.executionSpecifications.push(executionSpecification);
 				break;
 			case Diagram.EXEC_SPEC_LVL_CHANGE.DECREASE_LEVEL:
-				if (this.executionSpecificationStack.length >= 0) {
+				if (this.executionSpecificationStack.length > 0) {
 					this.executionSpecificationStack.pop().setEndSignal(signal);
 				} else {
 					throw new Error("The execution specification level for actor " + this.name +
@@ -121,40 +146,6 @@
 				}
 				break;
 		}
-	};
-
-	/*
-	 * Returns the execution specification level for the actor at the point in
-	 * the sequence that the given signal is processed.
-	 */
-	Diagram.Actor.prototype.execSpecLevelAtSignal = function (signal) {
-		var level = -1;
-		_.each(this.executionSpecifications, function (e, i) {
-			if ((e.startSignal.index <= signal.index) &&
-					(e.endSignal === null || (e.endSignal.index >= signal.index))) {
-				level = Math.max(e.level, level);
-			}
-		});
-		return level;
-	};
-
-	/*
-	 * Returns the top level executionSpecification at the point in the sequence
-	 * that the given sequence is processed. Since the matching is inclusive, it
-	 * is used to identify if the signal is at the start or end of the
-	 * executionSpecification.
-	 */
-	Diagram.Actor.prototype.topExecSpecAtSignal = function (signal) {
-		var execSpec = null;
-		_.each(this.executionSpecifications, function (e) {
-			if ((e.startSignal.index <= signal.index) &&
-			    (e.endSignal === null || (e.endSignal.index >= signal.index)) &&
-			    (execSpec === null || e.level >= execSpec.level))
-			{
-				execSpec = e;
-			}
-		});
-		return execSpec;
 	};
 
 	Diagram.ExecutionSpecification.prototype.setEndSignal = function (signal) {
