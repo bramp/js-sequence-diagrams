@@ -50,6 +50,8 @@
 	};
 
 	Diagram.prototype.addSignal = function(signal) {
+		// Set the numerical index of the signal.
+		signal.index = this.signals.length;
 		this.signals.push( signal );
 	};
 
@@ -57,19 +59,51 @@
 		this.alias = alias;
 		this.name  = name;
 		this.index = index;
+		this.executionStack = [];
+		this.executions = [];
+		this.maxExecutionsLevel = -1;
 	};
 
-	Diagram.Signal = function(actorA, signaltype, actorB, message) {
+	Diagram.Signal = function(actorA, signaltype, actorB, message,
+	                          executionLevelChangeA, executionLevelChangeB) {
 		this.type       = "Signal";
 		this.actorA     = actorA;
 		this.actorB     = actorB;
 		this.linetype   = signaltype & 3;
 		this.arrowtype  = (signaltype >> 2) & 3;
 		this.message    = message;
+		this.index      = null;
+		// If this is a self-signal and an Execution level modifier was only applied to the
+		// left-hand side of the signal, move it to the right-hand side to prevent rendering issues.
+		if (actorA === actorB && executionLevelChangeB === Diagram.EXECUTION_CHANGE.NONE) {
+			executionLevelChangeB = executionLevelChangeA;
+			executionLevelChangeA = Diagram.EXECUTION_CHANGE.NONE;
+		}
+
+		if (actorA === actorB && executionLevelChangeA === executionLevelChangeB &&
+		    executionLevelChangeA !== Diagram.EXECUTION_CHANGE.NONE) {
+			throw new Error("You cannot move the Execution nesting level in the same " +
+			                "direction twice on a single self-signal.");
+		}
+		this.actorA.changeExecutionLevel(executionLevelChangeA, this);
+		this.startLevel = this.actorA.executionStack.length - 1;
+		this.actorB.changeExecutionLevel(executionLevelChangeB, this);
+		this.endLevel   = this.actorB.executionStack.length - 1;
 	};
 
 	Diagram.Signal.prototype.isSelf = function() {
 		return this.actorA.index == this.actorB.index;
+	};
+
+	/*
+	 * If the signal is a self signal, this method returns the higher Execution nesting level
+	 * between the start and end of the signal.
+	 */
+	Diagram.Signal.prototype.maxExecutionLevel = function () {
+		if (!this.isSelf()) {
+			throw new Error("maxExecutionLevel() was called on a non-self signal.");
+		}
+		return Math.max(this.startLevel, this.endLevel);
 	};
 
 	Diagram.Note = function(actor, placement, message) {
@@ -81,6 +115,40 @@
 		if (this.hasManyActors() && actor[0] == actor[1]) {
 			throw new Error("Note should be over two different actors");
 		}
+	};
+
+	Diagram.Execution = function(actor, startSignal, level) {
+		this.actor = actor;
+		this.startSignal = startSignal;
+		this.endSignal = null;
+		this.level = level;
+	};
+
+	Diagram.Actor.prototype.changeExecutionLevel = function(change, signal) {
+		switch (change) {
+			case Diagram.EXECUTION_CHANGE.NONE:
+				break;
+			case Diagram.EXECUTION_CHANGE.INCREASE:
+				var newLevel = this.executionStack.length;
+				this.maxExecutionsLevel =
+					Math.max(this.maxExecutionsLevel, newLevel);
+				var execution = new Diagram.Execution(this, signal, newLevel);
+				this.executionStack.push(execution);
+				this.executions.push(execution);
+				break;
+			case Diagram.EXECUTION_CHANGE.DECREASE:
+				if (this.executionStack.length > 0) {
+					this.executionStack.pop().setEndSignal(signal);
+				} else {
+					throw new Error("The execution level for actor " + this.name +
+					                " was dropped below 0.");
+				}
+				break;
+		}
+	};
+
+	Diagram.Execution.prototype.setEndSignal = function (signal) {
+		this.endSignal = signal;
 	};
 
 	Diagram.Note.prototype.hasManyActors = function() {
@@ -106,6 +174,12 @@
 		LEFTOF  : 0,
 		RIGHTOF : 1,
 		OVER    : 2
+	};
+
+	Diagram.EXECUTION_CHANGE = {
+		NONE     : 0,
+		INCREASE : 1,
+		DECREASE : 2
 	};
 
 

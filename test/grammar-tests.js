@@ -67,6 +67,13 @@ function assertEmptyDocument(d) {
 	equal(d.signals.length, 0, "Zero signals");
 }
 
+function testExecutions(execution, affectedActorName, startSignal, endSignal, level) {
+	equal(execution.actor.name, affectedActorName, "Correct actor");
+	equal(execution.startSignal, startSignal, "Start signal of Execution");
+	equal(execution.endSignal, endSignal, "End signal of Execution");
+	equal(execution.level, level, "Nesting level of Execution");
+}
+
 
 var LINETYPE = Diagram.LINETYPE;
 var ARROWTYPE = Diagram.ARROWTYPE;
@@ -185,6 +192,45 @@ test( "Quoted names", function() {
 	assertSingleArrow(Diagram.parse("\"->:\"->B: M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "->:", "B", "M");
 	assertSingleArrow(Diagram.parse("A->\"->:\": M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "A", "->:", "M");
 	assertSingleActor(Diagram.parse("Participant \"->:\""), "->:");
+	assertSingleArrow(Diagram.parse("A->\"+B\": M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "A", "+B", "M");
+	assertSingleArrow(Diagram.parse("\"+A\"->B: M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "+A", "B", "M");
+	assertSingleArrow(Diagram.parse("\"+A\"->\"+B\": M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "+A", "+B", "M");
+});
+
+test( "Executions", function () {
+	assertSingleArrow(Diagram.parse("A->+B: M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "A", "B", "M");
+	assertSingleArrow(Diagram.parse("+A->B: M"), ARROWTYPE.FILLED, LINETYPE.SOLID, "A", "B", "M");
+	assertSingleArrow(Diagram.parse("+A-->+B: M"), ARROWTYPE.FILLED, LINETYPE.DOTTED, "A", "B", "M");
+	assertSingleArrow(Diagram.parse("+\"+A\"-->+B: M"), ARROWTYPE.FILLED, LINETYPE.DOTTED, "+A", "B", "M");
+
+	var d = Diagram.parse("A->+B: M1\n+B-->-B: M2\n-B-->>+A: M3");
+	equal(d.actors.length, 2, "Correct actors count");
+
+	var a = d.actors[0];
+	var b = d.actors[1];
+	equal(a.name, "A", "Actors A name");
+	equal(b.name, "B", "Actors B name");
+	var execsA = a.executions;
+	var execsB = b.executions;
+
+	equal(d.signals.length, 3, "Correct signals count");
+	equal(execsA.length, 1, "Correct actor A Execution count");
+	equal(execsB.length, 2, "Correct actor B Execution count");
+
+	// More or less normal Execution
+	testExecutions(execsB[0], "B", d.signals[0], d.signals[2], 0);
+	// Self-signalled Execution
+	testExecutions(execsB[1], "B", d.signals[1], d.signals[1], 1);
+	// Endless Execution
+	testExecutions(execsA[0], "A", d.signals[2], null, 0);
+
+	// Make sure we haven't broken the different arrow types.
+	equal(d.signals[0].arrowtype, ARROWTYPE.FILLED, "Signal 1 Arrow Type");
+	equal(d.signals[0].linetype, LINETYPE.SOLID, "Signal 1 Line Type");
+	equal(d.signals[1].arrowtype, ARROWTYPE.FILLED, "Signal 2 Arrow Type");
+	equal(d.signals[1].linetype, LINETYPE.DOTTED, "Signal 2 Line Type");
+	equal(d.signals[2].arrowtype, ARROWTYPE.OPEN, "Signal 3 Arrow Type");
+	equal(d.signals[2].linetype, LINETYPE.DOTTED, "Signal 3 Line Type");
 });
 
 test( "API", function() {
