@@ -93,17 +93,15 @@
 	function executionMarginLeft(level) {
 		if (level < 0) {
 			return 0;
-		} else {
-			return -EXECUTION_WIDTH * 0.5 + level * OVERLAPPING_EXECUTION_OFFSET;
 		}
+		return -EXECUTION_WIDTH * 0.5 + level * OVERLAPPING_EXECUTION_OFFSET;
 	}
 
 	function executionMarginRight(level) {
 		if (level < 0) {
 			return 0;
-		} else {
-			return EXECUTION_WIDTH * 0.5 + level * OVERLAPPING_EXECUTION_OFFSET;
 		}
+		return EXECUTION_WIDTH * 0.5 + level * OVERLAPPING_EXECUTION_OFFSET;
 	}
 
 /******************

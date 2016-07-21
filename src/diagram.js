@@ -75,13 +75,13 @@
 		this.index      = null;
 		// If this is a self-signal and an Execution level modifier was only applied to the
 		// left-hand side of the signal, move it to the right-hand side to prevent rendering issues.
-		if (actorA === actorB && executionLevelChangeB === Diagram.EXECUTION_LVL_CHANGE.UNCHANGED) {
+		if (actorA === actorB && executionLevelChangeB === Diagram.EXECUTION_CHANGE.NONE) {
 			executionLevelChangeB = executionLevelChangeA;
-			executionLevelChangeA = Diagram.EXECUTION_LVL_CHANGE.UNCHANGED;
+			executionLevelChangeA = Diagram.EXECUTION_CHANGE.NONE;
 		}
 
 		if (actorA === actorB && executionLevelChangeA === executionLevelChangeB &&
-		    executionLevelChangeA !== Diagram.EXECUTION_LVL_CHANGE.UNCHANGED) {
+		    executionLevelChangeA !== Diagram.EXECUTION_CHANGE.NONE) {
 			throw new Error("You cannot move the Execution nesting level in the same " +
 			                "direction twice on a single self-signal.");
 		}
@@ -126,9 +126,9 @@
 
 	Diagram.Actor.prototype.changeExecutionLevel = function(change, signal) {
 		switch (change) {
-			case Diagram.EXECUTION_LVL_CHANGE.UNCHANGED:
+			case Diagram.EXECUTION_CHANGE.NONE:
 				break;
-			case Diagram.EXECUTION_LVL_CHANGE.INCREASE_LEVEL:
+			case Diagram.EXECUTION_CHANGE.INCREASE:
 				var newLevel = this.executionStack.length;
 				this.maxExecutionsLevel =
 					Math.max(this.maxExecutionsLevel, newLevel);
@@ -136,7 +136,7 @@
 				this.executionStack.push(execution);
 				this.executions.push(execution);
 				break;
-			case Diagram.EXECUTION_LVL_CHANGE.DECREASE_LEVEL:
+			case Diagram.EXECUTION_CHANGE.DECREASE:
 				if (this.executionStack.length > 0) {
 					this.executionStack.pop().setEndSignal(signal);
 				} else {
@@ -176,10 +176,10 @@
 		OVER    : 2
 	};
 
-	Diagram.EXECUTION_LVL_CHANGE = {
-		UNCHANGED      :  0,
-		INCREASE_LEVEL :  1,
-		DECREASE_LEVEL : -1
+	Diagram.EXECUTION_CHANGE = {
+		NONE     : 0,
+		INCREASE : 1,
+		DECREASE : 2
 	};
 
 

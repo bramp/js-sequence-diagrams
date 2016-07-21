@@ -82,9 +82,9 @@ signal
 	;
 
 execution_modifier
-	: /* empty */ { $$ = Diagram.EXECUTION_LVL_CHANGE.UNCHANGED }
-	| LINE { $$ = Diagram.EXECUTION_LVL_CHANGE.DECREASE_LEVEL }
-	| PLUS { $$ = Diagram.EXECUTION_LVL_CHANGE.INCREASE_LEVEL }
+	: /* empty */ { $$ = Diagram.EXECUTION_CHANGE.NONE }
+	| LINE { $$ = Diagram.EXECUTION_CHANGE.DECREASE }
+	| PLUS { $$ = Diagram.EXECUTION_CHANGE.INCREASE }
 	;
 
 actor
