@@ -20,7 +20,7 @@ into
 
 Requirements
 ------------
-You will need [Raphaël](http://raphaeljs.com/), [underscore.js](http://underscorejs.org/) (or [lodash](https://lodash.com/)), and optionally [jQuery](https://jquery.com/).
+You will need [Raphaël](http://raphaeljs.com/), [underscore.js](http://underscorejs.org/) and optionally [jQuery](https://jquery.com/).
 
 
 Installation
