@@ -15,8 +15,9 @@ if (_.isEmpty(Diagram.themes)) {
 	throw new Error("No themes were registered. Please call registerTheme(...).");
 }
 
-// TODO If only oldHand and oldSimple registered, rename them to hand/simple
-
+// Set the default hand/simple based on which theme is available.
+Diagram.themes.hand = Diagram.themes.snapHand || Diagram.themes.raphaelHand;
+Diagram.themes.simple = Diagram.themes.snapSimple || Diagram.themes.raphaelSimple;
 
 /* Draws the diagram. Creates a SVG inside the container
 * container (HTMLElement|string) DOM element or its ID to draw on
@@ -34,13 +35,14 @@ Diagram.prototype.drawSVG = function (container, options) {
 	}
 
 	// TODO Write tests for this check
-	div = _.isString(container) ? document.getElementById(container) : container;
+	var div = _.isString(container) ? document.getElementById(container) : container;
 	if (div === null || !div.tagName) {
 		throw new Error("Invalid container: " + container);
 	}
 
-	var drawing = new Diagram.themes[options.theme](this);
-	drawing.draw(div);
+	new Diagram.themes[options.theme](this, options, function(drawing) {
+		drawing.draw(div);
+	});
 
 }; // end of drawSVG
 

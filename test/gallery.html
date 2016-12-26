@@ -82,10 +82,10 @@ Note right of A: By listing the participants\n you can change their order
         <script>
             $(document).ready(function(){
 
-                var themes = Diagram.themes;
+                var themes = _.omit(Diagram.themes, ['hand', 'simple']);
 
                 var table = $("#results");
-                var row = $("<tr>").append("<td>")
+                var row = $("<tr>").append("<td>");
                 _.each(themes, function(value, theme) {
                     row.append( $("<td>" + theme + "</td>") );
                 });
@@ -99,7 +99,7 @@ Note right of A: By listing the participants\n you can change their order
 
                     // Move the text area into the cell
                     textarea.appendTo(td);
-                    row.append(td)
+                    row.append(td);
 
                     // Now add one diagram per theme
                     _.each(themes, function(value, theme) {

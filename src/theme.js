@@ -130,35 +130,34 @@ function handLine(x1, y1, x2, y2) {
  * BaseTheme
  ******************/
 
-var BaseTheme = function(diagram) {
-	this.init(diagram);
+var BaseTheme = function(diagram, options) {
+	this.init(diagram, options);
 };
 
 _.extend(BaseTheme.prototype, {
-	init : function(diagram) {
+
+	// Init called while creating the Theme
+	init : function(diagram, options) {
 		this.diagram = diagram;
 
 		this._actors_height  = 0;
 		this._signals_height = 0;
-		this._title  = undefined; // hack - This should be somewhere better
+		this._title = undefined; // hack - This should be somewhere better
 	},
 
-	init_paper: function (container) {},
-	init_font : function() {},
+    setup_paper: function (container) {},
 
 	draw : function(container) {
-		var diagram = this.diagram;
-		this.init_paper(container);
-		this.init_font();
+		this.setup_paper(container);
 
-		this.layout();
+        this.layout();
 
-		var title_height = this._title ? this._title.height : 0;
-		var y = DIAGRAM_MARGIN + title_height;
+        var title_height = this._title ? this._title.height : 0;
+        var y = DIAGRAM_MARGIN + title_height;
 
-		this.draw_title();
-		this.draw_actors(y);
-		this.draw_signals(y + this._actors_height);
+        this.draw_title();
+        this.draw_actors(y);
+        this.draw_signals(y + this._actors_height);
 	},
 
 	layout : function() {
@@ -373,7 +372,7 @@ _.extend(BaseTheme.prototype, {
 		var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING;
 		var y = offsetY + SIGNAL_PADDING + signal.height / 2 + text_bb.y;
 
-		this.draw_text(x, y, signal.message, this._font, true, ALIGN_LEFT);
+		this.draw_text(x, y, signal.message, this._font, ALIGN_LEFT);
 
 		var y1 = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
 		var y2 = y1 + signal.height - 2*SIGNAL_MARGIN - SIGNAL_PADDING;
@@ -393,7 +392,7 @@ _.extend(BaseTheme.prototype, {
 		var y = offsetY + SIGNAL_MARGIN + 2*SIGNAL_PADDING;
 
 		// Draw the text in the middle of the signal
-		this.draw_text(x, y, signal.message, this._font, true, ALIGN_CENTER);
+		this.draw_text(x, y, signal.message, this._font, ALIGN_CENTER);
 
 		// Draw the line along the bottom of the signal
 		y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
@@ -448,7 +447,6 @@ _.extend(BaseTheme.prototype, {
 			y += padding;
 		}
 
-		return this.draw_text(x, y, text, font, false, align);
-	},
-
+		return this.draw_text(x, y, text, font, align);
+	}
 });

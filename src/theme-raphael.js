@@ -9,19 +9,22 @@ if (typeof Raphael != 'undefined') {
 
 	var LINE = {
 		'stroke': '#000000',
-		'stroke-width': 2
+		'stroke-width': 2,
+		'fill': 'none'
 	};
 
-	var RECT = _.extend(LINE, {
-		'fill': "#fff"
-	});
+	var RECT = {
+        'stroke': '#000000',
+        'stroke-width': 2,
+		'fill': '#fff'
+	};
 
 	/******************
 	 * Raphaël extras
 	 ******************/
 	Raphael.fn.line = function(x1, y1, x2, y2) {
 		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
-		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2).attr(LINE);
+		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
 	};
 
 
@@ -29,18 +32,23 @@ if (typeof Raphael != 'undefined') {
 	 * RaphaelTheme
 	 ******************/
 
-	var RaphaelTheme = function(diagram) {
-		this.init(diagram);
+	var RaphaelTheme = function(diagram, options, resume) {
+        this.init(diagram, _.defaults(options, {
+            'font-size': 16,
+            'font-family': 'Andale Mono, monospace'
+        }), resume);
 	};
 
 	_.extend(RaphaelTheme.prototype, BaseTheme.prototype, {
 
-		init : function(diagram, css_class) {
+		init : function(diagram, options, resume) {
 			BaseTheme.prototype.init.call(this, diagram);
 
 			this._paper  = undefined;
-			this._font   = undefined;
-			this._css_class = css_class;
+			this._font   = {
+                'font-size': options['font-size'],
+                'font-family': options['font-family']
+            };
 
 			var a = this.arrow_types = {};
 			a[ARROWTYPE.FILLED] = 'block';
@@ -49,16 +57,11 @@ if (typeof Raphael != 'undefined') {
 			var l = this.line_types = {};
  			l[LINETYPE.SOLID]  = '';
 			l[LINETYPE.DOTTED] = '-';
+
+			resume(this);
 		},
 
-		init_font : function() {
-			this._font = {
-				'font-size': 16,
-				'font-family': 'Andale Mono, monospace'
-			};
-		},
-
-		init_paper: function (container) {
+        setup_paper: function (container) {
 			this._paper = new Raphael(container, 320, 200);
 			this._paper.setStart();
 		},
@@ -106,7 +109,7 @@ if (typeof Raphael != 'undefined') {
 		},
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
-			var line = this._paper.line(x1, y1, x2, y2);
+			var line = this._paper.line(x1, y1, x2, y2).attr(LINE);
 			if (arrowhead !== undefined) {
 				line.attr('arrow-end', this.arrow_types[arrowhead] + '-wide-long');
 			}
@@ -125,10 +128,9 @@ if (typeof Raphael != 'undefined') {
 		 * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
 		 * text (string) text to print
 		 * font (Object)
-		 * background (boolean) draw a white background behind the text
 		 * align (string) ALIGN_LEFT or ALIGN_CENTER
 		 */
-		draw_text : function (x, y, text, font, background, align) {
+		draw_text : function (x, y, text, font, align) {
 			text = this.clean_text(text);
 			font = font || {};
 			align = align || ALIGN_LEFT;
@@ -151,34 +153,28 @@ if (typeof Raphael != 'undefined') {
 				t.attr({"text-anchor": "start"});
 			}
 
-			if (background) {
-				// draw a rect behind the text
-				var r = paper.rect(x, y, bb.width, bb.height);
-				r.attr(RECT).attr({'stroke': 'none'});
-				t.toFront();
-			}
 			return t;
-		},
+		}
 	});
 
 	/******************
 	 * RaphaelHandTheme
 	 ******************/
 
-	var RaphaelHandTheme = function(diagram) {
-		this.init(diagram);
+	var RaphaelHandTheme = function(diagram, options, resume) {
+		this.init(diagram, _.defaults(options, {
+            'font-size': 16,
+            'font-family': 'daniel'
+		}), resume);
 	};
 
 	// Take the standard RaphaelTheme and make all the lines wobbly
 	_.extend(RaphaelHandTheme.prototype, RaphaelTheme.prototype, {
-		init_font : function() {
-			this._font = {
-				'font-size': 16,
-				'font-family': 'daniel'
-			};
 
-			this._font._obj = this._paper.getFont('daniel');
-		},
+        setup_paper : function(container) {
+            RaphaelTheme.prototype.setup_paper.call(this, container);
+            this._font._obj = this._paper.getFont('daniel');
+        },
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.path(handLine(x1, y1, x2, y2)).attr(LINE);
@@ -196,6 +192,6 @@ if (typeof Raphael != 'undefined') {
 		}
 	});
 
-	registerTheme("oldSimple", RaphaelTheme);
-	registerTheme("oldHand",   RaphaelHandTheme);
+	registerTheme("raphaelSimple", RaphaelTheme);
+	registerTheme("raphaelHand",   RaphaelHandTheme);
 }

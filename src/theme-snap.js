@@ -7,46 +7,51 @@
 // TODO Move defintion of font onto the <svg>, so it can easily be override at each level
 if (typeof Snap != 'undefined') {
 
-	if (typeof WebFont == 'undefined') {
-		throw new Error("WebFont is required (https://github.com/typekit/webfontloader).");
-	}
+	//if (typeof WebFont == 'undefined') {
+	//	throw new Error("WebFont is required (https://github.com/typekit/webfontloader).");
+	//}
 
 	var xmlns = "http://www.w3.org/2000/svg";
 
 	var LINE = {
 		'stroke': '#000000',
-		'stroke-width': 2
+		'stroke-width': 2, // BUG TODO This gets set as a style, not as a attribute. Look at  eve.on("snap.util.attr"...
+        'fill': 'none'
 	};
 
-	var RECT = _.extend(LINE, {
+	var RECT = {
+        'stroke': '#000000',
+        'stroke-width': 2,
 		'fill': "#fff"
-	});
+	};
 
-	/******************
-	 * Snap extras
-	 ******************/
-	Snap.plugin(function (Snap, Element, Paper, global, Fragment) {
-
-
-	});
-
+	var LOADED_FONTS = {};
 
 	/******************
 	 * SnapTheme
 	 ******************/
 
-	var SnapTheme = function(diagram) {
-		this.init(diagram, 'simple');
+	var SnapTheme = function(diagram, options, resume) {
+        _.defaults(options, {
+            'css-class': 'simple',
+            'font-size': 16,
+            'font-family': 'Andale Mono, monospace'
+        });
+
+        this.init(diagram, options, resume);
 	};
 
 	_.extend(SnapTheme.prototype, BaseTheme.prototype, {
 
-		init : function(diagram, css_class) {
+		init : function(diagram, options, resume) {
 			BaseTheme.prototype.init.call(this, diagram);
 
 			this._paper  = undefined;
-			this._font   = undefined;
-			this._css_class = css_class;
+            this._css_class = options['css-class'] || undefined;
+            this._font = {
+                'font-size': options['font-size'],
+                'font-family': options['font-family']
+            };
 
 			var a = this.arrow_types = {};
 			a[ARROWTYPE.FILLED] = 'Block';
@@ -55,15 +60,49 @@ if (typeof Snap != 'undefined') {
 			var l = this.line_types = {};
  			l[LINETYPE.SOLID]  = '';
 			l[LINETYPE.DOTTED] = '6,2';
-		},
 
-		add_description: function(svg, description) {
+			var that = this;
+            this.wait_for_font(function() {
+            	resume(that);
+			});
+        },
+
+		// Wait for loading of the font
+        wait_for_font: function(callback) {
+			var font_family = this._font['font-family'];
+
+            if (typeof WebFont == 'undefined' || LOADED_FONTS[font_family]) {
+                callback();
+                return;
+            }
+
+            console.log("loading", font_family);
+            WebFont.load({
+                custom: {
+                    families: [font_family] // TODO replace this with somethign that reads the css
+                },
+                classes: false, // No need to place classes on the DOM, just use JS Events
+                active: function () {
+                    LOADED_FONTS[font_family] = true;
+                    console.log("active");
+                    callback();
+                },
+                inactive: function () {
+                    // If we fail to fetch the font, still continue.
+                    LOADED_FONTS[font_family] = true;
+                    console.log("inactive");
+                    callback();
+                }
+            });
+        },
+
+    	add_description: function(svg, description) {
             var desc = document.createElementNS(xmlns, 'desc');
             desc.appendChild(document.createTextNode(description));
             svg.appendChild(desc);
 		},
 
-		init_paper: function (container) {
+		setup_paper: function (container) {
 			// Container must be a SVG element. We assume it's a div, so lets create a SVG and insert
             var svg = document.createElementNS(xmlns, 'svg');
             container.appendChild(svg);
@@ -72,7 +111,10 @@ if (typeof Snap != 'undefined') {
 
 			this._paper = Snap(svg);
 			this._paper.addClass("sequence");
-			this._paper.addClass(this._css_class);
+
+			if (this._css_class) {
+                this._paper.addClass(this._css_class);
+            }
 
 			this.begin_group();
 
@@ -87,13 +129,6 @@ if (typeof Snap != 'undefined') {
 				.attr({ markerWidth: "4", id: "markerArrowOpen" });
 		},
 
-		init_font : function() {
-			this._font = {
-				'font-size': 16,
-				'font-family': 'Andale Mono, monospace'
-			};
-		},
-
 		layout : function() {
 			BaseTheme.prototype.layout.call(this);
 			this._paper.attr({
@@ -103,9 +138,9 @@ if (typeof Snap != 'undefined') {
 		},
 
 		text_bbox: function(text, font) {
+			// TODO getBBox will return the bounds with any whitespace/kerning. This makes some of our aligments screwed up
 			var t = this.create_text(text, font);
 			var bb = t.getBBox();
-			console.log(bb);
 			t.remove();
 			return bb;
 		},
@@ -164,24 +199,15 @@ if (typeof Snap != 'undefined') {
 		 * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
 		 * text (string) text to print
 		 * font (Object)
-		 * background (boolean) draw a white background behind the text
 		 * align (string) ALIGN_LEFT or ALIGN_CENTER
 		 */
-		draw_text : function (x, y, text, font, background, align) {
+		draw_text : function (x, y, text, font, align) {
 			var t = this.create_text(text, font);
 			var bb = t.getBBox();
 
 			if (align == ALIGN_CENTER) {
 				x = x - bb.width / 2;
 				y = y - bb.height / 2;
-			}
-
-			// draw a rect behind it
-			if (background) {
-				var paper = this._paper;
-				var r = paper.rect(x, y, bb.width, bb.height);
-				r.attr(RECT).attr({'stroke': 'none'});
-				this.push_to_stack(r);
 			}
 
 			// Now move the text into place
@@ -228,36 +254,18 @@ if (typeof Snap != 'undefined') {
 	 * SnapHandTheme
 	 ******************/
 
-	var SnapHandTheme = function(diagram) {
-		this.init(diagram, "hand");
+	var SnapHandTheme = function(diagram, options, resume) {
+        _.defaults(options, {
+            'css-class': 'hand',
+            'font-size': 16,
+            'font-family': 'danielbd'
+        });
+
+        this.init(diagram, options, resume);
 	};
 
 	// Take the standard SnapTheme and make all the lines wobbly
 	_.extend(SnapHandTheme.prototype, SnapTheme.prototype, {
-
-		draw : function(container) {
-			var that = this;
-			WebFont.load({
-				custom: {
-					families: ['daniel'] // TODO replace this with somethign that reads the css
-				},
-				classes: false, // No need to place classes on the DOM, just use JS Events
-				active: function() {
-					SnapTheme.prototype.draw.call(that, container);
-				},
-				inactive: function() {
-					// If we fail to fetch the font, still continue.
-					SnapTheme.prototype.draw.call(that, container);
-				},
-			});
-		},
-
-		init_font : function() {
-			this._font = { // TODO is this needed? CSS should handle?
-				'font-size': 16,
-				'font-family': 'daniel'
-			};
-		},
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.path(handLine(x1, y1, x2, y2)).attr(LINE);
@@ -273,9 +281,9 @@ if (typeof Snap != 'undefined') {
 		draw_rect : function(x, y, w, h) {
 			var rect = this._paper.path(handRect(x, y, w, h)).attr(RECT);
 			return this.push_to_stack(rect);
-		},
+		}
 	});
 
-	registerTheme("simple", SnapTheme);
-	registerTheme("hand",   SnapHandTheme);
+	registerTheme("snapSimple", SnapTheme);
+	registerTheme("snapHand",   SnapHandTheme);
 }
