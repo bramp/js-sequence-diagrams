@@ -7,12 +7,12 @@
   "license": "BSD-2-Clause",
   "devDependencies": {
     "jison": "0.4.15",
-    "jshint": "2.7.x",
+    "jshint": "2.9.x",
     "jsonlint": "1.6.x",
     "preprocessor": "1.4.x",
     "qunit": "0.7.x",
-    "uglify-js": "2.4.x",
-    "bower": "1.5.x",
+    "uglify-js": "2.7.x",
+    "bower": "1.8.x",
     "minifier": "0.8.x"
   },
   "scripts": {

@@ -145,6 +145,8 @@ ParseError.prototype = new Error();
 Diagram.ParseError = ParseError;
 
 Diagram.parse = function(input) {
+	// TODO jison v0.4.17 changed their API slightly, so parser is no longer defined:
+
 	// Create the object to track state and deal with errors
 	parser.yy = new Diagram();
 	parser.yy.parseError = function(message, hash) {

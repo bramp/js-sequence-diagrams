@@ -7,10 +7,6 @@
 // TODO Move defintion of font onto the <svg>, so it can easily be override at each level
 if (typeof Snap != 'undefined') {
 
-	//if (typeof WebFont == 'undefined') {
-	//	throw new Error("WebFont is required (https://github.com/typekit/webfontloader).");
-	//}
-
 	var xmlns = "http://www.w3.org/2000/svg";
 
 	var LINE = {
@@ -71,26 +67,22 @@ if (typeof Snap != 'undefined') {
         wait_for_font: function(callback) {
 			var font_family = this._font['font-family'];
 
-            if (typeof WebFont == 'undefined' || LOADED_FONTS[font_family]) {
-                callback();
-                return;
+            if (typeof WebFont == 'undefined') {
+            	throw new Error("WebFont is required (https://github.com/typekit/webfontloader).");
             }
 
-            console.log("loading", font_family);
             WebFont.load({
                 custom: {
-                    families: [font_family] // TODO replace this with somethign that reads the css
+                    families: [font_family] // TODO replace this with something that reads the css
                 },
                 classes: false, // No need to place classes on the DOM, just use JS Events
                 active: function () {
                     LOADED_FONTS[font_family] = true;
-                    console.log("active");
                     callback();
                 },
                 inactive: function () {
                     // If we fail to fetch the font, still continue.
                     LOADED_FONTS[font_family] = true;
-                    console.log("inactive");
                     callback();
                 }
             });
