@@ -42,6 +42,11 @@ lint: dependencies package.json bower.json
 	$(NODE_MODULES)/jshint --verbose test/*.js
 	$(NODE_MODULES)/jsonlint package.json -q
 	$(NODE_MODULES)/jsonlint bower.json -q
+	$(NODE_MODULES)/jsonlint .eslintrc.json -q
+
+	# --fix
+	#$(NODE_MODULES)/eslint -c .eslintrc.json src/*.js
+	#$(NODE_MODULES)/eslint -c .eslintrc.json test/*.js
 
 test: dependencies build/sequence-diagram-min.js
 
