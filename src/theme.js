@@ -79,14 +79,26 @@ function getCenterY(box) {
  * SVG Path extras
  ******************/
 
+function clamp(x, min, max) {
+	if (x < min) {
+		return min;
+	}
+	if (x > max) {
+		return max;
+	}
+	return x;
+}
+
 function wobble (x1, y1, x2, y2) {
 	assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
 
+	// Wobble no more than 1/25 of the line length
 	var factor = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 25;
 
-	// Distance along line
-	var r1 = Math.random();
-	var r2 = Math.random();
+	// Distance along line where the control points are
+	// Clamp between 20% and 80% so any arrow heads aren't angled too much
+	var r1 = clamp(Math.random(), 0.2, 0.8);
+	var r2 = clamp(Math.random(), 0.2, 0.8);
 
 	var xfactor = Math.random() > 0.5 ? factor : -factor;
 	var yfactor = Math.random() > 0.5 ? factor : -factor;
@@ -101,9 +113,9 @@ function wobble (x1, y1, x2, y2) {
 		y: (y2 - y1) * r2 + y1 - yfactor
 	};
 
-	return "C" + p1.x + "," + p1.y +
-		" " + p2.x + "," + p2.y +
-		" " + x2 + "," + y2;
+	return "C" + p1.x.toFixed(1) + "," + p1.y.toFixed(1) + // start control point
+	       " " + p2.x.toFixed(1) + "," + p2.y.toFixed(1) + // end control point
+	       " " + x2.toFixed(1) + "," + y2.toFixed(1);      // end point
 }
 
 /**
@@ -123,7 +135,7 @@ function handRect(x, y, w, h) {
  */
 function handLine(x1, y1, x2, y2) {
 	assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
-	return "M" + x1 + "," + y1 + wobble(x1, y1, x2, y2);
+	return "M" + x1.toFixed(1) + "," + y1.toFixed(1) + wobble(x1, y1, x2, y2);
 }
 
 /******************

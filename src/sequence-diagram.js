@@ -40,8 +40,8 @@ Diagram.prototype.drawSVG = function (container, options) {
 		throw new Error("Invalid container: " + container);
 	}
 
-	var themeFunc = new Diagram.themes[options.theme];
-    themeFunc(this, options, function(drawing) {
+	var theme = Diagram.themes[options.theme];
+    new theme(this, options, function(drawing) {
         drawing.draw(div);
     });
 }; // end of drawSVG

@@ -71,6 +71,12 @@ if (typeof Snap != 'undefined') {
             	throw new Error("WebFont is required (https://github.com/typekit/webfontloader).");
             }
 
+            if (LOADED_FONTS[font_family]) {
+            	// If already loaded, just return instantly.
+                callback();
+                return;
+			}
+
             WebFont.load({
                 custom: {
                     families: [font_family] // TODO replace this with something that reads the css
@@ -133,7 +139,6 @@ if (typeof Snap != 'undefined') {
 			// TODO getBBox will return the bounds with any whitespace/kerning. This makes some of our aligments screwed up
 			var t = this.create_text(text, font);
 			var bb = t.getBBox();
-			console.log(bb);
 			t.remove();
 			return bb;
 		},
@@ -173,11 +178,11 @@ if (typeof Snap != 'undefined') {
 
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.line(x1, y1, x2, y2).attr(LINE);
+            if (linetype !== undefined) {
+                line.attr('strokeDasharray', this.line_types[linetype]);
+            }
 			if (arrowhead !== undefined) {
 				line.attr('markerEnd', this.arrow_markers[arrowhead]);
-			}
-			if (arrowhead !== undefined) {
-				line.attr('strokeDasharray', this.line_types[linetype]);
 			}
 			return this.push_to_stack(line);
 		},
@@ -261,11 +266,11 @@ if (typeof Snap != 'undefined') {
 	_.extend(SnapHandTheme.prototype, SnapTheme.prototype, {
 		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
 			var line = this._paper.path(handLine(x1, y1, x2, y2)).attr(LINE);
+            if (linetype !== undefined) {
+                line.attr('strokeDasharray', this.line_types[linetype]);
+            }
 			if (arrowhead !== undefined) {
 				line.attr('markerEnd', this.arrow_markers[arrowhead]);
-			}
-			if (arrowhead !== undefined) {
-				line.attr('strokeDasharray', this.line_types[linetype]);
 			}
 			return this.push_to_stack(line);
 		},
