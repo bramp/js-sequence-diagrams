@@ -1,4 +1,4 @@
-JS Sequence Diagrams [![Build Status](https://travis-ci.org/bramp/js-sequence-diagrams.svg?branch=master)](https://travis-ci.org/bramp/js-sequence-diagrams)
+JS Sequence Diagrams v2 [![Build Status](https://travis-ci.org/bramp/js-sequence-diagrams.svg?branch=master)](https://travis-ci.org/bramp/js-sequence-diagrams)
 =============================================
 **Generates UML sequence diagrams from simple text**  
 <https://bramp.github.io/js-sequence-diagrams/>
@@ -16,11 +16,11 @@ We turn
 
 into
 
-![Sample generated UML diagram](http://bramp.github.io/js-sequence-diagrams/images/sample.svg)
+![Sample generated UML diagram](https://bramp.github.io/js-sequence-diagrams/images/sample.svg)
 
 Requirements
 ------------
-You will need [Raphaël](http://raphaeljs.com/), [underscore.js](http://underscorejs.org/) (or [lodash](https://lodash.com/)), and optionally [jQuery](https://jquery.com/).
+You will need [Snap.svg](http://snapsvg.io/), [Web Font Loader](https://github.com/typekit/webfontloader) (if you wish to use custom fonts), [underscore.js](http://underscorejs.org/) (or [lodash](https://lodash.com/)), and optionally [jQuery](https://jquery.com/).
 
 
 Installation
@@ -28,23 +28,21 @@ Installation
 
 ### bower
 
-Just run `bower install bramp/js-sequence-diagrams` and include the scripts below:
+Run `bower install bramp/js-sequence-diagrams` and include the scripts below:
 
 ```html
-<script src="{{ bower directory }}/raphael/raphael-min.js"></script>
-<script src="{{ bower directory }}/underscore/underscore-min.js"></script>
-<script src="{{ bower directory }}/js-sequence-diagrams/build/sequence-diagram-min.js"></script>
+<script src="{{ bower directory }}/snap.svg/dist/snap.svg-min.js" />
+<script src="{{ bower directory }}/underscore/underscore-min.js" />
+<script src="{{ bower directory }}/js-sequence-diagrams/build/sequence-diagram-min.js" />
 ```
 
-### Manually
-
-You can download the dependencies (see requirements above) and include them on your page like so:
-
+also import the CSS if you plan to use the hand drawn theme:
+ 
 ```html
-<script src="underscore-min.js"></script>
-<script src="raphael-min.js"></script>
-<script src="sequence-diagram-min.js"></script>
+<link href="{{ bower directory }}/js-sequence-diagrams/build/sequence-diagram-min.css" rel="stylesheet" />
 ```
+
+Not using bower? No problem. Just download the dependencies, and include them yourself.
 
 Usage
 -----
@@ -54,8 +52,9 @@ You can use the Diagram class like:
 ```html
 <div id="diagram">Diagram will be placed here</div>
 <script> 
-  var diagram = Diagram.parse("A->B: Does something");
-  diagram.drawSVG('diagram');
+  var d = Diagram.parse("A->B: Does something");
+  var options = {theme: 'simple'};
+  d.drawSVG('diagram', options);
 </script>
 ```
 
@@ -63,9 +62,72 @@ or use jQuery to do all the work:
 ```html
 <div class="diagram">A->B: Message</div>
 <script>
-$(".diagram").sequenceDiagram({theme: 'hand'});
+  var options = {theme: 'hand'};
+  $(".diagram").sequenceDiagram(options);
 </script>
 ```
+
+For full examples check out [the demo site](https://bramp.github.io/js-sequence-diagrams/).
+
+Options
+-------
+
+```javascript
+var options = {
+    // Change the styling of the diagram, typically one of 'simple', 'hand'. New themes can be registered with registerTheme(...).
+    theme: string,
+
+    // CSS style to apply to the diagram's svg tag. (Only supported if using snap.svg)
+    css_class: string,
+};
+```
+
+Styling
+-------
+
+The following CSS classes are applied to the SVG diagram when using snap.svg:
+
+* `sequence`: Applies to main SVG tag.
+* `title`: Applied to the title of the diagram.
+* `actor`: Applied to the actors.
+* `signal`: Applied to the signals.
+* `note`: Applied to all notes.
+
+The diagram can then be customised, for example:
+
+```css
+.signal text {
+    fill: #000000;
+}
+.signal text:hover {
+    fill: #aaaaaa
+}
+.note rect, .note path {
+    fill: #ffff00;
+}
+.title rect, .title path,
+.actor rect, .actor path {
+    fill: #ffffff
+}
+```
+
+Raphaël Deprecation
+-------------------
+
+Version 1.x of this library used [Raphaël](http://raphaeljs.com/) for drawing the diagrams, however, Raphaël had some limitations, and since disappeared from the Internet. We've decided to move to [Snap.svg](http://snapsvg.io/), which is a pure SVG implementation, instead of  Raphaël which in addition to SVG, also supported VML (on Internet Explorer). This support of VML made it impossible to use some newer SVG capabilities. Native SVG allows us to use CSS styling, better font support, animations and more.
+
+To aid in the transition Version 2.x will support both Raphaël and Snap.svg (preferring Snap.svg). If you include Raphaël instead of snap.svg, it will default to using Raphaël as the rendering library. For example 
+
+```html
+<script src="{{ bower directory }}/raphael/raphael-min.js"></script>
+```
+
+The plan is to drop support for Raphaël in a future release, simplifying the library, and reducing the file size.
+
+### Adding a Font
+
+Raphael requires Cufon style fonts. Find the font you want in ttf or otf format, visit [Cufon's site](http://cufon.shoqolate.com/generate/) and process it into a javascript file. Then ensure the font is included via the HTML, or recompile after altering main.js. So far only the hand drawn font, Daniel Bold, has been included.
+
 
 Build requirements
 ------------------
@@ -107,17 +169,13 @@ How to release
 * ``git tag -a v1.x.x -m v1.x.x``
 * ``git push origin v1.x.x``
 
-Adding a Font
--------------
-
-Raphael requires Cufon style fonts. Find the font you want in ttf or otf format, visit [Cufon's site](http://cufon.shoqolate.com/generate/) and process it into a javascript file. Then ensure the font is included via the HTML, or recompile after altering main.js. So far only the hand drawn font, Daniel Bold, has been included.
-
 
 TODO
 ----
 * Other themes
-* Rethink the use of Raphael. Due to its support of VML (which I don't care about), it makes many things harder. For example, font support, css styling, etc. Perhaps draw the SVG by hand, or find a small helper library
 * Automate the release process
+* Testing that checks the generated SVG is correct
+* Improve the hand drawn theme
 * Dozens of other issues on https://github.com/bramp/js-sequence-diagrams/issues
 
 Contributors
@@ -127,7 +185,7 @@ via [GitHub](https://github.com/bramp/js-sequence-diagrams/graphs/contributors)
 
 Thanks
 ------
-This project makes use of [Jison](http://zaach.github.io/jison/), Raphaël, underscore.js, and the awersome [Daniel font](http://www.dafont.com/daniel.font) (which is free to use for any purpose).
+This project makes use of [Jison](https://zaach.github.io/jison/), snap.svg, underscore.js, and the awersome [Daniel font](http://www.dafont.com/daniel.font) (which is free to use for any purpose).
 
 Many thanks to [Web Sequence Diagrams](http://www.websequencediagrams.com/) which greatly inspired this project, and forms the basis for the syntax.
 
@@ -135,7 +193,8 @@ Related
 -------
 
 * [Web Sequence Diagrams](http://www.websequencediagrams.com/) Server side version with a commercial offering
-* [flowchart.js](http://adrai.github.io/flowchart.js/) A similar project that draws flow charts in the browser
+* [flowchart.js](https://adrai.github.io/flowchart.js/) A similar project that draws flow charts in the browser
+
 
 Licence (Simplified BSD License)
 -------

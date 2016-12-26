@@ -16,7 +16,8 @@ I (bramp) fixed the backslash issues by just flipping the character, and removed
 Check out the test/font_test.html, to see all valid glyths.
 
 ## Raphael
-For Raphael the TTF fonts were then converted to cufon format, using [this site](http://cufon.shoqolate.com/generate/).0 
+For Raphael the TTF fonts were then converted to cufon format, using [this site](http://cufon.shoqolate.com/generate/).
+
 ## Snap.svg
 Snap uses normal CSS styled fonts. In this case, I used [font squirell](http://www.fontsquirrel.com/tools/webfont-generator) to convert to daniel OTF fonts to WOFF/WOFF2 formats, which is supported across modern browsers.
 
