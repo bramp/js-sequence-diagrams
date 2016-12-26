@@ -31,6 +31,7 @@ Installation
 Run `bower install bramp/js-sequence-diagrams` and include the scripts below:
 
 ```html
+<script src="{{ bower directory }}/bower-webfontloader/webfont.js" />
 <script src="{{ bower directory }}/snap.svg/dist/snap.svg-min.js" />
 <script src="{{ bower directory }}/underscore/underscore-min.js" />
 <script src="{{ bower directory }}/js-sequence-diagrams/build/sequence-diagram-min.js" />
@@ -121,6 +122,8 @@ To aid in the transition Version 2.x will support both Raphaël and Snap.svg (pr
 ```html
 <script src="{{ bower directory }}/raphael/raphael-min.js"></script>
 ```
+
+There are also four transitional themes, 'snapSimple', 'snapHand', 'raphaelSimple', 'raphaelHand', which force the use of either Snap.svg, or Raphaël.
 
 The plan is to drop support for Raphaël in a future release, simplifying the library, and reducing the file size.
 

@@ -9,7 +9,7 @@ all: lint js css test
 	#
 	cp build/sequence-diagram*-min.js* _site/
 
-js: build/sequence-diagram-min.js
+js: build/sequence-diagram-min.js build/sequence-diagram-raphael-min.js build/sequence-diagram-snap-min.js
 css: build/sequence-diagram-min.css font
 font: build/danielbd.woff2 build/danielbd.woff
 
@@ -77,13 +77,15 @@ build/grammar.js: src/grammar.jison
 		$@.tmp -o $@ \
 		--comments all --compress --beautify
 
+	rm $@.tmp
+
 # Compile the grammar
 build/diagram-grammar.js: src/diagram.js build/grammar.js
 	$(NODE_MODULES)/preprocess $< . > $@
 
 # Combine all javascript files together (Raphael and Snap.svg)
 build/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js src/theme.js src/theme-snap.js src/theme-raphael.js fonts/daniel/daniel_700.font.js
-	$(NODE_MODULES)/preprocess $< . -SNAP=true -RAPHAEL=true  > $@	
+	$(NODE_MODULES)/preprocess $< . -SNAP=true -RAPHAEL=true  > $@
 
 # Combine just Raphael theme
 build/sequence-diagram-raphael.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js src/theme.js src/theme-raphael.js fonts/daniel/daniel_700.font.js
@@ -94,11 +96,14 @@ build/sequence-diagram-snap.js: src/main.js build/diagram-grammar.js src/jquery-
 	$(NODE_MODULES)/preprocess $< . -SNAP=true > $@
 
 # Minify the final combined javascript (both Raphael and Snap.svg)
-#build/sequence-diagram-raphael-min.js build/sequence-diagram-raphael-min.js.map: build/sequence-diagram-raphael.js 
-#build/sequence-diagram-snap-min.js build/sequence-diagram-snap-min.js.map: build/sequence-diagram-snap.js 
+#build/sequence-diagram-raphael-min.js build/sequence-diagram-raphael-min.js.map: build/sequence-diagram-raphael.js
+#build/sequence-diagram-snap-min.js build/sequence-diagram-snap-min.js.map: build/sequence-diagram-snap.js
+
+build/sequence-diagram.css: src/sequence-diagram.css
+	cp $< $@
 
 # Minify the CSS
-build/sequence-diagram-min.css: src/sequence-diagram.css
+build/sequence-diagram-min.css: build/sequence-diagram.css
 	$(NODE_MODULES)/minify --output $@ $<
 
 # Move some fonts TODO optomise the fonts
@@ -108,17 +113,13 @@ build/%.woff: fonts/daniel/%.woff
 build/%.woff2: fonts/daniel/%.woff2
 	cp $< $@
 
-build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js 
+#build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js
+build/%-min.js build/%-min.js.map: build/%.js
 	#
 	# Please ignore the warnings below (these are in combined js code)
 	#
 	$(NODE_MODULES)/uglifyjs \
 		$< -o $@ \
 		--compress --comments --lint \
-		--source-map build/sequence-diagram-min.js.map \
-		--source-map-url sequence-diagram-min.js.map
-
-	#
-	# Copy minified file to site
-	#
-	cp build/sequence-diagram*-min.js* _site/
+		--source-map $<.map \
+		--source-map-url `basename $<`
