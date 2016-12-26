@@ -1,13 +1,17 @@
-.PHONY : all test dependencies clean veryclean lint
+.PHONY : all test dependencies clean veryclean lint js css font
 
 NODE_MODULES := node_modules/.bin
 BOWER_COMPONENTS := bower_components
 
-all: lint build/sequence-diagram-min.js test
+all: lint js css test
 	#
 	# Copy minified file to site
 	#
 	cp build/sequence-diagram*-min.js* _site/
+
+js: build/sequence-diagram-min.js
+css: build/sequence-diagram-min.css font
+font: build/danielbd.woff2 build/danielbd.woff
 
 node_modules: package.json
 	#
@@ -73,9 +77,7 @@ build/grammar.js: src/grammar.jison
 		$@.tmp -o $@ \
 		--comments all --compress --beautify
 
-#
-# Compiling grammar
-#
+# Compile the grammar
 build/diagram-grammar.js: src/diagram.js build/grammar.js
 	$(NODE_MODULES)/preprocess $< . > $@
 
@@ -94,6 +96,17 @@ build/sequence-diagram-snap.js: src/main.js build/diagram-grammar.js src/jquery-
 # Minify the final combined javascript (both Raphael and Snap.svg)
 #build/sequence-diagram-raphael-min.js build/sequence-diagram-raphael-min.js.map: build/sequence-diagram-raphael.js 
 #build/sequence-diagram-snap-min.js build/sequence-diagram-snap-min.js.map: build/sequence-diagram-snap.js 
+
+# Minify the CSS
+build/sequence-diagram-min.css: src/sequence-diagram.css
+	$(NODE_MODULES)/minify --output $@ $<
+
+# Move some fonts TODO optomise the fonts
+build/%.woff: fonts/daniel/%.woff
+	cp $< $@
+
+build/%.woff2: fonts/daniel/%.woff2
+	cp $< $@
 
 build/sequence-diagram-min.js build/sequence-diagram-min.js.map: build/sequence-diagram.js 
 	#
