@@ -11,7 +11,7 @@
     "sequence",
     "diagram"
   ],
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "readmeFilename": "README.md",
   "ignore": [
     ".*",

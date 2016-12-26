@@ -3,7 +3,7 @@ JS Sequence Diagrams [![Build Status](https://travis-ci.org/bramp/js-sequence-di
 **Generates UML sequence diagrams from simple text**  
 <https://bramp.github.io/js-sequence-diagrams/>
 
-by [Andrew Brampton](http://bramp.net) 2012-2015
+by [Andrew Brampton](http://bramp.net) 2012-2017
 
 
 Example
@@ -140,7 +140,7 @@ Related
 Licence (Simplified BSD License)
 -------
 
-Copyright (c) 2012-2015, Andrew Brampton  
+Copyright (c) 2012-2017, Andrew Brampton
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
