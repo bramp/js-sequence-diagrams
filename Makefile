@@ -4,11 +4,6 @@ NODE_MODULES := node_modules/.bin
 BOWER_COMPONENTS := bower_components
 
 all: lint js css test
-	#
-	# Copy minified file to site
-	#
-	cp dist/sequence-diagram*-min.js* _site/
-
 js: dist/sequence-diagram-min.js dist/sequence-diagram-raphael-min.js dist/sequence-diagram-snap-min.js
 css: dist/sequence-diagram-min.css font
 font: dist/danielbd.woff2 dist/danielbd.woff
@@ -31,7 +26,7 @@ dependencies: node_modules bower_components
 
 clean:
 	-rm build/*
-	-git checkout -- dist/*
+	-git checkout -- dist
 
 veryclean: clean
 	-rm -rf node_modules
@@ -74,7 +69,7 @@ test: dependencies dist/sequence-diagram-min.js
 		-d test/*-mock.js $(BOWER_COMPONENTS)/lodash/dist/lodash.min.js
 
 build/grammar.js: src/grammar.jison
-	mkdir build
+	mkdir -p build
 	$(NODE_MODULES)/jison $< -o $@.tmp
 
 	# After building the grammar, run it through the uglifyjs to fix some non-strict issues.
@@ -91,7 +86,7 @@ build/diagram-grammar.js: src/diagram.js build/grammar.js
 
 # Combine all javascript files together (Raphael and Snap.svg)
 dist/sequence-diagram.js: src/main.js build/diagram-grammar.js src/jquery-plugin.js src/sequence-diagram.js src/theme.js src/theme-snap.js src/theme-raphael.js fonts/daniel/daniel_700.font.js
-	mkdir dist
+	mkdir -p dist
 	$(NODE_MODULES)/preprocess $< . -SNAP=true -RAPHAEL=true  > $@
 
 # Combine just Raphael theme
@@ -125,5 +120,5 @@ dist/%-min.js dist/%-min.js.map: dist/%.js
 	$(NODE_MODULES)/uglifyjs \
 		$< -o $@ \
 		--compress --comments --lint \
-		--source-map $<.map \
+		--source-map $@.map \
 		--source-map-url `basename $<`
