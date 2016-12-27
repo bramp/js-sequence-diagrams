@@ -7,8 +7,7 @@
   "license": "BSD-2-Clause",
   "devDependencies": {
     "bower": "1.8.x",
-    "eslint": "^3.12.2",
-    "eslint-config-google": "^0.7.1",
+    "jscs": "3.0.x",
     "jison": "0.4.15",
     "jshint": "2.9.x",
     "jsonlint": "1.6.x",
