@@ -7,189 +7,189 @@
 
 if (typeof Raphael != 'undefined') {
 
-	var LINE = {
-		'stroke': '#000000',
-		'stroke-width': 2,
-		'fill': 'none'
-	};
+  var LINE = {
+    'stroke': '#000000',
+    'stroke-width': 2,
+    'fill': 'none'
+  };
 
-	var RECT = {
+  var RECT = {
         'stroke': '#000000',
         'stroke-width': 2,
-		'fill': '#fff'
-	};
+        'fill': '#fff'
+      };
 
-	/******************
-	 * Raphaël extras
-	 ******************/
-	Raphael.fn.line = function(x1, y1, x2, y2) {
-		assert(_.all([x1,x2,y1,y2], _.isFinite), "x1,x2,y1,y2 must be numeric");
-		return this.path("M{0},{1} L{2},{3}", x1, y1, x2, y2);
-	};
+  /******************
+   * Raphaël extras
+   ******************/
+  Raphael.fn.line = function(x1, y1, x2, y2) {
+    assert(_.all([x1,x2,y1,y2], _.isFinite), 'x1,x2,y1,y2 must be numeric');
+    return this.path('M{0},{1} L{2},{3}', x1, y1, x2, y2);
+  };
 
-	/******************
-	 * RaphaelTheme
-	 ******************/
+  /******************
+   * RaphaelTheme
+   ******************/
 
-	var RaphaelTheme = function(diagram, options, resume) {
+  var RaphaelTheme = function(diagram, options, resume) {
         this.init(diagram, _.defaults(options, {
             'font-size': 16,
             'font-family': 'Andale Mono, monospace'
-        }), resume);
-	};
+          }), resume);
+      };
 
-	_.extend(RaphaelTheme.prototype, BaseTheme.prototype, {
+  _.extend(RaphaelTheme.prototype, BaseTheme.prototype, {
 
-		init : function(diagram, options, resume) {
-			BaseTheme.prototype.init.call(this, diagram);
+    init: function(diagram, options, resume) {
+      BaseTheme.prototype.init.call(this, diagram);
 
-			this._paper  = undefined;
-			this._font   = {
-                'font-size': options['font-size'],
-                'font-family': options['font-family']
-            };
+      this.paper_  = undefined;
+      this.font_   = {
+                  'font-size': options['font-size'],
+                  'font-family': options['font-family']
+                };
 
-			var a = this.arrow_types = {};
-			a[ARROWTYPE.FILLED] = 'block';
-			a[ARROWTYPE.OPEN]   = 'open';
+      var a = this.arrowTypes_ = {};
+      a[ARROWTYPE.FILLED] = 'block';
+      a[ARROWTYPE.OPEN]   = 'open';
 
-			var l = this.line_types = {};
- 			l[LINETYPE.SOLID]  = '';
-			l[LINETYPE.DOTTED] = '-';
+      var l = this.lineTypes_ = {};
+      l[LINETYPE.SOLID]  = '';
+      l[LINETYPE.DOTTED] = '-';
 
-			resume(this);
-		},
+      resume(this);
+    },
 
-        setup_paper: function (container) {
-			this._paper = new Raphael(container, 320, 200);
-			this._paper.setStart();
-		},
+    setupPaper: function(container) {
+      this.paper_ = new Raphael(container, 320, 200);
+      this.paper_.setStart();
+    },
 
-		draw : function(container) {
-			BaseTheme.prototype.draw.call(this, container);
-			this._paper.setFinish();
-		},
+    draw: function(container) {
+      BaseTheme.prototype.draw.call(this, container);
+      this.paper_.setFinish();
+    },
 
-		layout : function() {
-			BaseTheme.prototype.layout.call(this);
-			this._paper.setSize(
-				this.diagram.width,
-				this.diagram.height
-			);
-		},
+    layout: function() {
+      BaseTheme.prototype.layout.call(this);
+      this.paper_.setSize(
+       this.diagram.width,
+       this.diagram.height
+      );
+    },
 
-		/**
-		 * Strip whitespace from each newline
-		 */
-		clean_text: function(text) {
-			text = _.invoke(text.split("\n"), 'trim');
-			return text.join("\n");
-		},
+    /**
+     * Strip whitespace from each newline
+     */
+    cleanText: function(text) {
+      text = _.invoke(text.split('\n'), 'trim');
+      return text.join('\n');
+    },
 
-		/**
-		 * Returns the text's bounding box
-		 */
-		text_bbox: function(text, font) {
-			text = this.clean_text(text);
-			font = font || {};
-			var p;
-			if (font._obj) {
-				p = this._paper.print(0, 0, text, font._obj, font['font-size']);
-			} else {
-				p = this._paper.text(0, 0, text);
-				p.attr(font);
-				//p.attr({"text-anchor": "start"});
-			}
+    /**
+     * Returns the text's bounding box
+     */
+    textBBox: function(text, font) {
+      text = this.cleanText(text);
+      font = font || {};
+      var p;
+      if (font.obj_) {
+        p = this.paper_.print(0, 0, text, font.obj_, font['font-size']);
+      } else {
+        p = this.paper_.text(0, 0, text);
+        p.attr(font);
+        //p.attr({"text-anchor": "start"});
+      }
 
-			var bb = p.getBBox();
-			p.remove();
+      var bb = p.getBBox();
+      p.remove();
 
-			return bb;
-		},
+      return bb;
+    },
 
-		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
-			var line = this._paper.line(x1, y1, x2, y2).attr(LINE);
-			if (arrowhead !== undefined) {
-				line.attr('arrow-end', this.arrow_types[arrowhead] + '-wide-long');
-			}
-			if (arrowhead !== undefined) {
-				line.attr('stroke-dasharray', this.line_types[linetype]);
-			}
-			return line;
-		},
+    drawLine: function(x1, y1, x2, y2, linetype, arrowhead) {
+      var line = this.paper_.line(x1, y1, x2, y2).attr(LINE);
+      if (arrowhead !== undefined) {
+        line.attr('arrow-end', this.arrowTypes_[arrowhead] + '-wide-long');
+      }
+      if (arrowhead !== undefined) {
+        line.attr('stroke-dasharray', this.lineTypes_[linetype]);
+      }
+      return line;
+    },
 
-		draw_rect : function(x, y, w, h) {
-			return this._paper.rect(x, y, w, h).attr(RECT);
-		},
+    drawRect: function(x, y, w, h) {
+      return this.paper_.rect(x, y, w, h).attr(RECT);
+    },
 
-		/**
-		 * Draws text with a optional white background
-		 * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
-		 * text (string) text to print
-		 * font (Object)
-		 * align (string) ALIGN_LEFT or ALIGN_CENTER
-		 */
-		draw_text : function (x, y, text, font, align) {
-			text = this.clean_text(text);
-			font = font || {};
-			align = align || ALIGN_LEFT;
+    /**
+     * Draws text with a optional white background
+     * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
+     * text (string) text to print
+     * font (Object)
+     * align (string) ALIGN_LEFT or ALIGN_CENTER
+     */
+    drawText: function(x, y, text, font, align) {
+      text = this.cleanText(text);
+      font = font || {};
+      align = align || ALIGN_LEFT;
 
-			var paper = this._paper;
-			var bb = this.text_bbox(text, font);
+      var paper = this.paper_;
+      var bb = this.textBBox(text, font);
 
-			if (align == ALIGN_CENTER) {
-				x = x - bb.width / 2;
-				y = y - bb.height / 2;
-			}
+      if (align == ALIGN_CENTER) {
+        x = x - bb.width / 2;
+        y = y - bb.height / 2;
+      }
 
-			var t;
-			if (font._obj) {
-				// When using a font, we have to use .print(..)
-				t = paper.print(x - bb.x, y - bb.y, text, font._obj, font['font-size']);
-			} else {
-				t = paper.text(x - bb.x - bb.width / 2, y - bb.y, text);
-				t.attr(font);
-				t.attr({"text-anchor": "start"});
-			}
+      var t;
+      if (font.obj_) {
+        // When using a font, we have to use .print(..)
+        t = paper.print(x - bb.x, y - bb.y, text, font.obj_, font['font-size']);
+      } else {
+        t = paper.text(x - bb.x - bb.width / 2, y - bb.y, text);
+        t.attr(font);
+        t.attr({'text-anchor': 'start'});
+      }
 
-			return t;
-		}
-	});
+      return t;
+    }
+  });
 
-	/******************
-	 * RaphaelHandTheme
-	 ******************/
+  /******************
+   * RaphaelHandTheme
+   ******************/
 
-	var RaphaelHandTheme = function(diagram, options, resume) {
-		this.init(diagram, _.defaults(options, {
-            'font-size': 16,
-            'font-family': 'daniel'
-		}), resume);
-	};
+  var RaphaelHandTheme = function(diagram, options, resume) {
+    this.init(diagram, _.defaults(options, {
+              'font-size': 16,
+              'font-family': 'daniel'
+            }), resume);
+  };
 
-	// Take the standard RaphaelTheme and make all the lines wobbly
-	_.extend(RaphaelHandTheme.prototype, RaphaelTheme.prototype, {
-        setup_paper : function(container) {
-            RaphaelTheme.prototype.setup_paper.call(this, container);
-            this._font._obj = this._paper.getFont('daniel');
+  // Take the standard RaphaelTheme and make all the lines wobbly
+  _.extend(RaphaelHandTheme.prototype, RaphaelTheme.prototype, {
+        setupPaper: function(container) {
+            RaphaelTheme.prototype.setupPaper.call(this, container);
+            this.font_.obj_ = this.paper_.getFont('daniel');
+          },
+
+        drawLine: function(x1, y1, x2, y2, linetype, arrowhead) {
+          var line = this.paper_.path(handLine(x1, y1, x2, y2)).attr(LINE);
+          if (arrowhead !== undefined) {
+            line.attr('arrow-end', this.arrowTypes_[arrowhead] + '-wide-long');
+          }
+          if (arrowhead !== undefined) {
+            line.attr('stroke-dasharray', this.lineTypes_[linetype]);
+          }
+          return line;
         },
 
-		draw_line : function(x1, y1, x2, y2, linetype, arrowhead) {
-			var line = this._paper.path(handLine(x1, y1, x2, y2)).attr(LINE);
-			if (arrowhead !== undefined) {
-				line.attr('arrow-end', this.arrow_types[arrowhead] + '-wide-long');
-			}
-			if (arrowhead !== undefined) {
-				line.attr('stroke-dasharray', this.line_types[linetype]);
-			}
-			return line;
-		},
+        drawRect: function(x, y, w, h) {
+          return this.paper_.path(handRect(x, y, w, h)).attr(RECT);
+        }
+      });
 
-		draw_rect : function(x, y, w, h) {
-			return this._paper.path(handRect(x, y, w, h)).attr(RECT);
-		}
-	});
-
-	registerTheme("raphaelSimple", RaphaelTheme);
-	registerTheme("raphaelHand",   RaphaelHandTheme);
+  registerTheme('raphaelSimple', RaphaelTheme);
+  registerTheme('raphaelHand',   RaphaelHandTheme);
 }
