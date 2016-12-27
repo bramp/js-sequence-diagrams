@@ -111,12 +111,12 @@ test('Dashed Open Arrow', function() {
 });
 
 test('Titles', function() {
-  equal(Diagram.parse('Title: title').title, 'title', 'Title');
-  equal(Diagram.parse('Title: line1\\nline2').title, 'line1\nline2', 'Multiline Title');
+  deepEqual(Diagram.parse('Title: title').title, {message: 'title', lineno: 0}, 'Title');
+  deepEqual(Diagram.parse('Title: line1\\nline2').title, {message: 'line1\nline2', lineno: 0}, 'Multiline Title');
 });
 
 test('Unicode', function() {
-  equal(Diagram.parse('Title: 中国').title, '中国', 'Unicode Title');
+  deepEqual(Diagram.parse('Title: 中国').title, {message: '中国', lineno: 0}, 'Unicode Title');
   assertEmptyDocument(Diagram.parse('# 中国'));
   assertSingleActor(Diagram.parse('Participant 中国'), '中国');
   assertSingleActor(Diagram.parse('Participant 中国 as alias'), 'alias', '中国');
@@ -149,7 +149,7 @@ test('Comments', function() {
   assertSingleArrow(Diagram.parse('A->B: Message # not a comment'), ARROWTYPE.FILLED,
       LINETYPE.SOLID, 'A', 'B', 'Message # not a comment');
 
-  equal(Diagram.parse('Title: title # not a comment').title, 'title # not a comment');
+  deepEqual(Diagram.parse('Title: title # not a comment').title, {message: 'title # not a comment', lineno: 0});
   assertSingleNote(Diagram.parse('note left of A: Message # not a comment'), PLACEMENT.LEFTOF, 'A',
       'Message # not a comment');
 });

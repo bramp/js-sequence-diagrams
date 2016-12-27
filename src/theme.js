@@ -185,9 +185,10 @@ _.extend(BaseTheme.prototype, {
     // Setup some layout stuff
     if (diagram.title) {
       var title = this.title_ = {};
-      var bb = this.textBBox(diagram.title, font);
+      title.message = diagram.title.message;
+      title.lineno  = diagram.title.lineno;
+      var bb = this.textBBox(title.message, font);
       title.textBB = bb;
-      title.message = diagram.title;
 
       title.width  = bb.width  + (TITLE_PADDING + TITLE_MARGIN) * 2;
       title.height = bb.height + (TITLE_PADDING + TITLE_MARGIN) * 2;

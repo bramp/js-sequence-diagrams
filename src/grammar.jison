@@ -57,12 +57,12 @@ statement
 	: 'participant' actor_alias { $2; }
 	| signal               { yy.parser.yy.addSignal($1); }
 	| note_statement       { yy.parser.yy.addSignal($1); }
-	| 'title' message      { yy.parser.yy.setTitle($2);  }
+	| 'title' message      { yy.parser.yy.setTitle($2, yylineno);  }
 	;
 
 note_statement
-	: 'note' placement actor message   { $$ = new Diagram.Note($3, $2, $4); }
-	| 'note' 'over' actor_pair message { $$ = new Diagram.Note($3, Diagram.PLACEMENT.OVER, $4); }
+	: 'note' placement actor message   { $$ = new Diagram.Note($3, $2, $4, yylineno); }
+	| 'note' 'over' actor_pair message { $$ = new Diagram.Note($3, Diagram.PLACEMENT.OVER, $4, yylineno); }
 	;
 
 actor_pair
@@ -77,7 +77,7 @@ placement
 
 signal
 	: actor signaltype actor message
-	{ $$ = new Diagram.Signal($1, $2, $3, $4); }
+	{ $$ = new Diagram.Signal($1, $2, $3, $4, yylineno); }
 	;
 
 actor
@@ -85,7 +85,7 @@ actor
 	;
 
 actor_alias
-	: ACTOR { $$ = yy.parser.yy.getActorWithAlias(Diagram.unescape($1)); }
+	: ACTOR { $$ = yy.parser.yy.getActorWithAlias(Diagram.unescape($1), yylineno); }
 	;
 
 signaltype
