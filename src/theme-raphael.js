@@ -23,7 +23,7 @@ if (typeof Raphael != 'undefined') {
    * Raphaël extras
    ******************/
   Raphael.fn.line = function(x1, y1, x2, y2) {
-    assert(_.all([x1,x2,y1,y2], _.isFinite), 'x1,x2,y1,y2 must be numeric');
+    assert(_.every([x1,x2,y1,y2], _.isFinite), 'x1,x2,y1,y2 must be numeric');
     return this.path('M{0},{1} L{2},{3}', x1, y1, x2, y2);
   };
 
@@ -82,8 +82,9 @@ if (typeof Raphael != 'undefined') {
      * Strip whitespace from each newline
      */
     cleanText: function(text) {
-      text = _.invoke(text.split('\n'), 'trim');
-      return text.join('\n');
+      return text.split('\n').map(function(x) {
+        return x.trim();
+      }).join('\n');
     },
 
     /**

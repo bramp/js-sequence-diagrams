@@ -162,7 +162,9 @@ if (typeof Snap != 'undefined') {
     },
 
     createText: function(text, font) {
-      text = _.invoke(text.split('\n'), 'trim');
+      text = text.split('\n').map(function(x) {
+          return x.trim();
+      });
       var t = this.paper_.text(0, 0, text);
       t.attr(font || {});
       if (text.length > 1) {
