@@ -4,7 +4,7 @@
   "authors": "Andrew Brampton (bramp.net)",
   "description": "Generates UML sequence diagrams from simple text",
   "homepage": "https://bramp.github.io/js-sequence-diagrams/",
-  "main": "build/sequence-diagram-min.js",
+  "main": "dist/sequence-diagram-min.js",
   "namespace": "Diagram",
   "keywords": [
     "uml",

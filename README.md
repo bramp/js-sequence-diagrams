@@ -34,13 +34,13 @@ Run `bower install bramp/js-sequence-diagrams` and include the scripts below:
 <script src="{{ bower directory }}/bower-webfontloader/webfont.js" />
 <script src="{{ bower directory }}/snap.svg/dist/snap.svg-min.js" />
 <script src="{{ bower directory }}/underscore/underscore-min.js" />
-<script src="{{ bower directory }}/js-sequence-diagrams/build/sequence-diagram-min.js" />
+<script src="{{ bower directory }}/js-sequence-diagrams/dist/sequence-diagram-min.js" />
 ```
 
 also import the CSS if you plan to use the hand drawn theme:
  
 ```html
-<link href="{{ bower directory }}/js-sequence-diagrams/build/sequence-diagram-min.css" rel="stylesheet" />
+<link href="{{ bower directory }}/js-sequence-diagrams/dist/sequence-diagram-min.css" rel="stylesheet" />
 ```
 
 Not using bower? No problem. Just download the dependencies, and include them yourself.
@@ -167,11 +167,11 @@ How to release
 * Bump version in src/main.js and bower.json
 * ``make clean``
 * ``make``
-* ``git add -f src/main.js bower.json build/sequence-diagram-min.js build/sequence-diagram-min.js.map``
-* ``git commit -m "Released version 1.x.x"``
+* ``git add -f src/main.js bower.json dist/*``
+* ``git commit -m "Released version 2.x.x"``
 * ``git push origin master``
-* ``git tag -a v1.x.x -m v1.x.x``
-* ``git push origin v1.x.x``
+* ``git tag -a v2.x.x -m v2.x.x``
+* ``git push origin v2.x.x``
 
 
 TODO
