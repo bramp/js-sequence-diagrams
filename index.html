@@ -12,6 +12,7 @@
     <![endif]-->
 
     <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="css/sequence-diagram-min.css" media="screen" />
 
     <title>js-sequence-diagrams by bramp</title>
     <link rel="canonical" href="https://bramp.github.io/js-sequence-diagrams/" />
@@ -39,7 +40,7 @@
       -->
       </div>
       <a href="https://github.com/bramp/js-sequence-diagrams">
-        <img class="gh-forkme" src="//s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub">
+        <img class="gh-forkme" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub">
       </a>
     </header>
 
@@ -73,7 +74,7 @@ Andrew->>China: I am good thanks!</div>
       <section id="info">
         <h3>Intro</h3>
         <p>A simple javascript library to turn text into vector <a href="http://en.wikipedia.org/wiki/Sequence_diagram">UML sequence diagrams</a>.
-          Heavily inspired by <a href="http://www.websequencediagrams.com/">websequencediagrams.com</a>, who offer a serverside solution. We use <a href="http://zaach.github.com/jison/">Jison</a> to parse the text, and <a href="http://raphaeljs.com/">Raphaël</a> to draw the image.</p>
+          Heavily inspired by <a href="http://www.websequencediagrams.com/">websequencediagrams.com</a>, who offer a serverside solution. We use <a href="http://zaach.github.com/jison/">Jison</a> to parse the text, and <a href="http://snapsvg.io/">Snap.svg</a> to draw the image.</p>
       </section>
       <section id="examples">
         <h3>Examples</h3>
@@ -149,10 +150,12 @@ Note right of A: By listing the participants\n you can change their order</div>
       </section>
       <section id="usage">
         <h3>Usage</h3>
-        <p>js-sequence-diagrams depends on <a href="http://raphaeljs.com/">Raphaël</a> and <a href="http://underscorejs.org/">Underscore.js</a> (we are <a href="http://lodash.com/">lodash</a> compatible). You can download all these files manually, or use "<a href="http://bower.io/">bower</a> install bramp/js-sequence-diagrams".</p>
+        <p>js-sequence-diagrams depends on <a href="http://http://snapsvg.io/">Snap.svg</a> and <a href="http://underscorejs.org/">Underscore.js</a> (or <a href="http://lodash.com/">lodash</a>). You can download all these files manually, or use "<a href="http://bower.io/">bower</a> install bramp/js-sequence-diagrams".</p>
         <p>
+
         Then include the following HTML:
-        <pre>&lt;script src=&quot;<a href="js/raphael-min.js">raphael-min.js</a>&quot;&gt;&lt;/script&gt;
+        <pre>&lt;script src=&quot;<a href="js/webfont.js">webfont.js</a>&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;<a href="js/snap.svg-min.js">snap.svg-min.js</a>&quot;&gt;&lt;/script&gt;
 &lt;script src=&quot;<a href="js/underscore-min.js">underscore-min.js</a>&quot;&gt;&lt;/script&gt;
 &lt;script src=&quot;<a href="js/sequence-diagram-min.js">sequence-diagram-min.js</a>&quot;&gt;&lt;/script&gt;
 </pre>
@@ -174,13 +177,15 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
 </pre>
 
 </p>
+<p>More documentation is in the official <a href="https://github.com/bramp/js-sequence-diagrams/blob/master/README.md">README.md</a></p>
+
       </section>
       </div>
 
     <footer>
       <hr />
       <div class="inner">
-        by <a href="http://bramp.net">Andrew Brampton</a> - <a href="https://github.com/bramp">github</a> - <a href="https://twitter.com/TheBramp">@TheBramp</a>
+        by <a href="https://bramp.net">Andrew Brampton</a> - <a href="https://github.com/bramp">github</a> - <a href="https://twitter.com/TheBramp">@TheBramp</a>
       </div>
     </footer>
 
@@ -189,13 +194,12 @@ $(&quot;.diagram&quot;).sequenceDiagram({theme: &#39;hand&#39;});
     <!-- Needed for the text editor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
 
+    <script src="js/webfont.js"></script>
+    <script src="js/snap.svg-min.js"></script>
     <script src="js/underscore-min.js"></script>
-    <script src="js/raphael-min.js"></script>
+    <script src="js/sequence-diagram-snap-min.js"></script>
 
-    <script src="js/sequence-diagram-min.js"></script>
-    <!--script src="../js-sequence-diagrams/build/sequence-diagram.js"></script-->
     <script src="js/svginnerhtml.min.js"></script>
-
     <script type="text/javascript">
 
       function setup_editor(div) {

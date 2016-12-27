@@ -2,7 +2,7 @@
   "name": "js-sequence-diagrams-site",
   "authors": "Andrew Brampton (bramp.net)",
   "description": "Generates UML sequence diagrams from simple text",
-  "homepage": "http://bramp.github.io/js-sequence-diagrams/",
+  "homepage": "https://bramp.github.io/js-sequence-diagrams/",
   "keywords": [
     "uml",
     "sequence",
@@ -13,7 +13,7 @@
     "bower_components"
   ],
   "dependencies": {
-    "js-sequence-diagrams": "1.0.x",
-    "jquery": "1.9.x"
+    "js-sequence-diagrams": "2.0.1",
+    "jquery": "3.1.x"
   }
 }
