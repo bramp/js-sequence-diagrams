@@ -1,4 +1,4 @@
-JS Sequence Diagrams [![Bower](https://img.shields.io/bower/v/js-sequence-diagrams.svg)](https://libraries.io/bower/js-sequence-diagrams) [![Build Status](https://img.shields.io/travis/bramp/js-sequence-diagrams.svg)](https://travis-ci.org/bramp/js-sequence-diagrams) ![License](https://img.shields.io/npm/l/js-sequence-diagrams.svg)
+JS Sequence Diagrams [![Bower](https://img.shields.io/bower/v/js-sequence-diagrams.svg)](https://libraries.io/bower/js-sequence-diagrams) [![Build Status](https://img.shields.io/travis/bramp/js-sequence-diagrams.svg)](https://travis-ci.org/bramp/js-sequence-diagrams) [![Code Climate](https://img.shields.io/codeclimate/github/bramp/js-sequence-diagrams.svg)](https://codeclimate.com/github/bramp/js-sequence-diagrams) ![License](https://img.shields.io/npm/l/js-sequence-diagrams.svg)
 =============================================
 **Generates UML sequence diagrams from simple text**  
 <https://bramp.github.io/js-sequence-diagrams/>
@@ -180,7 +180,11 @@ TODO
 * Automate the release process
 * Testing that checks the generated SVG is correct
 * Improve the hand drawn theme
-* Dozens of other issues on https://github.com/bramp/js-sequence-diagrams/issues
+  * "Note left of Bob: " generates a small empty box.
+  * The font seems to have extra margin at the bottom.
+  * The wiggly lines don't always touch.
+
+* Dozens of other issues on [https://github.com/bramp/js-sequence-diagrams/issues](https://github.com/bramp/js-sequence-diagrams/issues)
 
 Contributors
 ------------
