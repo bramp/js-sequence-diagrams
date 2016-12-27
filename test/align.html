@@ -8,8 +8,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>Text Alignment Test</title>
 
-        <script src="../bower_components/jquery/jquery.min.js"></script>
-        <script src="../bower_components/lodash/lodash.min.js"></script>
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../bower_components/lodash/dist/lodash.min.js"></script>
 
         <script src="../bower_components/snap.svg/dist/snap.svg.js"></script>
         <script src="../bower_components/bower-webfontloader/webfont.js"></script>
@@ -17,7 +17,7 @@
         <script type="text/javascript">
 
             $(document).ready(function(){
-                var paper = Snap("#svg")
+                var paper = Snap("#svg");
 
                 var RECT = {
                     'stroke': '#000000',
@@ -62,7 +62,7 @@
                     return t;
                 }
 
-                var font = {'font-size': '64px'}
+                var font = {'font-size': '64px'};
 
                 //////////
                 draw_cross(100, 100);

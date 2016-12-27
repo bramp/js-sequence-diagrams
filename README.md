@@ -61,6 +61,7 @@ You can use the Diagram class like:
 
 or use jQuery to do all the work:
 ```html
+<script src="{{ bower directory }}/jquery/dist/jquery.min.js" />
 <div class="diagram">A->B: Message</div>
 <script>
   var options = {theme: 'hand'};
