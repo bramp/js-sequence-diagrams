@@ -1,6 +1,6 @@
 /** js sequence diagrams 1.0.6
- *  http://bramp.github.io/js-sequence-diagrams/
- *  (c) 2012-2015 Andrew Brampton (bramp.net)
+ *  https://bramp.github.io/js-sequence-diagrams/
+ *  (c) 2012-2017 Andrew Brampton (bramp.net)
  *  @license Simplified BSD license.
  */
 (function() {
