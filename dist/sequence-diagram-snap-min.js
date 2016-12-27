@@ -1,4 +1,4 @@
-/** js sequence diagrams 2.0
+/** js sequence diagrams 2.0.1
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2017 Andrew Brampton (bramp.net)
  *  @license Simplified BSD license.
