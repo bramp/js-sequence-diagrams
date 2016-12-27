@@ -44,6 +44,14 @@ lint: dependencies package.json bower.json
 
 test: dependencies dist/sequence-diagram-min.js
 
+	$(NODE_MODULES)/qunit \
+		-c dist/sequence-diagram.js \
+		-t test/render-tests.js \
+		-d test/document-mock.js \
+		   $(BOWER_COMPONENTS)/snap.svg/dist/snap.svg-min.js \
+		   $(BOWER_COMPONENTS)/raphael/raphael.min.js \
+		   $(BOWER_COMPONENTS)/underscore/underscore-min.js
+
 	# Test the un-minifed file (with underscore)
 	$(NODE_MODULES)/qunit \
 		-c dist/sequence-diagram.js \
