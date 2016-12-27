@@ -98,7 +98,6 @@ if (typeof Raphael != 'undefined') {
       } else {
         p = this.paper_.text(0, 0, text);
         p.attr(font);
-        //p.attr({"text-anchor": "start"});
       }
 
       var bb = p.getBBox();

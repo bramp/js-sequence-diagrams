@@ -3,7 +3,7 @@ JS Sequence Diagrams v2 [![Build Status](https://travis-ci.org/bramp/js-sequence
 **Generates UML sequence diagrams from simple text**  
 <https://bramp.github.io/js-sequence-diagrams/>
 
-by [Andrew Brampton](http://bramp.net) 2012-2017
+by [Andrew Brampton](https://bramp.net) 2012-2017
 
 
 Example

@@ -180,7 +180,7 @@ _.extend(BaseTheme.prototype, {
     var signals = diagram.signals;
 
     diagram.width  = 0; // min width
-    diagram.height = 0; // min width
+    diagram.height = 0; // min height
 
     // Setup some layout stuff
     if (diagram.title) {
@@ -202,7 +202,6 @@ _.extend(BaseTheme.prototype, {
       var bb = this.textBBox(a.name, font);
       a.textBB = bb;
 
-      //var bb = t.attr("text", a.name).getBBox();
       a.x = 0; a.y = 0;
       a.width  = bb.width  + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
       a.height = bb.height + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
