@@ -15,11 +15,14 @@ statement ::=
 		( 'left of' | 'right of') actor
 		| 'over' (actor | actor ',' actor)
 		) ':' message
-	| actor ( '-' | '--' ) ( '>' | '>>' )? actor ':' message
+	| arrow
+	| 'alt' message arrow+ ('else' arrow)+ 'end'
 	)
 
 /*
 message ::= [^\n]+
 
 actor ::= [^\->:\n,]+
+
+arrow ::= actor ( '-' | '--' ) ( '>' | '>>' )? actor ':' message
 */
