@@ -67,8 +67,8 @@ function(module, exports, __webpack_require__) {
     /* WEBPACK VAR INJECTION */
     (function(global) {
         var Diagram = __webpack_require__(7);
-        __webpack_require__(6), "undefined" != typeof window ? window.Diagram = Diagram : global.Diagram = Diagram, 
-        module.exports = Diagram;
+        __webpack_require__(6), "undefined" != typeof window ? window.Diagram = Diagram : // TODO expose only for tests or explicitly require 'sequence-diagram' in tests
+        global.Diagram = Diagram, module.exports = Diagram;
     }).call(exports, function() {
         return this;
     }());
@@ -222,7 +222,7 @@ function(module, exports, __webpack_require__) {
             " ": {
                 w: 179
             },
-            "	": {
+            "\t": {
                 w: 179
             },
             "\r": {
@@ -1413,7 +1413,7 @@ function(module, exports, __webpack_require__) {
                         return token = lexer.lex() || EOF, "number" != typeof token && (token = self.symbols_[token] || token), 
                         token;
                     }, yyval = {}; ;) {
-                        if (state = stack[stack.length - 1], this.defaultActions[state] ? action = this.defaultActions[state] : ((null === symbol || "undefined" == typeof symbol) && (symbol = lex()), 
+                        if (state = stack[stack.length - 1], this.defaultActions[state] ? action = this.defaultActions[state] : (null !== symbol && "undefined" != typeof symbol || (symbol = lex()), 
                         action = table[state] && table[state][symbol]), "undefined" == typeof action || !action.length || !action[0]) {
                             var errStr = "";
                             expected = [];
@@ -1536,7 +1536,8 @@ function(module, exports, __webpack_require__) {
                     // test the lexed token: return FALSE when not a match, otherwise return token
                     test_match: function(match, indexed_rule) {
                         var token, lines, backup;
-                        if (this.options.backtrack_lexer && (backup = {
+                        if (this.options.backtrack_lexer && (// save context
+                        backup = {
                             yylineno: this.yylineno,
                             yylloc: {
                                 first_line: this.yylloc.first_line,
@@ -1592,7 +1593,7 @@ function(module, exports, __webpack_require__) {
                             }
                             if (!this.options.flex) break;
                         }
-                        return match ? (token = this.test_match(match, rules[index]), token !== !1 ? token : !1) : "" === this._input ? this.EOF : this.parseError("Lexical error on line " + (this.yylineno + 1) + ". Unrecognized text.\n" + this.showPosition(), {
+                        return match ? (token = this.test_match(match, rules[index]), token !== !1 && token) : "" === this._input ? this.EOF : this.parseError("Lexical error on line " + (this.yylineno + 1) + ". Unrecognized text.\n" + this.showPosition(), {
                             text: "",
                             token: null,
                             line: this.yylineno
@@ -1842,8 +1843,10 @@ function(module, exports, __webpack_require__) {
         },
         layout: function() {
             function actor_ensure_distance(a, b, d) {
-                assert(b > a, "a must be less than or equal to b"), 0 > a ? (b = actors[b], b.x = Math.max(d - b.width / 2, b.x)) : b >= actors.length ? (a = actors[a], 
-                a.padding_right = Math.max(d, a.padding_right)) : (a = actors[a], a.distances[b] = Math.max(d, a.distances[b] ? a.distances[b] : 0));
+                assert(a < b, "a must be less than or equal to b"), a < 0 ? (// Ensure b has left margin
+                b = actors[b], b.x = Math.max(d - b.width / 2, b.x)) : b >= actors.length ? (// Ensure a has right margin
+                a = actors[a], a.padding_right = Math.max(d, a.padding_right)) : (a = actors[a], 
+                a.distances[b] = Math.max(d, a.distances[b] ? a.distances[b] : 0));
             }
             // Local copies
             var diagram = this.diagram, paper = this._paper, font = this._font, actors = diagram.actors, signals = diagram.signals;
@@ -1871,9 +1874,12 @@ function(module, exports, __webpack_require__) {
                 b = Math.max(s.actorA.index, s.actorB.index)); else {
                     if ("Note" != s.type) throw new Error("Unhandled signal type:" + s.type);
                     if (s.width += 2 * (NOTE_MARGIN + NOTE_PADDING), s.height += 2 * (NOTE_MARGIN + NOTE_PADDING), 
+                    // HACK lets include the actor's padding
                     extra_width = 2 * ACTOR_MARGIN, s.placement == PLACEMENT.LEFTOF) b = s.actor.index, 
-                    a = b - 1; else if (s.placement == PLACEMENT.RIGHTOF) a = s.actor.index, b = a + 1; else if (s.placement == PLACEMENT.OVER && s.hasManyActors()) a = Math.min(s.actor[0].index, s.actor[1].index), 
-                    b = Math.max(s.actor[0].index, s.actor[1].index), extra_width = -(2 * NOTE_PADDING + 2 * NOTE_OVERLAP); else if (s.placement == PLACEMENT.OVER) // Over single actor
+                    a = b - 1; else if (s.placement == PLACEMENT.RIGHTOF) a = s.actor.index, b = a + 1; else if (s.placement == PLACEMENT.OVER && s.hasManyActors()) // Over multiple actors
+                    a = Math.min(s.actor[0].index, s.actor[1].index), b = Math.max(s.actor[0].index, s.actor[1].index), 
+                    // We don't need our padding, and we want to overlap
+                    extra_width = -(2 * NOTE_PADDING + 2 * NOTE_OVERLAP); else if (s.placement == PLACEMENT.OVER) // Over single actor
                     return a = s.actor.index, actor_ensure_distance(a - 1, a, s.width / 2), actor_ensure_distance(a, a + 1, s.width / 2), 
                     void (this._signals_height += s.height);
                 }
@@ -1983,7 +1989,8 @@ function(module, exports, __webpack_require__) {
         },
         draw_text_box: function(box, text, margin, padding, font) {
             var x = box.x + margin, y = box.y + margin, w = box.width - 2 * margin, h = box.height - 2 * margin, rect = this.draw_rect(x, y, w, h);
-            rect.attr(LINE), x = getCenterX(box), y = getCenterY(box), this.draw_text(x, y, text, font);
+            rect.attr(LINE), // Draw text (in the center)
+            x = getCenterX(box), y = getCenterY(box), this.draw_text(x, y, text, font);
         }
     });
     /******************
@@ -2037,19 +2044,64 @@ function(module, exports, __webpack_require__) {
 }, /* 8 */
 /***/
 function(module, exports) {
+    function defaultSetTimout() {
+        throw new Error("setTimeout has not been defined");
+    }
+    function defaultClearTimeout() {
+        throw new Error("clearTimeout has not been defined");
+    }
+    function runTimeout(fun) {
+        if (cachedSetTimeout === setTimeout) //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+        // if setTimeout wasn't available but was latter defined
+        if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) return cachedSetTimeout = setTimeout, 
+        setTimeout(fun, 0);
+        try {
+            // when when somebody has screwed with setTimeout but no I.E. maddness
+            return cachedSetTimeout(fun, 0);
+        } catch (e) {
+            try {
+                // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+                return cachedSetTimeout.call(null, fun, 0);
+            } catch (e) {
+                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+                return cachedSetTimeout.call(this, fun, 0);
+            }
+        }
+    }
+    function runClearTimeout(marker) {
+        if (cachedClearTimeout === clearTimeout) //normal enviroments in sane situations
+        return clearTimeout(marker);
+        // if clearTimeout wasn't available but was latter defined
+        if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) return cachedClearTimeout = clearTimeout, 
+        clearTimeout(marker);
+        try {
+            // when when somebody has screwed with setTimeout but no I.E. maddness
+            return cachedClearTimeout(marker);
+        } catch (e) {
+            try {
+                // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+                return cachedClearTimeout.call(null, marker);
+            } catch (e) {
+                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+                // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+                return cachedClearTimeout.call(this, marker);
+            }
+        }
+    }
     function cleanUpNextTick() {
-        draining = !1, currentQueue.length ? queue = currentQueue.concat(queue) : queueIndex = -1, 
-        queue.length && drainQueue();
+        draining && currentQueue && (draining = !1, currentQueue.length ? queue = currentQueue.concat(queue) : queueIndex = -1, 
+        queue.length && drainQueue());
     }
     function drainQueue() {
         if (!draining) {
-            var timeout = setTimeout(cleanUpNextTick);
+            var timeout = runTimeout(cleanUpNextTick);
             draining = !0;
             for (var len = queue.length; len; ) {
                 for (currentQueue = queue, queue = []; ++queueIndex < len; ) currentQueue && currentQueue[queueIndex].run();
                 queueIndex = -1, len = queue.length;
             }
-            currentQueue = null, draining = !1, clearTimeout(timeout);
+            currentQueue = null, draining = !1, runClearTimeout(timeout);
         }
     }
     // v8 likes predictible objects
@@ -2058,11 +2110,24 @@ function(module, exports) {
     }
     function noop() {}
     // shim for using process in browser
-    var currentQueue, process = module.exports = {}, queue = [], draining = !1, queueIndex = -1;
+    var cachedSetTimeout, cachedClearTimeout, process = module.exports = {};
+    !function() {
+        try {
+            cachedSetTimeout = "function" == typeof setTimeout ? setTimeout : defaultSetTimout;
+        } catch (e) {
+            cachedSetTimeout = defaultSetTimout;
+        }
+        try {
+            cachedClearTimeout = "function" == typeof clearTimeout ? clearTimeout : defaultClearTimeout;
+        } catch (e) {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    }();
+    var currentQueue, queue = [], draining = !1, queueIndex = -1;
     process.nextTick = function(fun) {
         var args = new Array(arguments.length - 1);
         if (arguments.length > 1) for (var i = 1; i < arguments.length; i++) args[i - 1] = arguments[i];
-        queue.push(new Item(fun, args)), 1 !== queue.length || draining || setTimeout(drainQueue, 0);
+        queue.push(new Item(fun, args)), 1 !== queue.length || draining || runTimeout(drainQueue);
     }, Item.prototype.run = function() {
         this.fun.apply(null, this.array);
     }, process.title = "browser", process.browser = !0, process.env = {}, process.argv = [], 

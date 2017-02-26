@@ -11,6 +11,7 @@
     "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",
     "bower": "^1.7.2",
+    "cross-env": "^3.1.4",
     "express": "^4.13.3",
     "jison": "0.4.16",
     "jquery": "^2.2.0",
@@ -23,8 +24,8 @@
     "webpack-hot-middleware": "^2.6.0"
   },
   "dependencies": {
-    "lodash": "^4.0.0",
-    "raphael": "git://github.com/DmitryBaranovskiy/raphael.git"
+    "lodash": "^4.17.4",
+    "raphael": "^2.2.7"
   },
   "scripts": {
     "start": "node devserver.js",
@@ -32,8 +33,8 @@
     "jshint": "jshint --verbose ./src ./test",
     "lint": "npm run jshint && npm run jsonlint",
     "test": "make test",
-    "build:unminified": "NODE_ENV=production webpack --config webpack.config.js",
-    "build:minified": "NODE_ENV=production MINIFIED=1 webpack --config webpack.config.js",
+    "build:unminified": "cross-env NODE_ENV=production webpack --config webpack.config.js",
+    "build:minified": "cross-env NODE_ENV=production MINIFIED=1 webpack --config webpack.config.js",
     "build:grammar": "node build-grammar.js",
     "build": "npm run build:unminified && npm run build:minified"
   }
