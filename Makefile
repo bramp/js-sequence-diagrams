@@ -33,14 +33,11 @@ veryclean: clean
 	-rm -rf bower_components
 
 lint: dependencies package.json bower.json
-	$(NODE_MODULES)/jshint --verbose src/*.js
-	$(NODE_MODULES)/jshint --verbose test/*.js
 	$(NODE_MODULES)/jsonlint package.json -q
 	$(NODE_MODULES)/jsonlint bower.json -q
 
-	$(NODE_MODULES)/jsonlint .jscsrc -q
-	$(NODE_MODULES)/jscs --fix src/*.js
-	$(NODE_MODULES)/jscs --fix test/*.js
+	$(NODE_MODULES)/eslint src/*.js
+	$(NODE_MODULES)/eslint test/*.js
 
 test: dependencies dist/sequence-diagram-min.js
 
