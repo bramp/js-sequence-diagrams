@@ -13,7 +13,7 @@ function Diagram() {
 /*
  * Return an existing actor with this alias, or creates a new one with alias and name.
  */
-Diagram.prototype.getActor = function(alias, name) {
+Diagram.prototype.getActor = function(alias, name, lineno) {
   alias = alias.trim();
 
   var i;
@@ -23,14 +23,14 @@ Diagram.prototype.getActor = function(alias, name) {
       return actors[i];
     }
   }
-  i = actors.push(new Diagram.Actor(alias, (name || alias), actors.length));
+  i = actors.push(new Diagram.Actor(alias, (name || alias), actors.length, lineno));
   return actors[ i - 1 ];
 };
 
 /*
  * Parses the input as either a alias, or a "name as alias", and returns the corresponding actor.
  */
-Diagram.prototype.getActorWithAlias = function(input) {
+Diagram.prototype.getActorWithAlias = function(input, lineno) {
   input = input.trim();
 
   // We are lazy and do some of the parsing in javascript :(. TODO move into the .jison file.
@@ -43,41 +43,47 @@ Diagram.prototype.getActorWithAlias = function(input) {
   } else {
     name = alias = input;
   }
-  return this.getActor(alias, name);
+  return this.getActor(alias, name, lineno);
 };
 
-Diagram.prototype.setTitle = function(title) {
-  this.title = title;
+Diagram.prototype.setTitle = function(title, lineno) {
+  this.title = {
+    message: title,
+    lineno: lineno
+  };
 };
 
 Diagram.prototype.addSignal = function(signal) {
   this.signals.push(signal);
 };
 
-Diagram.Actor = function(alias, name, index) {
-  this.alias = alias;
-  this.name  = name;
-  this.index = index;
+Diagram.Actor = function(alias, name, index, lineno) {
+  this.alias   = alias;
+  this.name    = name;
+  this.index   = index;
+  this.lineno  = lineno;
 };
 
-Diagram.Signal = function(actorA, signaltype, actorB, message) {
+Diagram.Signal = function(actorA, signaltype, actorB, message, lineno) {
   this.type       = 'Signal';
   this.actorA     = actorA;
   this.actorB     = actorB;
   this.linetype   = signaltype & 3;
   this.arrowtype  = (signaltype >> 2) & 3;
   this.message    = message;
+  this.lineno     = lineno;
 };
 
 Diagram.Signal.prototype.isSelf = function() {
   return this.actorA.index == this.actorB.index;
 };
 
-Diagram.Note = function(actor, placement, message) {
+Diagram.Note = function(actor, placement, message, lineno) {
   this.type      = 'Note';
   this.actor     = actor;
   this.placement = placement;
   this.message   = message;
+  this.lineno    = lineno;
 
   if (this.hasManyActors() && actor[0] == actor[1]) {
     throw new Error('Note should be over two different actors');

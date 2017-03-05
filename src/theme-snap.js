@@ -155,11 +155,17 @@ if (typeof Snap != 'undefined') {
     },
 
     // Finishes the group, and returns the <group> element
-    finishGroup: function() {
-      var g = this.paper_.group.apply(this.paper_, this._stack);
-      this.beginGroup(); // Reset the group
-      return g;
-    },
+    finishGroup: function(groupName, lineno) {
+        var g = this.paper_.group.apply(this.paper_, this._stack);
+        this.beginGroup();
+        if (groupName) {
+          g.addClass(groupName);
+        }
+        if (lineno !== undefined) {
+          g.attr({'data-lineno': lineno + 1}); // +1 to correct jison line numbering
+        }
+        return g;
+      },
 
     createText: function(text, font) {
       text = text.split('\n').map(function(x) {
@@ -222,31 +228,31 @@ if (typeof Snap != 'undefined') {
     drawTitle: function() {
       this.beginGroup();
       BaseTheme.prototype.drawTitle.call(this);
-      return this.finishGroup().addClass('title');
+      return this.finishGroup('title', this.title_ ? this.title_.lineno : undefined);
     },
 
     drawActor: function(actor, offsetY, height) {
       this.beginGroup();
       BaseTheme.prototype.drawActor.call(this, actor, offsetY, height);
-      return this.finishGroup().addClass('actor');
+      return this.finishGroup('actor', actor.lineno);
     },
 
     drawSignal: function(signal, offsetY) {
       this.beginGroup();
       BaseTheme.prototype.drawSignal.call(this, signal, offsetY);
-      return this.finishGroup().addClass('signal');
+      return this.finishGroup('signal', signal.lineno);
     },
 
     drawSelfSignal: function(signal, offsetY) {
       this.beginGroup();
       BaseTheme.prototype.drawSelfSignal.call(this, signal, offsetY);
-      return this.finishGroup().addClass('signal');
+      return this.finishGroup('signal', signal.lineno);
     },
 
     drawNote: function(note, offsetY) {
       this.beginGroup();
       BaseTheme.prototype.drawNote.call(this, note, offsetY);
-      return this.finishGroup().addClass('note');
+      return this.finishGroup('note', note.lineno);
     },
   });
 
