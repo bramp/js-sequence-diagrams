@@ -228,7 +228,7 @@ if (typeof Snap != 'undefined') {
     drawActor: function(actor, offsetY, height) {
       this.beginGroup();
       BaseTheme.prototype.drawActor.call(this, actor, offsetY, height);
-      return this.finishGroup().addClass('actor');
+      return this.finishGroup().addClass('actor actor'+actor.index);
     },
 
     drawSignal: function(signal, offsetY) {
