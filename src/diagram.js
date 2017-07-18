@@ -89,8 +89,11 @@ Diagram.Note.prototype.hasManyActors = function() {
 };
 
 Diagram.unescape = function(s) {
-  // Turn "\\n" into "\n"
-  return s.trim().replace(/^"(.*)"$/m, '$1').replace(/\\n/gm, '\n');
+  var unescaped = s.trim()
+    .replace(/^"(.*)"$/m, '$1') // remove quotes on quoted actors
+    .replace(/\\n/gm, '\n')     // turn "\\n" into "\n"
+    .replace(/\\"/gm, '"');     // turn '\"' into '"'
+  return unescaped;
 };
 
 Diagram.LINETYPE = {

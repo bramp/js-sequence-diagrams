@@ -24,7 +24,7 @@
 "title"           return 'title';
 ","               return ',';
 [^\->:,\r\n"]+    return 'ACTOR';
-\"[^"]+\"         return 'ACTOR';
+\"(([^\"]|\\\")*[^\\])?\" return 'ACTOR'; // quoted actors
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';
