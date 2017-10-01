@@ -48,7 +48,7 @@ define("ace/mode/sequencebramp",
                i = e("./text").Mode,
                s = e("./sequencebramp_highlight_rules").SequencebrampHighlightRules,
                u = function() {
-                   this.HighlightRules = s
+                   this.HighlightRules = s;
                };
            r.inherits(u, i),
            function() {
@@ -56,6 +56,6 @@ define("ace/mode/sequencebramp",
                this.$id = "ace/mode/sequencebramp"
            }
                .call(u.prototype),
-           t.Mode = u
+           t.Mode = u;
        }
       )
