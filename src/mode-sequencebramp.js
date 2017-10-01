@@ -32,11 +32,11 @@ define("ace/mode/sequencebramp_highlight_rules",
                            caseInsensitive: true,
                        }, {
                            token: ["keyword", "operator", "keyword", "text", "string"],
-                           regex: /^(\s*.*)(-?->>?)(.*)(\s*:\s*)(.*)?$/,
+                           regex: /^(\s*.*)(\s-?->>?)(.*)(\s*:\s*)(.*)?$/,
                        }]
                    };
                };
-               r.inherits(s, i),
+           r.inherits(s, i);
                t.SequencebrampHighlightRules = s;
        }
       ),
