@@ -1148,7 +1148,7 @@ _.extend(BaseTheme.prototype, {
       // Bottom box
       this.drawActor(a, y + this.actorsHeight_ + this.signalsHeight_, this.actorsHeight_);
 
-      // Veritical line
+      // Vertical line
       var aX = getCenterX(a);
       this.drawLine(
        aX, y + this.actorsHeight_ - ACTOR_MARGIN,

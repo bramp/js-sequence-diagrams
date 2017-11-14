@@ -4,7 +4,7 @@
  *  Simplified BSD license.
  */
 /*global Diagram, Snap, WebFont _ */
-// TODO Move defintion of font onto the <svg>, so it can easily be override at each level
+// TODO Move definition of font onto the <svg>, so it can easily be override at each level
 if (typeof Snap != 'undefined') {
 
   var xmlns = 'http://www.w3.org/2000/svg';
