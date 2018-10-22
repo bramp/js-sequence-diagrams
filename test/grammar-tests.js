@@ -113,6 +113,8 @@ test('Dashed Open Arrow', function() {
 test('Titles', function() {
   equal(Diagram.parse('Title: title').title, 'title', 'Title');
   equal(Diagram.parse('Title: line1\\nline2').title, 'line1\nline2', 'Multiline Title');
+  equal(Diagram.parse('Title title').title, 'title', 'Title without colon');
+  equal(Diagram.parse('Title:: title').title, ': title', 'Title with multiple colons');
 });
 
 test('Unicode', function() {

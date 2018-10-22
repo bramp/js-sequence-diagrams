@@ -9,7 +9,7 @@
 document ::= statement*
 
 statement ::=
-	( 'title' ':' message
+	( 'title' ':'? message
 	| 'participant' actor ('as' alias)?
 	| 'note' (
 		( 'left of' | 'right of') actor

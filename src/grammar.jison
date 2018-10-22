@@ -11,6 +11,8 @@
 	// Pre-lexer code can go here
 %}
 
+%x title
+
 %%
 
 [\r\n]+           return 'NL';
@@ -21,7 +23,8 @@
 "right of"        return 'right_of';
 "over"            return 'over';
 "note"            return 'note';
-"title"           return 'title';
+"title"           { this.begin('title'); return 'title'; }
+<title>[^\r\n]+   { this.popState(); return 'MESSAGE'; }
 ","               return ',';
 [^\->:,\r\n"]+    return 'ACTOR';
 \"[^"]+\"         return 'ACTOR';
