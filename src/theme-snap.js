@@ -215,6 +215,10 @@ if (typeof Snap != 'undefined') {
       t.attr({x: x - bb.x, y: y - bb.y});
       t.selectAll('tspan').attr({x: x});
 
+      // To prevent text from overlapping lines, add a white background by creating a rect without
+      // the stroke attribute.
+      this.drawRect(x, y, bb.width, bb.height).attr('stroke', 'none');
+
       this.pushToStack(t);
       return t;
     },
