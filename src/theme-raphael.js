@@ -127,7 +127,7 @@ if (typeof Raphael != 'undefined') {
      * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
      * text (string) text to print
      * font (Object)
-     * align (string) ALIGN_LEFT or ALIGN_CENTER
+     * align (string) ALIGN_LEFT, ALIGN_CENTER, ALIGN_HORIZONTAL_CENTER or ALIGN_VERTICAL_CENTER
      */
     drawText: function(x, y, text, font, align) {
       text = this.cleanText(text);
@@ -137,8 +137,10 @@ if (typeof Raphael != 'undefined') {
       var paper = this.paper_;
       var bb = this.textBBox(text, font);
 
-      if (align == ALIGN_CENTER) {
+      if (align == ALIGN_CENTER || align == ALIGN_HORIZONTAL_CENTER) {
         x = x - bb.width / 2;
+      }
+      if (align == ALIGN_CENTER || align == ALIGN_VERTICAL_CENTER) {
         y = y - bb.height / 2;
       }
 

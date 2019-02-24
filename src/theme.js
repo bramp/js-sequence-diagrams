@@ -40,6 +40,8 @@ var ARROWTYPE = Diagram.ARROWTYPE;
 
 var ALIGN_LEFT   = 0;
 var ALIGN_CENTER = 1;
+var ALIGN_HORIZONTAL_CENTER = 2;
+var ALIGN_VERTICAL_CENTER = 3;
 
 function AssertException(message) { this.message = message; }
 AssertException.prototype.toString = function() {
@@ -378,24 +380,28 @@ _.extend(BaseTheme.prototype, {
   },
 
   drawSelfSignal: function(signal, offsetY) {
-      assert(signal.isSelf(), 'signal must be a self signal');
+    assert(signal.isSelf(), 'signal must be a self signal');
 
-      var textBB = signal.textBB;
-      var aX = getCenterX(signal.actorA);
+    var textBB = signal.textBB;
+    var aX = getCenterX(signal.actorA);
 
-      var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING;
-      var y = offsetY + SIGNAL_PADDING + signal.height / 2 + textBB.y;
+    var y1 = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
+    var y2 = y1 + signal.height - 2 * SIGNAL_MARGIN - SIGNAL_PADDING;
 
-      this.drawText(x, y, signal.message, this.font_, ALIGN_LEFT);
+    // Draw three lines, the last one with a arrow
+    this.drawLine(aX, y1, aX + SELF_SIGNAL_WIDTH, y1, signal.linetype);
+    this.drawLine(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2, signal.linetype);
+    this.drawLine(aX + SELF_SIGNAL_WIDTH, y2, aX, y2, signal.linetype, signal.arrowtype);
 
-      var y1 = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
-      var y2 = y1 + signal.height - 2 * SIGNAL_MARGIN - SIGNAL_PADDING;
+    // Draw text
+    var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING;
+    var arrowHeight = (y2 - y1);
+    var emptyVerticalSpace = arrowHeight - textBB.height;
+    var topPadding = emptyVerticalSpace / 2;
+    var y = y1 + topPadding;
 
-      // Draw three lines, the last one with a arrow
-      this.drawLine(aX, y1, aX + SELF_SIGNAL_WIDTH, y1, signal.linetype);
-      this.drawLine(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2, signal.linetype);
-      this.drawLine(aX + SELF_SIGNAL_WIDTH, y2, aX, y2, signal.linetype, signal.arrowtype);
-    },
+    this.drawText(x, y, signal.message, this.font_, ALIGN_LEFT);
+  },
 
   drawSignal: function(signal, offsetY) {
     var aX = getCenterX(signal.actorA);
@@ -403,13 +409,15 @@ _.extend(BaseTheme.prototype, {
 
     // Mid point between actors
     var x = (bX - aX) / 2 + aX;
-    var y = offsetY + SIGNAL_MARGIN + 2 * SIGNAL_PADDING;
+    var y = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
 
     // Draw the text in the middle of the signal
-    this.drawText(x, y, signal.message, this.font_, ALIGN_CENTER);
+    this.drawText(x, y, signal.message, this.font_, ALIGN_HORIZONTAL_CENTER);
 
     // Draw the line along the bottom of the signal
-    y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
+    // Padding above, between message and line
+    // Margin below the line, between line and next signal
+    y = offsetY + signal.height - SIGNAL_PADDING;
     this.drawLine(aX, y, bX, y, signal.linetype, signal.arrowtype);
   },
 
