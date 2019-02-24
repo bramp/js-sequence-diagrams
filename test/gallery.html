@@ -35,11 +35,12 @@ A->B:
 B->C:
 C->C:
 A->B: Normal line
+A->B: Normal line\nwith\nmany\nlines
 B-->C: Dashed line
 C->>D: Open arrow
 D-->>A: Dashed open arrow
 D->D: Self
-D->D: Many\nLines
+D->D: Self\nMany\nLines
 </textarea>
 <textarea class="language" rows="10" cols="35">
 # Example of a comment.
@@ -94,7 +95,7 @@ Note right of A: By listing the participants\n you can change their order
                 });
                 table.append(row);
 
-                $('textarea.language').each(function(i){                    
+                $('textarea.language').each(function(i){
                     var textarea = $(this);
                     var row = $("<tr>");
                     var td = $("<td>");
