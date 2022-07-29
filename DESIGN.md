@@ -16,7 +16,7 @@ Random Design Notes
 * Self Signal: Horz left aligned, Vertically center aligned (TODO)
 * Notes: Left aligned
 
-Whitespace is trimed from the ends of each line
+Whitespace is trimmed from the ends of each line
 
 ## CSS Classes
 * SVG: 'sequence' and the name of the theme e.g. 'simple' or 'hand'

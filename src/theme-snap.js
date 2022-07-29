@@ -4,7 +4,7 @@
  *  Simplified BSD license.
  */
 /*global Diagram, Snap, WebFont _ */
-// TODO Move defintion of font onto the <svg>, so it can easily be override at each level
+// TODO Move definition of font onto the <svg>, so it can easily be override at each level
 if (typeof Snap != 'undefined') {
 
   var xmlns = 'http://www.w3.org/2000/svg';
@@ -136,7 +136,7 @@ if (typeof Snap != 'undefined') {
     },
 
     textBBox: function(text, font) {
-      // TODO getBBox will return the bounds with any whitespace/kerning. This makes some of our aligments screwed up
+      // TODO getBBox will return the bounds with any whitespace/kerning. This makes some of our alignments screwed up
       var t = this.createText(text, font);
       var bb = t.getBBox();
       t.remove();
