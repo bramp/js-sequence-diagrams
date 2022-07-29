@@ -13,7 +13,7 @@ The daniel bold font had a couple of mistakes
 
 I (bramp) fixed the backslash issues by just flipping the character, and removed the other invalid mappings. This original font was saved as danielbd-original.ttf.
 
-Check out the test/font_test.html, to see all valid glyths.
+Check out the test/font_test.html, to see all valid glyphs.
 
 ## Raphael
 For Raphael the TTF fonts were then converted to cufon format, using [this site](http://cufon.shoqolate.com/generate/).
