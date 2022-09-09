@@ -1,10 +1,19 @@
 {
   "name": "js-sequence-diagrams",
+  "version": "2.0.1",
+  "main": "dist/sequence-diagram.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/bramp/js-sequence-diagrams.git"
   },
   "license": "BSD-2-Clause",
+  "dependencies": {
+    "underscore": "1.8.x",
+    "lodash": "4.17.x",
+    "raphael": "2.2.x",
+    "snapsvg": "0.4.x",
+    "webfontloader": "~1.6.x"
+  },
   "devDependencies": {
     "bower": "1.8.x",
     "eslint": "3.16.x",
