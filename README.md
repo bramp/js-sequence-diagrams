@@ -1,4 +1,5 @@
 JS Sequence Diagrams [![Bower](https://img.shields.io/bower/v/js-sequence-diagrams.svg)](https://libraries.io/bower/js-sequence-diagrams) [![Build Status](https://img.shields.io/travis/bramp/js-sequence-diagrams.svg)](https://travis-ci.org/bramp/js-sequence-diagrams) [![Code Climate](https://img.shields.io/codeclimate/github/bramp/js-sequence-diagrams.svg)](https://codeclimate.com/github/bramp/js-sequence-diagrams) [![Libraries.io](https://img.shields.io/librariesio/github/bramp/js-sequence-diagrams.svg)](https://libraries.io/github/bramp/js-sequence-diagrams) ![License](https://img.shields.io/npm/l/js-sequence-diagrams.svg)
+[![kandi X-Ray](https://kandi.openweaver.com/badges/xray.svg)](https://kandi.openweaver.com/javascript/bramp/js-sequence-diagrams)
 =============================================
 **Generates UML sequence diagrams from simple text**  
 <https://bramp.github.io/js-sequence-diagrams/>
