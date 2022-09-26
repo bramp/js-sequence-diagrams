@@ -456,22 +456,22 @@ var parser = function() {
                 return token = lexer.lex() || EOF, "number" != typeof token && (token = self.symbols_[token] || token), 
                 token;
             }
-            var self = this, stack = [ 0 ], vstack = [ null ], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1, args = lstack.slice.call(arguments, 1), lexer = Object.create(this.lexer), sharedState = {
+            var self = this, stack = [ 0 ], vstack = [ null ], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, EOF = 1, args = lstack.slice.call(arguments, 1), lexer = Object.create(this.lexer), sharedState = {
                 yy: {}
             };
             for (var k in this.yy) Object.prototype.hasOwnProperty.call(this.yy, k) && (sharedState.yy[k] = this.yy[k]);
             lexer.setInput(input, sharedState.yy), sharedState.yy.lexer = lexer, sharedState.yy.parser = this, 
-            "undefined" == typeof lexer.yylloc && (lexer.yylloc = {});
+            void 0 === lexer.yylloc && (lexer.yylloc = {});
             var yyloc = lexer.yylloc;
             lstack.push(yyloc);
             var ranges = lexer.options && lexer.options.ranges;
             "function" == typeof sharedState.yy.parseError ? this.parseError = sharedState.yy.parseError : this.parseError = Object.getPrototypeOf(this).parseError;
             for (var symbol, preErrorSymbol, state, action, r, p, len, newState, expected, yyval = {}; ;) {
-                if (state = stack[stack.length - 1], this.defaultActions[state] ? action = this.defaultActions[state] : (null !== symbol && "undefined" != typeof symbol || (symbol = lex()), 
-                action = table[state] && table[state][symbol]), "undefined" == typeof action || !action.length || !action[0]) {
+                if (state = stack[stack.length - 1], this.defaultActions[state] ? action = this.defaultActions[state] : (null !== symbol && void 0 !== symbol || (symbol = lex()), 
+                action = table[state] && table[state][symbol]), void 0 === action || !action.length || !action[0]) {
                     var errStr = "";
                     expected = [];
-                    for (p in table[state]) this.terminals_[p] && p > TERROR && expected.push("'" + this.terminals_[p] + "'");
+                    for (p in table[state]) this.terminals_[p] && p > 2 && expected.push("'" + this.terminals_[p] + "'");
                     errStr = lexer.showPosition ? "Parse error on line " + (yylineno + 1) + ":\n" + lexer.showPosition() + "\nExpecting " + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symbol) + "'" : "Parse error on line " + (yylineno + 1) + ": Unexpected " + (symbol == EOF ? "end of input" : "'" + (this.terminals_[symbol] || symbol) + "'"), 
                     this.parseError(errStr, {
                         text: lexer.match,
@@ -497,8 +497,7 @@ var parser = function() {
                         first_column: lstack[lstack.length - (len || 1)].first_column,
                         last_column: lstack[lstack.length - 1].last_column
                     }, ranges && (yyval._$.range = [ lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1] ]), 
-                    r = this.performAction.apply(yyval, [ yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack ].concat(args)), 
-                    "undefined" != typeof r) return r;
+                    void 0 !== (r = this.performAction.apply(yyval, [ yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack ].concat(args)))) return r;
                     len && (stack = stack.slice(0, -1 * len * 2), vstack = vstack.slice(0, -1 * len), 
                     lstack = lstack.slice(0, -1 * len)), stack.push(this.productions_[action[1]][0]), 
                     vstack.push(yyval.$), lstack.push(yyval._$), newState = table[stack[stack.length - 2]][stack[stack.length - 1]], 
@@ -512,7 +511,7 @@ var parser = function() {
             return !0;
         }
     }, lexer = function() {
-        var lexer = {
+        return {
             EOF: 1,
             parseError: function(str, hash) {
                 if (!this.yy.parser) throw new Error(str);
@@ -532,9 +531,8 @@ var parser = function() {
             // consumes and returns one char from the input
             input: function() {
                 var ch = this._input[0];
-                this.yytext += ch, this.yyleng++, this.offset++, this.match += ch, this.matched += ch;
-                var lines = ch.match(/(?:\r\n?|\n).*/g);
-                return lines ? (this.yylineno++, this.yylloc.last_line++) : this.yylloc.last_column++, 
+                return this.yytext += ch, this.yyleng++, this.offset++, this.match += ch, this.matched += ch, 
+                ch.match(/(?:\r\n?|\n).*/g) ? (this.yylineno++, this.yylloc.last_line++) : this.yylloc.last_column++, 
                 this.options.ranges && this.yylloc.range[1]++, this._input = this._input.slice(1), 
                 ch;
             },
@@ -634,10 +632,9 @@ var parser = function() {
                 this._input || (this.done = !0);
                 var token, match, tempMatch, index;
                 this._more || (this.yytext = "", this.match = "");
-                for (var rules = this._currentRules(), i = 0; i < rules.length; i++) if (tempMatch = this._input.match(this.rules[rules[i]]), 
-                tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                for (var rules = this._currentRules(), i = 0; i < rules.length; i++) if ((tempMatch = this._input.match(this.rules[rules[i]])) && (!match || tempMatch[0].length > match[0].length)) {
                     if (match = tempMatch, index = i, this.options.backtrack_lexer) {
-                        if (token = this.test_match(tempMatch, rules[i]), token !== !1) return token;
+                        if (!1 !== (token = this.test_match(tempMatch, rules[i]))) return token;
                         if (this._backtrack) {
                             match = !1;
                             continue;
@@ -647,7 +644,7 @@ var parser = function() {
                     }
                     if (!this.options.flex) break;
                 }
-                return match ? (token = this.test_match(match, rules[index]), token !== !1 && token) : "" === this._input ? this.EOF : this.parseError("Lexical error on line " + (this.yylineno + 1) + ". Unrecognized text.\n" + this.showPosition(), {
+                return match ? !1 !== (token = this.test_match(match, rules[index])) && token : "" === this._input ? this.EOF : this.parseError("Lexical error on line " + (this.yylineno + 1) + ". Unrecognized text.\n" + this.showPosition(), {
                     text: "",
                     token: null,
                     line: this.yylineno
@@ -656,7 +653,7 @@ var parser = function() {
             // return next match that has a token
             lex: function() {
                 var r = this.next();
-                return r ? r : this.lex();
+                return r || this.lex();
             },
             // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
             begin: function(condition) {
@@ -664,8 +661,7 @@ var parser = function() {
             },
             // pop the previously active lexer condition state off the condition stack
             popState: function() {
-                var n = this.conditionStack.length - 1;
-                return n > 0 ? this.conditionStack.pop() : this.conditionStack[0];
+                return this.conditionStack.length - 1 > 0 ? this.conditionStack.pop() : this.conditionStack[0];
             },
             // produce the lexer rule set which is active for the currently active lexer condition state
             _currentRules: function() {
@@ -692,9 +688,6 @@ var parser = function() {
                     return 8;
 
                   case 1:
-                    /* skip whitespace */
-                    break;
-
                   case 2:
                     /* skip comments */
                     break;
@@ -715,48 +708,52 @@ var parser = function() {
                     return 15;
 
                   case 8:
-                    return 13;
+                    return this.begin("title"), 13;
 
                   case 9:
-                    return 20;
+                    return this.popState(), 31;
 
                   case 10:
-                    return 24;
+                    return 20;
 
                   case 11:
+                  case 12:
                     return 24;
 
-                  case 12:
+                  case 13:
                     return 28;
 
-                  case 13:
+                  case 14:
                     return 27;
 
-                  case 14:
+                  case 15:
                     return 30;
 
-                  case 15:
+                  case 16:
                     return 29;
 
-                  case 16:
+                  case 17:
                     return 31;
 
-                  case 17:
+                  case 18:
                     return 5;
 
-                  case 18:
+                  case 19:
                     return "INVALID";
                 }
             },
-            rules: [ /^(?:[\r\n]+)/i, /^(?:\s+)/i, /^(?:#[^\r\n]*)/i, /^(?:participant\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:,)/i, /^(?:[^\->:,\r\n"]+)/i, /^(?:"[^"]+")/i, /^(?:--)/i, /^(?:-)/i, /^(?:>>)/i, /^(?:>)/i, /^(?:[^\r\n]+)/i, /^(?:$)/i, /^(?:.)/i ],
+            rules: [ /^(?:[\r\n]+)/i, /^(?:\s+)/i, /^(?:#[^\r\n]*)/i, /^(?:participant\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:[^\r\n]+)/i, /^(?:,)/i, /^(?:[^\->:,\r\n"]+)/i, /^(?:"[^"]+")/i, /^(?:--)/i, /^(?:-)/i, /^(?:>>)/i, /^(?:>)/i, /^(?:[^\r\n]+)/i, /^(?:$)/i, /^(?:.)/i ],
             conditions: {
+                title: {
+                    rules: [ 9 ],
+                    inclusive: !1
+                },
                 INITIAL: {
-                    rules: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 ],
+                    rules: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
                     inclusive: !0
                 }
             }
         };
-        return lexer;
     }();
     return parser.lexer = lexer, Parser.prototype = parser, parser.Parser = Parser, 
     new Parser();
@@ -843,6 +840,8 @@ var ARROWTYPE = Diagram.ARROWTYPE;
 
 var ALIGN_LEFT   = 0;
 var ALIGN_CENTER = 1;
+var ALIGN_HORIZONTAL_CENTER = 2;
+var ALIGN_VERTICAL_CENTER = 3;
 
 function AssertException(message) { this.message = message; }
 AssertException.prototype.toString = function() {
@@ -1181,24 +1180,28 @@ _.extend(BaseTheme.prototype, {
   },
 
   drawSelfSignal: function(signal, offsetY) {
-      assert(signal.isSelf(), 'signal must be a self signal');
+    assert(signal.isSelf(), 'signal must be a self signal');
 
-      var textBB = signal.textBB;
-      var aX = getCenterX(signal.actorA);
+    var textBB = signal.textBB;
+    var aX = getCenterX(signal.actorA);
 
-      var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING;
-      var y = offsetY + SIGNAL_PADDING + signal.height / 2 + textBB.y;
+    var y1 = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
+    var y2 = y1 + signal.height - 2 * SIGNAL_MARGIN - SIGNAL_PADDING;
 
-      this.drawText(x, y, signal.message, this.font_, ALIGN_LEFT);
+    // Draw three lines, the last one with a arrow
+    this.drawLine(aX, y1, aX + SELF_SIGNAL_WIDTH, y1, signal.linetype);
+    this.drawLine(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2, signal.linetype);
+    this.drawLine(aX + SELF_SIGNAL_WIDTH, y2, aX, y2, signal.linetype, signal.arrowtype);
 
-      var y1 = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
-      var y2 = y1 + signal.height - 2 * SIGNAL_MARGIN - SIGNAL_PADDING;
+    // Draw text
+    var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING;
+    var arrowHeight = (y2 - y1);
+    var emptyVerticalSpace = arrowHeight - textBB.height;
+    var topPadding = emptyVerticalSpace / 2;
+    var y = y1 + topPadding;
 
-      // Draw three lines, the last one with a arrow
-      this.drawLine(aX, y1, aX + SELF_SIGNAL_WIDTH, y1, signal.linetype);
-      this.drawLine(aX + SELF_SIGNAL_WIDTH, y1, aX + SELF_SIGNAL_WIDTH, y2, signal.linetype);
-      this.drawLine(aX + SELF_SIGNAL_WIDTH, y2, aX, y2, signal.linetype, signal.arrowtype);
-    },
+    this.drawText(x, y, signal.message, this.font_, ALIGN_LEFT);
+  },
 
   drawSignal: function(signal, offsetY) {
     var aX = getCenterX(signal.actorA);
@@ -1206,13 +1209,15 @@ _.extend(BaseTheme.prototype, {
 
     // Mid point between actors
     var x = (bX - aX) / 2 + aX;
-    var y = offsetY + SIGNAL_MARGIN + 2 * SIGNAL_PADDING;
+    var y = offsetY + SIGNAL_MARGIN + SIGNAL_PADDING;
 
     // Draw the text in the middle of the signal
-    this.drawText(x, y, signal.message, this.font_, ALIGN_CENTER);
+    this.drawText(x, y, signal.message, this.font_, ALIGN_HORIZONTAL_CENTER);
 
     // Draw the line along the bottom of the signal
-    y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
+    // Padding above, between message and line
+    // Margin below the line, between line and next signal
+    y = offsetY + signal.height - SIGNAL_PADDING;
     this.drawLine(aX, y, bX, y, signal.linetype, signal.arrowtype);
   },
 
@@ -1469,14 +1474,16 @@ if (typeof Snap != 'undefined') {
      * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
      * text (string) text to print
      * font (Object)
-     * align (string) ALIGN_LEFT or ALIGN_CENTER
+     * align (string) ALIGN_LEFT, ALIGN_CENTER, ALIGN_HORIZONTAL_CENTER or ALIGN_VERTICAL_CENTER
      */
     drawText: function(x, y, text, font, align) {
       var t = this.createText(text, font);
       var bb = t.getBBox();
 
-      if (align == ALIGN_CENTER) {
+      if (align == ALIGN_CENTER || align == ALIGN_HORIZONTAL_CENTER) {
         x = x - bb.width / 2;
+      }
+      if (align == ALIGN_CENTER || align == ALIGN_VERTICAL_CENTER) {
         y = y - bb.height / 2;
       }
 
@@ -1686,7 +1693,7 @@ if (typeof Raphael != 'undefined') {
      * x,y (int) x,y top left point of the text, or the center of the text (depending on align param)
      * text (string) text to print
      * font (Object)
-     * align (string) ALIGN_LEFT or ALIGN_CENTER
+     * align (string) ALIGN_LEFT, ALIGN_CENTER, ALIGN_HORIZONTAL_CENTER or ALIGN_VERTICAL_CENTER
      */
     drawText: function(x, y, text, font, align) {
       text = this.cleanText(text);
@@ -1696,8 +1703,10 @@ if (typeof Raphael != 'undefined') {
       var paper = this.paper_;
       var bb = this.textBBox(text, font);
 
-      if (align == ALIGN_CENTER) {
+      if (align == ALIGN_CENTER || align == ALIGN_HORIZONTAL_CENTER) {
         x = x - bb.width / 2;
+      }
+      if (align == ALIGN_CENTER || align == ALIGN_VERTICAL_CENTER) {
         y = y - bb.height / 2;
       }
 
