@@ -18,6 +18,27 @@ into
 
 ![Sample generated UML diagram](https://bramp.github.io/js-sequence-diagrams/images/sample.svg)
 
+
+A Grammar Self-Contain Example
+
+    title : title : hello
+    participant "participant example"
+    participant A
+    participant B
+    participant C
+    A -> B : "A->B"
+    A --> C : "A-->C"
+    B -->> C:  "B-->>C"
+    C ->> B : "C->>B"
+    note over A,C : "note over A, C"
+    note left of A: "note left of A"
+    note right of C: "note right of C"
+    note over B: "note over B"
+    
+into
+
+![Grammar_self_contain_example](https://winchua.github.io/images/self_contain.bmp)
+
 Requirements
 ------------
 You will need [Snap.svg](http://snapsvg.io/), [Web Font Loader](https://github.com/typekit/webfontloader) (if you wish to use custom fonts), [underscore.js](http://underscorejs.org/) (or [lodash](https://lodash.com/)), and optionally [jQuery](https://jquery.com/).
