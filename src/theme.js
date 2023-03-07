@@ -180,6 +180,7 @@ _.extend(BaseTheme.prototype, {
     var font    = this.font_;
     var actors  = diagram.actors;
     var signals = diagram.signals;
+    var theme   = this;
 
     diagram.width  = 0; // min width
     diagram.height = 0; // min height
@@ -230,69 +231,76 @@ _.extend(BaseTheme.prototype, {
       }
     }
 
+    function buildSignalLayout(signal) {
+      var a, b;
+      var bb = theme.textBBox(signal.message, font);
+
+      signal.textBB = bb;
+      signal.width = bb.width + (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
+      signal.height = bb.height + (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
+
+      if (signal.isSelf()) {
+        // TODO Self signals need a min height
+        a = signal.actorA.index;
+        b = a + 1;
+        signal.width += SELF_SIGNAL_WIDTH;
+      } else {
+        a = Math.min(signal.actorA.index, signal.actorB.index);
+        b = Math.max(signal.actorA.index, signal.actorB.index);
+      }
+
+      actorEnsureDistance(a, b, signal.width);
+    }
+
+    function buildNoteLayout(signal) {
+      var a, b;
+      var bb = theme.textBBox(signal.message, font);
+
+      signal.textBB = bb;
+      signal.width = bb.width + (NOTE_MARGIN + NOTE_PADDING) * 2;
+      signal.height = bb.height + (NOTE_MARGIN + NOTE_PADDING) * 2;
+
+      // HACK lets include the actor'signal padding
+      var extraWidth = 2 * ACTOR_MARGIN;
+
+      if (signal.placement == PLACEMENT.LEFTOF) {
+        b = signal.actor.index;
+        a = b - 1;
+        actorEnsureDistance(a, b, signal.width + extraWidth);
+      } else if (signal.placement == PLACEMENT.RIGHTOF) {
+        a = signal.actor.index;
+        b = a + 1;
+        actorEnsureDistance(a, b, signal.width + extraWidth);
+      } else if (signal.placement == PLACEMENT.OVER && signal.hasManyActors()) {
+        // Over multiple actors
+        a = Math.min(signal.actor[0].index, signal.actor[1].index);
+        b = Math.max(signal.actor[0].index, signal.actor[1].index);
+
+        // We don't need our padding, and we want to overlap
+        extraWidth = -(NOTE_PADDING * 2 + NOTE_OVERLAP * 2);
+        actorEnsureDistance(a, b, signal.width + extraWidth);
+      } else if (signal.placement == PLACEMENT.OVER) {
+        // Over single actor
+        a = signal.actor.index;
+        actorEnsureDistance(a - 1, a, signal.width / 2);
+        actorEnsureDistance(a, a + 1, signal.width / 2);
+      }
+    }
+
+    var layoutBuilders = {
+      Signal: buildSignalLayout,
+      Note: buildNoteLayout
+    };
+
     _.each(signals, _.bind(function(s) {
       // Indexes of the left and right actors involved
-      var a;
-      var b;
-
-      var bb = this.textBBox(s.message, font);
-
-      s.textBB = bb;
-      s.width   = bb.width;
-      s.height  = bb.height;
-
-      var extraWidth = 0;
-
-      if (s.type == 'Signal') {
-
-        s.width  += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
-        s.height += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
-
-        if (s.isSelf()) {
-          // TODO Self signals need a min height
-          a = s.actorA.index;
-          b = a + 1;
-          s.width += SELF_SIGNAL_WIDTH;
-        } else {
-          a = Math.min(s.actorA.index, s.actorB.index);
-          b = Math.max(s.actorA.index, s.actorB.index);
-        }
-
-      } else if (s.type == 'Note') {
-        s.width  += (NOTE_MARGIN + NOTE_PADDING) * 2;
-        s.height += (NOTE_MARGIN + NOTE_PADDING) * 2;
-
-        // HACK lets include the actor's padding
-        extraWidth = 2 * ACTOR_MARGIN;
-
-        if (s.placement == PLACEMENT.LEFTOF) {
-          b = s.actor.index;
-          a = b - 1;
-        } else if (s.placement == PLACEMENT.RIGHTOF) {
-          a = s.actor.index;
-          b = a + 1;
-        } else if (s.placement == PLACEMENT.OVER && s.hasManyActors()) {
-          // Over multiple actors
-          a = Math.min(s.actor[0].index, s.actor[1].index);
-          b = Math.max(s.actor[0].index, s.actor[1].index);
-
-          // We don't need our padding, and we want to overlap
-          extraWidth = -(NOTE_PADDING * 2 + NOTE_OVERLAP * 2);
-
-        } else if (s.placement == PLACEMENT.OVER) {
-          // Over single actor
-          a = s.actor.index;
-          actorEnsureDistance(a - 1, a, s.width / 2);
-          actorEnsureDistance(a, a + 1, s.width / 2);
-          this.signalsHeight_ += s.height;
-
-          return; // Bail out early
-        }
+      var buildLayout = layoutBuilders[s.type];
+      if (buildLayout) {
+        buildLayout(s);
       } else {
         throw new Error('Unhandled signal type:' + s.type);
       }
 
-      actorEnsureDistance(a, b, s.width + extraWidth);
       this.signalsHeight_ += s.height;
     }, this));
 
