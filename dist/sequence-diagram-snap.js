@@ -1148,7 +1148,7 @@ _.extend(BaseTheme.prototype, {
       // Bottom box
       this.drawActor(a, y + this.actorsHeight_ + this.signalsHeight_, this.actorsHeight_);
 
-      // Veritical line
+      // Vertical line
       var aX = getCenterX(a);
       this.drawLine(
        aX, y + this.actorsHeight_ - ACTOR_MARGIN,
@@ -1275,7 +1275,7 @@ _.extend(BaseTheme.prototype, {
  *  Simplified BSD license.
  */
 /*global Diagram, Snap, WebFont _ */
-// TODO Move defintion of font onto the <svg>, so it can easily be override at each level
+// TODO Move definition of font onto the <svg>, so it can easily be override at each level
 if (typeof Snap != 'undefined') {
 
   var xmlns = 'http://www.w3.org/2000/svg';
