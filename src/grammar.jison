@@ -27,7 +27,7 @@
 <title>[^\r\n]+   { this.popState(); return 'MESSAGE'; }
 ","               return ',';
 [^\->:,\r\n"]+    return 'ACTOR';
-\"[^"]+\"         return 'ACTOR';
+\"(([^\"]|\\\")*[^\\])?\" return 'ACTOR'; // quoted actors
 "--"              return 'DOTLINE';
 "-"               return 'LINE';
 ">>"              return 'OPENARROW';

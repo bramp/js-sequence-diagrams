@@ -193,6 +193,11 @@ test('Quoted names', function() {
   assertSingleActor(Diagram.parse('Participant "->:"'), '->:');
 });
 
+test('Quoted names with escape characters', function() {
+  assertSingleArrow(Diagram.parse('"->\\":"->B: M'), ARROWTYPE.FILLED, LINETYPE.SOLID,
+      '->":', 'B', 'M');
+});
+
 test('API', function() {
   // Public API
   ok(typeof Diagram.parse == 'function');
